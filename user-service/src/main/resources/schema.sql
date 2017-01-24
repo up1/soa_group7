@@ -8,7 +8,6 @@ CREATE TABLE USERS
     PRIMARY KEY (id)
 );
 
--- Insert Users --
 insert into USERS (firstname, lastname) values ('Sean', 'Louis');
 insert into USERS (firstname, lastname) values ('Lori', 'Betty');
 insert into USERS (firstname, lastname) values ('Bruce', 'Bruce');
