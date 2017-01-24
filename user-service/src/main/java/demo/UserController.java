@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class UserController {
 
@@ -16,5 +18,10 @@ public class UserController {
         return this.userRepository.findById((long) id);
     }
 
-    //TODO get all users w/ paging (@param page=1, item_per_page=10)
+    @RequestMapping("/users")
+    public List<User> getUsers(
+            @RequestParam(value="page", defaultValue="1") int page,
+            @RequestParam(value="item_per_page", defaultValue="10") int itemPerPage) {
+        return this.userRepository.findAll(page, itemPerPage);
+    }
 }

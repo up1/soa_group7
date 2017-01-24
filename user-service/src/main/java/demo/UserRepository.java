@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public class UserRepository {
 
@@ -18,6 +20,11 @@ public class UserRepository {
         }catch (Exception exception) {
             throw new UserNotFoundException(id);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAll(int page, int itemPerPage) {
+        return this.jdbcTemplate.query("select * from users limit ?, ?", new Object[]{(page-1)*itemPerPage, itemPerPage}, new UserRowMapper());
     }
 
     @Transactional
