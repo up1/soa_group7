@@ -24,7 +24,10 @@ public class UserRepository {
 
     @Transactional(readOnly = true)
     public List<User> findAll(int page, int itemPerPage) {
-        return this.jdbcTemplate.query("select * from users limit ?, ?", new Object[]{(page-1)*itemPerPage, itemPerPage}, new UserRowMapper());
+        int countRow = this.jdbcTemplate.queryForObject("select count(*) from users", int.class);
+        int maxPage = (int) Math.ceil(countRow/(itemPerPage+0.0));
+        System.out.println("Max page = "+maxPage);
+        return this.jdbcTemplate.query("select id,firstname,lastname from users limit ?, ?", new Object[]{(page-1)*itemPerPage, itemPerPage}, new UserRowMapper());
     }
 
     @Transactional
