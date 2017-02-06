@@ -17,3 +17,11 @@ Perform a find user information with id `1`.
   "lastname": "Louis"
 }
 ```
+
+## `GET user/999`
+
+Perform a find user information with invalid id.
+
+===
+
+* `Status: 404`
