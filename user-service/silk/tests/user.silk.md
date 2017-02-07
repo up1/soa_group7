@@ -1,6 +1,6 @@
 # Get user information by ID
 
-This can be run with `silk -silk.url="http://localhost:9001"`
+This can be run with `silk -silk.url="http://localhost:9001/"`
 
 ## `GET user/1`
 
