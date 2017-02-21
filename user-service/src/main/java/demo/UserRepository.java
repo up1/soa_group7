@@ -29,7 +29,6 @@ public class UserRepository {
         if (page < 1 || itemPerPage < 1 || page > maxPage) {
             throw new InvalidArgumentsException();
         }
-        System.out.println("Max page = "+maxPage);
         return this.jdbcTemplate.query("select id,firstname,lastname from users limit ?, ?", new Object[]{(page-1)*itemPerPage, itemPerPage}, new UserRowMapper());
     }
 
@@ -38,6 +37,8 @@ public class UserRepository {
         String sql = "INSERT INTO USERS(id, firstname, lastname) VALUES (?,?,?)";
         this.jdbcTemplate.update(sql, user.getId(), user.getFirstname(), user.getLastname());
     }
+
+
 
     public void delete(Long id) {
         String sql = "DELETE FROM USERS WHERE id=?";
