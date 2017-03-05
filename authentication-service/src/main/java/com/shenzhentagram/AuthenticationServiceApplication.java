@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 @CrossOrigin(origins = "*")
-public class AutenticationServiceApplication {
+public class AuthenticationServiceApplication {
 
 	@RequestMapping(method = RequestMethod.GET, path = "/")
 	public String showAuthentication() {
@@ -18,7 +18,7 @@ public class AutenticationServiceApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(AutenticationServiceApplication.class, args);
+		SpringApplication.run(AuthenticationServiceApplication.class, args);
 	}
 
 }
