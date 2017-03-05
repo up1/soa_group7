@@ -6,7 +6,9 @@ import org.springframework.security.core.Authentication;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by Meranote on 3/5/2017.
+ * JWT Configuration class and parse token helper
+ *
+ * @author Meranote (chaniwat.meranote@gmail.com)
  */
 public class JWTAuthenticationService {
 

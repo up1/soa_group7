@@ -1,7 +1,9 @@
 package com.shenzhentagram.authentication;
 
 /**
- * Created by Meranote on 3/5/2017.
+ * Credentials information for authenticate
+ *
+ * @author Meranote
  */
 public class AccountCredentials {
 

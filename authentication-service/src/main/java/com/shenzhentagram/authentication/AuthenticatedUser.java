@@ -6,9 +6,13 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 /**
- * Created by Meranote on 3/5/2017.
+ * AuthenticatedUser for Authentication information
+ *
+ * @author Meranote
  */
 public class AuthenticatedUser implements Authentication {
+
+    // TODO implement User model
 
     private String name;
     private boolean authenticated = true;

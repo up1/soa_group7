@@ -18,36 +18,63 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * Created by Meranote on 3/5/2017.
+ * Use in Authentication Service for authenticate the user and provide 'access_token'
+ *
+ * @author Meranote (chaniwat.meranote@gmail.com)
  */
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 
+    /**
+     * Construct new login filter
+     * @param url
+     * @param authenticationManager
+     */
     public JWTLoginFilter(String url, AuthenticationManager authenticationManager) {
         super(new AntPathRequestMatcher(url));
-
         setAuthenticationManager(authenticationManager);
     }
 
+    /**
+     * Attempt to authenticate
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws AuthenticationException, IOException, ServletException {
+        // TODO check user from Users-DB
+
         AccountCredentials credentials = new ObjectMapper().readValue(httpServletRequest.getInputStream(), AccountCredentials.class);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword());
 
         return getAuthenticationManager().authenticate(token);
     }
 
+    /**
+     * If authenticate was successful
+     */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        // Get successful authenticate user's username
         String name = authResult.getName();
 
-        // Build token, response in header
-        // TODO Response in body (JSON)
+        // Build JWT token
         String JWT = Jwts.builder()
                 .setSubject(name)
                 .setExpiration(new Date(System.currentTimeMillis() + JWTAuthenticationService.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, JWTAuthenticationService.SECRET)
                 .compact();
-        response.addHeader(JWTAuthenticationService.HEADER_STRING, JWTAuthenticationService.TOKEN_PREFIX + " " + JWT);
+
+        // Set attribute so AuthController@authenticate can response token via JSON
+        request.setAttribute("access_token", JWT);
+        // Chain to controller
+        chain.doFilter(request, response);
+    }
+
+    /**
+     * If authenticate was failed
+     */
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        // TODO Add unsuccessful response message (to AuthController@authenticate => via attribute)
+        super.unsuccessfulAuthentication(request, response, failed);
     }
 
 }

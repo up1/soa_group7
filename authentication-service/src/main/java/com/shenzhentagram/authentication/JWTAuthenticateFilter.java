@@ -12,12 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * Created by Meranote on 3/5/2017.
+ * Use in any Service for authorize the authenticated user<br>
+ * register this filter via security configuration (add before)
+ *
+ * @author Meranote (chaniwat.meranote@gmail.com)
  */
 public class JWTAuthenticateFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        // TODO check expired token (renew or reject)
         Authentication authentication = new JWTAuthenticationService().parseToken((HttpServletRequest) servletRequest);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -30,13 +30,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // permit ANY "/"
                 .antMatchers("/").permitAll()
                 // permit POST "/login"
-                .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth").permitAll()
                 // Otherwise, need authenticate
                 .anyRequest().authenticated();
 
         // Filter Config
-        // Filter "/login" for login
-        http.addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        // Filter "/auth" for login (before call AuthController@authenticate)
+        http.addFilterBefore(new JWTLoginFilter("/auth", authenticationManager()), UsernamePasswordAuthenticationFilter.class);
         // Filter any request to check authenticate
         http.addFilterBefore(new JWTAuthenticateFilter(), UsernamePasswordAuthenticationFilter.class);
     }
