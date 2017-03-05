@@ -27,11 +27,14 @@ public class Post implements Serializable {
     @Column(nullable = false, columnDefinition = "INT DEFAULT '0'")
     private int reactions;
 
+    @Column(nullable = false)
+    private String media;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition="DATETIME DEFAULT CURRENT_TIMESTAMP", insertable=false, updatable=false)
     private Date created_at;
-    
+
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition="DATETIME DEFAULT CURRENT_TIMESTAMP", insertable=false, updatable=false)
@@ -104,5 +107,13 @@ public class Post implements Serializable {
 
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getMedia() {
+        return media;
+    }
+
+    public void setMedia(String media) {
+        this.media = media;
     }
 }
