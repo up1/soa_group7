@@ -1,6 +1,8 @@
-package com.shenzhentagram.authentication;
+package com.shenzhentagram.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shenzhentagram.authentication.JWTAuthenticationService;
+import com.shenzhentagram.model.AccountCredentials;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;

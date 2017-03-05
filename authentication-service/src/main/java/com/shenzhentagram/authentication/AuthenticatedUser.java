@@ -12,8 +12,6 @@ import java.util.Collection;
  */
 public class AuthenticatedUser implements Authentication {
 
-    // TODO implement User model
-
     private String name;
     private boolean authenticated = true;
 

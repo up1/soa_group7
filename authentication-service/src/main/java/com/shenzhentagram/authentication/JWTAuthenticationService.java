@@ -29,7 +29,7 @@ public class JWTAuthenticationService {
             // Parse token
             String username = Jwts.parser()
                     .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace("Bearer ", ""))
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX + " ", ""))
                     .getBody()
                     .getSubject();
 

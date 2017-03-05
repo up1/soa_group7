@@ -1,7 +1,8 @@
 package com.shenzhentagram.config;
 
 import com.shenzhentagram.authentication.JWTAuthenticateFilter;
-import com.shenzhentagram.authentication.JWTLoginFilter;
+import com.shenzhentagram.filter.JWTLoginFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -10,12 +11,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.sql.DataSource;
+
 /**
  * Created by Meranote on 3/5/2017.
  */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -43,11 +49,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // Create a default account
-        auth.inMemoryAuthentication()
-                .withUser("admin")
-                .password("password")
-                .roles("ADMIN");
+        // Authenticate from database
+        auth.jdbcAuthentication().dataSource(dataSource)
+                .usersByUsernameQuery("SELECT username, password, enable FROM users WHERE username = ?")
+                .authoritiesByUsernameQuery("SELECT username, role FROM users WHERE username = ?");
     }
 
 }

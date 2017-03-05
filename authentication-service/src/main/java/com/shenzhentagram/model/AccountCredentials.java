@@ -1,4 +1,4 @@
-package com.shenzhentagram.authentication;
+package com.shenzhentagram.model;
 
 /**
  * Credentials information for authenticate
