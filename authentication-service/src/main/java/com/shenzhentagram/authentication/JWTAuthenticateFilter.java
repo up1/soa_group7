@@ -1,7 +1,9 @@
 package com.shenzhentagram.authentication;
 
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -26,6 +28,10 @@ public class JWTAuthenticateFilter extends GenericFilterBean {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    public static void registerFilter(HttpSecurity http) {
+        http.addFilterBefore(new JWTAuthenticateFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
 }

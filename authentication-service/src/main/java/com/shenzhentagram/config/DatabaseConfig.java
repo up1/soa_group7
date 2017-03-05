@@ -16,6 +16,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
+/**
+ * Database configuration<br>
+ * code from github@up1/demo-service example
+ */
 @Configuration
 @ComponentScan
 @EnableTransactionManagement

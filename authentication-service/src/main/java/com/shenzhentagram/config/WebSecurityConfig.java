@@ -14,7 +14,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.sql.DataSource;
 
 /**
- * Created by Meranote on 3/5/2017.
+ * Web security configuration
+ *
+ * @author Meranote
  */
 @Configuration
 @EnableWebSecurity
@@ -23,6 +25,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    /**
+     * Config web & mapping filter
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Disable caching
@@ -43,10 +48,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Filter Config
         // Filter "/auth" for login (before call AuthController@authenticate)
         http.addFilterBefore(new JWTLoginFilter("/auth", authenticationManager()), UsernamePasswordAuthenticationFilter.class);
-        // Filter any request to check authenticate
-        http.addFilterBefore(new JWTAuthenticateFilter(), UsernamePasswordAuthenticationFilter.class);
+        // Register JWTAuthenticateFilter for filter any request to check authenticate
+        JWTAuthenticateFilter.registerFilter(http);
     }
 
+    /**
+     * Config authentication (user queries) => for authenticate
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // Authenticate from database
