@@ -15,17 +15,23 @@ public class Post implements Serializable {
     @Id
     @GeneratedValue
     private long id;
+
     @Column(nullable = false)
     private String type;
+
     @Column(nullable = false, columnDefinition = "INT DEFAULT '0'")
     private int comments;
+
     private String caption;
+
     @Column(nullable = false, columnDefinition = "INT DEFAULT '0'")
     private int reactions;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition="DATETIME DEFAULT CURRENT_TIMESTAMP", insertable=false, updatable=false)
     private Date created_at;
+    
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition="DATETIME DEFAULT CURRENT_TIMESTAMP", insertable=false, updatable=false)
