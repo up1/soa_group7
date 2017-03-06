@@ -3,12 +3,17 @@ package com.shenzhentagram.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shenzhentagram.authentication.JWTAuthenticationService;
 import com.shenzhentagram.model.AccountCredentials;
+import com.shenzhentagram.model.User;
+import com.shenzhentagram.service.UserService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -26,14 +31,18 @@ import java.util.Date;
  */
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 
+    private UserService userService;
+
     /**
      * Construct new login filter
      * @param url
      * @param authenticationManager
      */
-    public JWTLoginFilter(String url, AuthenticationManager authenticationManager) {
+    @Autowired
+    public JWTLoginFilter(String url, AuthenticationManager authenticationManager, UserService userService) {
         super(new AntPathRequestMatcher(url));
         setAuthenticationManager(authenticationManager);
+        this.userService = userService;
     }
 
     /**
@@ -53,11 +62,17 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // Get successful authenticate user's username
-        String name = authResult.getName();
+        String username = authResult.getName();
+
+        User user = userService.getByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        claims.put("name", user.getName());
+        claims.put("id", user.getId());
 
         // Build JWT token
         String JWT = Jwts.builder()
-                .setSubject(name)
+                .setClaims(claims)
                 .setExpiration(new Date(System.currentTimeMillis() + JWTAuthenticationService.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, JWTAuthenticationService.SECRET)
                 .compact();

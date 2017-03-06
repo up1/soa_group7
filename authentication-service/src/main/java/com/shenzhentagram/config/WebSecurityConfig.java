@@ -2,6 +2,7 @@ package com.shenzhentagram.config;
 
 import com.shenzhentagram.authentication.JWTAuthenticateFilter;
 import com.shenzhentagram.filter.JWTLoginFilter;
+import com.shenzhentagram.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    private UserService userService;
 
     /**
      * Config web & mapping filter
@@ -47,7 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Filter Config
         // Filter "/auth" for login (before call AuthController@authenticate)
-        http.addFilterBefore(new JWTLoginFilter("/auth", authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JWTLoginFilter("/auth", authenticationManager(), userService), UsernamePasswordAuthenticationFilter.class);
         // Register JWTAuthenticateFilter for filter any request to check authenticate
         JWTAuthenticateFilter.registerFilter(http);
     }
