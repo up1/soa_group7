@@ -1,4 +1,4 @@
-package demo;
+package com.shenzhentagram;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,8 +16,8 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @RequestMapping("/user/{userid}")
-    public User getUser(@PathVariable("userid") int id) {
+    @RequestMapping("/users/{user_id}")
+    public User getUser(@PathVariable("user_id") int id) {
         return this.userRepository.findById((long) id);
     }
 

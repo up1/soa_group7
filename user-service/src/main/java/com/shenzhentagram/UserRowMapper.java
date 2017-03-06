@@ -1,4 +1,4 @@
-package demo;
+package com.shenzhentagram;
 
 import org.springframework.jdbc.core.RowMapper;
 

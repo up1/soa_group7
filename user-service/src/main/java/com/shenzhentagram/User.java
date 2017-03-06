@@ -1,4 +1,4 @@
-package demo;
+package com.shenzhentagram;
 
 public class User {
     private long id;
