@@ -31,7 +31,6 @@ public class JwtTokenUtil {
             u = new User();
             u.setUsername(body.getSubject());
             u.setId((Integer) body.get("id"));
-            u.setName((String) body.get("name"));
             u.setRole("USER");
         } catch (JwtException e) {
             // Simply print the exception and null will be returned for the userDto
