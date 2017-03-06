@@ -1,4 +1,4 @@
-package demo.config;
+package com.shenzhentagram.config;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
