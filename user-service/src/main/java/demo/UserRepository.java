@@ -38,10 +38,10 @@ public class UserRepository {
         this.jdbcTemplate.update(sql, user.getId(), user.getFirstname(), user.getLastname());
     }
 
-
-
+    @Transactional
     public void delete(Long id) {
         String sql = "DELETE FROM USERS WHERE id=?";
         this.jdbcTemplate.update(sql, id);
     }
+
 }

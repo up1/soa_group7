@@ -1,6 +1,5 @@
 package demo;
 
-
 public class User {
     private long id;
     private String firstname;
