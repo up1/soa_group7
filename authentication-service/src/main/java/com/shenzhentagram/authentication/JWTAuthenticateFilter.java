@@ -17,7 +17,7 @@ import java.io.IOException;
  * Use in any Service for authorize the authenticated user<br>
  * register this filter via security configuration (add before)
  *
- * @author Meranote (chaniwat.meranote@gmail.com)
+ * @author Meranote
  */
 public class JWTAuthenticateFilter extends GenericFilterBean {
 

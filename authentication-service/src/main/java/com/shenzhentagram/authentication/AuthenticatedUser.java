@@ -12,10 +12,12 @@ import java.util.Collection;
  */
 public class AuthenticatedUser implements Authentication {
 
+    private int id;
     private String name;
     private boolean authenticated = true;
 
-    public AuthenticatedUser(String name) {
+    public AuthenticatedUser(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
@@ -52,6 +54,10 @@ public class AuthenticatedUser implements Authentication {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    public int getId() {
+        return this.id;
     }
 
 }

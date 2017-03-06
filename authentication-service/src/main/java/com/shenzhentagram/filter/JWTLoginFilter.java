@@ -9,6 +9,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,12 +23,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Use in Authentication Service for authenticate the user and provide 'access_token'
  *
- * @author Meranote (chaniwat.meranote@gmail.com)
+ * @author Meranote
  */
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -40,8 +43,9 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
      */
     @Autowired
     public JWTLoginFilter(String url, AuthenticationManager authenticationManager, UserService userService) {
-        super(new AntPathRequestMatcher(url));
+        super(new AntPathRequestMatcher(url, "POST"));
         setAuthenticationManager(authenticationManager);
+
         this.userService = userService;
     }
 
@@ -64,10 +68,11 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
         // Get successful authenticate user's username
         String username = authResult.getName();
 
+        // Get user by username
         User user = userService.getByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
+        // Set claims (payloads)
         Claims claims = Jwts.claims().setSubject(user.getUsername());
-        claims.put("name", user.getName());
         claims.put("id", user.getId());
 
         // Build JWT token
@@ -79,17 +84,28 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 
         // Set attribute so AuthController@authenticate can response token via JSON
         request.setAttribute("access_token", JWT);
+        request.setAttribute("authenticated_user", user);
         // Chain to controller
         chain.doFilter(request, response);
     }
 
     /**
-     * If authenticate was failed
+     * If authenticate was failed, response it
      */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        // TODO Add unsuccessful response message (to AuthController@authenticate => via attribute)
-        super.unsuccessfulAuthentication(request, response, failed);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+
+        PrintWriter writer = response.getWriter();
+
+        HashMap<String, Object> mappingResponse = new HashMap<String, Object>() {{
+            put("error", failed.getMessage());
+        }};
+        ObjectMapper mapper = new ObjectMapper();
+
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        writer.println(mapper.writeValueAsString(mappingResponse));
     }
 
 }

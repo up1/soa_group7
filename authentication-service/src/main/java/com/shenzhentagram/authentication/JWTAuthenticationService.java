@@ -1,5 +1,7 @@
 package com.shenzhentagram.authentication;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.Authentication;
 
@@ -26,15 +28,16 @@ public class JWTAuthenticationService {
         String token = request.getHeader(HEADER_STRING);
 
         if(token != null) {
-            // Parse token
-            String username = Jwts.parser()
+            Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX + " ", ""))
-                    .getBody()
-                    .getSubject();
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX + " ", ""));
+
+            // Parse token
+            int id = (int) claims.getBody().get("id");
+            String username = claims.getBody().getSubject();
 
             if(username != null) {
-               return new AuthenticatedUser(username);
+               return new AuthenticatedUser(id, username);
             }
         }
 

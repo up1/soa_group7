@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationServiceApplication {
 
 	@RequestMapping(method = RequestMethod.GET, path = "/")
-	public String showAuthentication() {
+	public String showHello() {
 		return "Hello!";
 	}
 
