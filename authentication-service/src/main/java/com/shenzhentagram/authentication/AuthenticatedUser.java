@@ -12,11 +12,11 @@ import java.util.Collection;
  */
 public class AuthenticatedUser implements Authentication {
 
-    private int id;
+    private long id;
     private String name;
     private boolean authenticated = true;
 
-    public AuthenticatedUser(int id, String name) {
+    public AuthenticatedUser(long id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -56,7 +56,7 @@ public class AuthenticatedUser implements Authentication {
         return this.name;
     }
 
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 
