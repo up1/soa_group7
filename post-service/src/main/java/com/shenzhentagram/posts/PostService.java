@@ -15,5 +15,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public interface PostService {
     Page<Post> findAllByPage(Pageable pageable);
+    Post findById(Long id);
+    void patchPost(Post post);
     ResponseEntity<?> storePost(Post post, MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException, XmlPullParserException;
 }

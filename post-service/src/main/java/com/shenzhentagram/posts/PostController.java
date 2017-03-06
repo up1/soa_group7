@@ -5,6 +5,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -50,5 +51,23 @@ public class PostController {
         post.setUser_id(userDetails.getId());
 
         return postService.storePost(post, file);
+    }
+
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<?> patchPost(Authentication authentication,
+                                       @PathVariable("id") long id,
+                                       @RequestParam(value = "caption") String caption) {
+        AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
+
+        Post post = postService.findById(id);
+
+        if (userDetails.getId() != post.getUser_id()) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        post.setCaption(caption);
+        postService.patchPost(post);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
