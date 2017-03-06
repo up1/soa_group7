@@ -70,4 +70,20 @@ public class PostController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> deletePost(Authentication authentication,
+                                       @PathVariable("id") long id) {
+        AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
+
+        Post post = postService.findById(id);
+
+        if (userDetails.getId() != post.getUser_id()) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        postService.deletePost(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

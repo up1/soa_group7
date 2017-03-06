@@ -73,6 +73,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void deletePost(Long id) {
+        postRepository.delete(id);
+    }
+
+    @Override
     public ResponseEntity<?> storePost(Post post, MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException, XmlPullParserException {
         try {
             minioClient.putObject(bucket, post.getMedia(), file.getInputStream(), file.getSize(), file.getContentType());
