@@ -34,7 +34,7 @@ public class PostController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> post(@RequestParam(value = "caption") String caption,
+    public ResponseEntity<?> postPost(@RequestParam(value = "caption") String caption,
                                   @RequestParam(value = "type") String type,
                                   @RequestParam(value = "file") MultipartFile file) throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         String media = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
