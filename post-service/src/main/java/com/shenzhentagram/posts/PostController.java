@@ -1,10 +1,12 @@
 package com.shenzhentagram.posts;
 
+import com.shenzhentagram.model.AuthenticatedUser;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xmlpull.v1.XmlPullParserException;
@@ -34,15 +36,18 @@ public class PostController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> postPost(@RequestParam(value = "caption") String caption,
+    public ResponseEntity<?> postPost(Authentication authentication,
+                                  @RequestParam(value = "caption") String caption,
                                   @RequestParam(value = "type") String type,
                                   @RequestParam(value = "file") MultipartFile file) throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         String media = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
+        AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
 
         Post post = new Post();
         post.setCaption(caption);
         post.setType(type);
         post.setMedia(media);
+        post.setUser_id(userDetails.getId());
 
         return postService.storePost(post, file);
     }
