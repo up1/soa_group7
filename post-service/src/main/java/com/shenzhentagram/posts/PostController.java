@@ -48,7 +48,7 @@ public class PostController {
         post.setCaption(caption);
         post.setType(type);
         post.setMedia(media);
-        post.setUser_id(userDetails.getId());
+        post.setUserId(userDetails.getId());
 
         return postService.storePost(post, file);
     }
@@ -61,7 +61,7 @@ public class PostController {
 
         Post post = postService.findById(id);
 
-        if (userDetails.getId() != post.getUser_id()) {
+        if (userDetails.getId() != post.getUserId()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
@@ -78,7 +78,7 @@ public class PostController {
 
         Post post = postService.findById(id);
 
-        if (userDetails.getId() != post.getUser_id()) {
+        if (userDetails.getId() != post.getUserId()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 

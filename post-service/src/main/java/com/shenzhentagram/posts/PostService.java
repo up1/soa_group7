@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public interface PostService {
     Page<Post> findAllByPage(Pageable pageable);
+    Page<Post> findAllByUserId(Long id, Pageable pageable);
     Post findById(Long id);
     void patchPost(Post post);
     void deletePost(Long id);

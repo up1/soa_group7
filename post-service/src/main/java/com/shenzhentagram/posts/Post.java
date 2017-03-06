@@ -30,8 +30,8 @@ public class Post implements Serializable {
     @Column(nullable = false)
     private String media;
 
-    @Column(nullable = false)
-    private long user_id;
+    @Column(name = "user_id", nullable = false)
+    private long userId;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -43,15 +43,15 @@ public class Post implements Serializable {
     @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date updated_at;
 
-    public Post(String type, int comments, String caption, int reactions, String media, long user_id, Date created_at, Date updated_at) {
-        this.setType(type);
-        this.setComments(comments);
-        this.setCaption(caption);
-        this.setReactions(reactions);
-        this.setMedia(media);
-        this.setUser_id(user_id);
-        this.setCreated_at(created_at);
-        this.setUpdated_at(updated_at);
+    public Post(String type, int comments, String caption, int reactions, String media, long userId, Date created_at, Date updated_at) {
+        this.type = type;
+        this.comments = comments;
+        this.caption = caption;
+        this.reactions = reactions;
+        this.media = media;
+        this.userId = userId;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public Post() {
@@ -105,14 +105,6 @@ public class Post implements Serializable {
         this.media = media;
     }
 
-    public long getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
-    }
-
     public Date getCreated_at() {
         return created_at;
     }
@@ -127,5 +119,13 @@ public class Post implements Serializable {
 
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }
