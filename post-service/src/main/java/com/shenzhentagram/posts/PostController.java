@@ -36,6 +36,11 @@ public class PostController {
         return postService.findAllByPage(pageable);
     }
 
+    @GetMapping(value = "/{id}")
+    public Post getPosts(@PathVariable("id") long id) {
+        return postService.findById(id);
+    }
+
     @PostMapping()
     public ResponseEntity<?> postPost(Authentication authentication,
                                   @RequestParam(value = "caption") String caption,
