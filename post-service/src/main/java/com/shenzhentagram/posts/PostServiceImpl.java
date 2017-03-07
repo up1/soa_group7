@@ -83,13 +83,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResponseEntity<?> storePost(Post post, MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException, XmlPullParserException {
+    public ResponseEntity<Post> storePost(Post post, MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException, XmlPullParserException {
         try {
             minioClient.putObject(bucket, post.getMedia(), file.getInputStream(), file.getSize(), file.getContentType());
 
             postRepository.save(post);
             System.out.println("Success");
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(post, HttpStatus.CREATED);
         } catch(MinioException e) {
             System.out.println("Error occurred: " + e);
         }

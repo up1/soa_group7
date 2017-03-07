@@ -42,7 +42,7 @@ public class PostController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> postPost(Authentication authentication,
+    public ResponseEntity<Post> postPost(Authentication authentication,
                                   @RequestParam(value = "caption") String caption,
                                   @RequestParam(value = "type") String type,
                                   @RequestParam(value = "file") MultipartFile file) throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
@@ -59,7 +59,7 @@ public class PostController {
     }
 
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<?> patchPost(Authentication authentication,
+    public ResponseEntity<Post> patchPost(Authentication authentication,
                                        @PathVariable("id") long id,
                                        @RequestParam(value = "caption") String caption) {
         AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
@@ -73,7 +73,7 @@ public class PostController {
         post.setCaption(caption);
         postService.patchPost(post);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")

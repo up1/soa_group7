@@ -19,5 +19,5 @@ public interface PostService {
     Post findById(Long id);
     void patchPost(Post post);
     void deletePost(Long id);
-    ResponseEntity<?> storePost(Post post, MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException, XmlPullParserException;
+    ResponseEntity<Post> storePost(Post post, MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException, XmlPullParserException;
 }
