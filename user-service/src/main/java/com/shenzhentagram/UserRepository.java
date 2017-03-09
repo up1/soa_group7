@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -27,6 +28,23 @@ public class UserRepository {
             );
         } catch (Exception exception) {
             throw new UserNotFoundException(id);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findByName(String name) {
+        try {
+            return this.jdbcTemplate.query(
+                    "SELECT id, username, firstname, lastname, bio, profile_picture, display_name, follows, followed_by " +
+                            "FROM users " +
+                            "WHERE firstname OR username OR lastname OR display_name = ?",
+                    new Object[] {
+                            name
+                    },
+                    new UserRowMapper()
+            );
+        } catch (Exception exception) {
+            throw new UserNotFoundException(name);
         }
     }
 
