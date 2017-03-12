@@ -37,7 +37,7 @@ public class UserRepository {
             return this.jdbcTemplate.query(
                     "SELECT id, username, firstname, lastname, bio, profile_picture, display_name, follows, followed_by " +
                             "FROM users " +
-                            "WHERE firstname OR username OR lastname OR display_name = ?",
+                            "WHERE username OR firstname = ?",
                     new Object[] {
                             name
                     },
