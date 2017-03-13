@@ -1,16 +1,9 @@
 package com.shenzhentagram;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shenzhentagram.authentication.AuthenticatedUser;
+import com.shenzhentagram.models.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")

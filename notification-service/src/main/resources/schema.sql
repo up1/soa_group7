@@ -16,9 +16,9 @@
 --   PRIMARY KEY (id)
 -- )
 DROP TABLE IF EXISTS notifications;
-DROP TABLE IF EXISTS notificationUser;
-DROP TABLE IF EXISTS notificationReaction;
-DROP TABLE IF EXISTS notificationPost;
+DROP TABLE IF EXISTS notificationUsers;
+DROP TABLE IF EXISTS notificationReactions;
+DROP TABLE IF EXISTS notificationPosts;
 
 CREATE TABLE notifications(
   id BIGINT(20) NOT NULL AUTO_INCREMENT,
@@ -26,25 +26,25 @@ CREATE TABLE notifications(
   type_ varchar(20),
   text varchar(255),
   thumbnail varchar(255),
-  notificationId varchar(255),
+  notificationId BIGINT(255),
   PRIMARY KEY (id)
 );
 
-CREATE TABLE notificationUser(
+CREATE TABLE notificationUsers(
   id BIGINT(20) NOT NULL AUTO_INCREMENT,
   userId BIGINT(20),
   PRIMARY KEY (id)
 );
 
-CREATE TABLE notificationReaction(
+CREATE TABLE notificationReactions(
   id BIGINT(20) NOT NULL AUTO_INCREMENT,
-  post_id BIGINT(20),
-  comment_id BIGINT(20),
+  reaction_id BIGINT(20),
   PRIMARY KEY (id)
 );
 
-CREATE TABLE notificationPost(
+CREATE TABLE notificationPosts(
   id BIGINT(20) NOT NULL AUTO_INCREMENT,
-  reaction_id BIGINT(20),
+  post_id BIGINT(20),
+  comment_id BIGINT(20),
   PRIMARY KEY (id)
 );

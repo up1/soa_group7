@@ -1,14 +1,16 @@
-package com.shenzhentagram;
+package com.shenzhentagram.models;
 
 /**
  * Created by Jiravat on 3/9/2017.
  */
 public class Notification {
     private long id;
+    private long userId;
     private String type;
     private String text;
     private String thumbnail;
-    private String notificationId;
+    private long notificationId;
+    private NotificationAbstract notification;
 
     public Notification(){
 
@@ -46,11 +48,27 @@ public class Notification {
         this.thumbnail = thumbnail;
     }
 
-    public String getNotificationId() {
+    public long getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(String notificationId) {
+    public void setNotificationId(long notificationId) {
         this.notificationId = notificationId;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public NotificationAbstract getNotification() {
+        return notification;
+    }
+
+    public void setNotification(NotificationAbstract notification) {
+        this.notification = notification;
     }
 }
