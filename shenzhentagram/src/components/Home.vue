@@ -4,6 +4,7 @@
 
 <script type="application/ecmascript">
   export default {
+      name: 'home',
       data () {
           return {}
       }

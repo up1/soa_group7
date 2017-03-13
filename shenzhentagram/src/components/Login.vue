@@ -15,7 +15,7 @@
 <script>
   import LoginForm from './LoginForm'
   export default {
-    name: 'hello',
+    name: 'login',
     components: {
       LoginForm
     },
