@@ -25,20 +25,22 @@ import java.util.UUID;
 @RequestMapping(value = "/posts")
 public class PostController {
     private PostService postService;
+    private PostRepository postRepository;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostRepository postRepository) {
         this.postService = postService;
+        this.postRepository = postRepository;
     }
 
     @GetMapping()
     public Page<Post> getPosts(Pageable pageable) {
-        return postService.findAllByPage(pageable);
+        return postRepository.findAll(pageable);
     }
 
     @GetMapping(value = "/{id}")
     public Post getPosts(@PathVariable("id") long id) {
-        return postService.findById(id);
+        return postRepository.findOne(id);
     }
 
     @PostMapping()
@@ -64,14 +66,14 @@ public class PostController {
                                        @RequestParam(value = "caption") String caption) {
         AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
 
-        Post post = postService.findById(id);
+        Post post = postRepository.findOne(id);
 
         if (userDetails.getId() != post.getUserId()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
         post.setCaption(caption);
-        postService.patchPost(post);
+        postRepository.save(post);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -81,13 +83,13 @@ public class PostController {
                                        @PathVariable("id") long id) {
         AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
 
-        Post post = postService.findById(id);
+        Post post = postRepository.findOne(id);
 
         if (userDetails.getId() != post.getUserId()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        postService.deletePost(id);
+        postRepository.delete(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

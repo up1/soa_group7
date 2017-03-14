@@ -4,8 +4,6 @@ import io.minio.MinioClient;
 import io.minio.errors.MinioException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -55,31 +53,6 @@ public class PostServiceImpl implements PostService {
         } catch (MinioException e) {
             System.out.println("Error occur" + e);
         }
-    }
-
-    @Override
-    public Page<Post> findAllByPage(Pageable pageable) {
-        return postRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<Post> findAllByUserId(Long id, Pageable pageable) {
-        return postRepository.findAllByUserId(id, pageable);
-    }
-
-    @Override
-    public Post findById(Long id) {
-        return postRepository.findOne(id);
-    }
-
-    @Override
-    public void patchPost(Post post) {
-        postRepository.save(post);
-    }
-
-    @Override
-    public void deletePost(Long id) {
-        postRepository.delete(id);
     }
 
     @Override
