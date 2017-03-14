@@ -19,6 +19,8 @@ public class JWTAuthenticationService {
     public static final String TOKEN_PREFIX = "Bearer";
     public static final String HEADER_STRING = "Authorization";
 
+    private long userId;
+
     /**
      * Parse token to authenticated user
      * @param request
@@ -36,6 +38,8 @@ public class JWTAuthenticationService {
             int id = (int) claims.getBody().get("id");
             String username = claims.getBody().getSubject();
 
+            this.userId = id;
+
             if(username != null) {
                return new AuthenticatedUser(id, username);
             }
@@ -44,4 +48,7 @@ public class JWTAuthenticationService {
         return null;
     }
 
+    public long getUserId() {
+        return userId;
+    }
 }

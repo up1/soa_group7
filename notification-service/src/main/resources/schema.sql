@@ -24,9 +24,10 @@ CREATE TABLE notifications(
   id BIGINT(20) NOT NULL AUTO_INCREMENT,
   userId BIGINT(20),
   type_ varchar(20),
-  text varchar(255),
-  thumbnail varchar(255),
+  text varchar(255) DEFAULT '',
+  thumbnail varchar(255) DEFAULT '',
   notificationId BIGINT(255),
+  checkStatus TINYINT(1) DEFAULT 0,
   PRIMARY KEY (id)
 );
 

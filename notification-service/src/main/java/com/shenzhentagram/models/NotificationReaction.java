@@ -1,10 +1,18 @@
 package com.shenzhentagram.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 /**
  * Created by Jiravat on 3/13/2017.
  */
+
 public class NotificationReaction extends NotificationAbstract  {
+    long id;
     long reaction_id;
+
+    public NotificationReaction(long id, long reaction_id) {
+        this.reaction_id = reaction_id;
+    }
 
     public NotificationReaction() {
     }

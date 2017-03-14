@@ -1,14 +1,22 @@
 package com.shenzhentagram.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 /**
  * Created by Jiravat on 3/9/2017.
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Notification {
     private long id;
     private long userId;
     private String type;
     private String text;
     private String thumbnail;
+    private int checkStatus;
+    @JsonIgnore
     private long notificationId;
     private NotificationAbstract notification;
 
@@ -70,5 +78,13 @@ public class Notification {
 
     public void setNotification(NotificationAbstract notification) {
         this.notification = notification;
+    }
+
+    public int getCheckStatus() {
+        return checkStatus;
+    }
+
+    public void setCheckStatus(int checkStatus) {
+        this.checkStatus = checkStatus;
     }
 }

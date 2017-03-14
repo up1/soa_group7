@@ -5,14 +5,14 @@ import com.shenzhentagram.mappers.NotificationPostRowMapper;
 import com.shenzhentagram.mappers.NotificationReactionRowMapper;
 import com.shenzhentagram.mappers.NotificationRowMapper;
 import com.shenzhentagram.mappers.NotificationUserRowMapper;
-import com.shenzhentagram.models.Notification;
-import com.shenzhentagram.models.NotificationPost;
-import com.shenzhentagram.models.NotificationReaction;
-import com.shenzhentagram.models.NotificationUser;
+import com.shenzhentagram.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Repository
 public class NotificationRepository {
@@ -21,10 +21,43 @@ public class NotificationRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly = true)
+    public List<Notification> findByUserId(Long id) {
+        try {
+            List<Notification> notifications = this.jdbcTemplate.query(
+                    "SELECT id, userId, type_, text, thumbnail, notificationId, checkStatus " +
+                            "FROM notifications " +
+                            "WHERE userId = ?",
+                    new Object[] {
+                            id
+                    },
+                    new NotificationRowMapper()
+            );
+//            System.out.println(notifications);
+            notifications.forEach(notification->{
+                switch (notification.getType()){
+                    case "followed_by":
+                        notification.setNotification(findNotificationUserById(notification.getNotificationId()));
+                        break;
+                    case "comment":
+                        notification.setNotification(findNotificationPostById(notification.getNotificationId()));
+                        break;
+                    case "reaction":
+                        notification.setNotification(findNotificationReactionById(notification.getNotificationId()));
+                        break;
+                }
+            });
+            return notifications;
+        } catch (Exception exception) {
+            System.out.println(exception);
+            throw new NotificationNotFoundException(id);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public Notification findById(Long id) {
         try {
             Notification notification = this.jdbcTemplate.queryForObject(
-                    "SELECT id, userId, type_, text, thumbnail, notificationId " +
+                    "SELECT id, userId, type_, text, thumbnail, notificationId, checkStatus " +
                             "FROM notifications " +
                             "WHERE id = ?",
                     new Object[] {
@@ -42,7 +75,7 @@ public class NotificationRepository {
                 case "reaction":
                     notification.setNotification(findNotificationReactionById(notification.getNotificationId()));
                     break;
-            }
+            };
             return notification;
         } catch (Exception exception) {
             System.out.println(exception);
@@ -99,7 +132,7 @@ public class NotificationRepository {
         try {
             NotificationReaction notification = this.jdbcTemplate.queryForObject(
                     "SELECT id, reaction_id " +
-                            "FROM notificationUsers " +
+                            "FROM notificationReactions " +
                             "WHERE id = ?",
                     new Object[] {
                             id
@@ -112,5 +145,93 @@ public class NotificationRepository {
             throw new NotificationNotFoundException(id);
         }
     }
+
+    @Transactional()
+    public int createNotifications(List<Notification> notifications) {
+        try {
+            String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?)";
+            for (Notification notification  : notifications) {
+                        this.jdbcTemplate.update(insertSql,
+                                new Object[] {
+                                        notification.getId(),
+                                        notification.getUserId(),
+                                        notification.getType(),
+                                        notification.getText(),
+                                        notification.getThumbnail(),
+                                        notification.getNotificationId(),
+                                        notification.getCheckStatus()
+                                }
+                        );
+                        switch (notification.getType()){
+                            case "followed_by":
+                                createNotificationUser((NotificationUser) notification.getNotification());
+                                break;
+                            case "comment":
+                                createNotificationPost((NotificationPost) notification.getNotification());
+                                break;
+                            case "reaction":
+                                createNotificationReaction((NotificationReaction) notification.getNotification());
+                                break;
+                        }
+            }
+
+
+            return HttpServletResponse.SC_CREATED;
+        } catch (Exception exception) {
+            System.out.print(exception);
+            return HttpServletResponse.SC_NOT_MODIFIED;
+        }
+    }
+
+    @Transactional()
+    public void createNotificationUser(NotificationUser notificationUser) {
+        try {
+            String insertSql = "insert into notificationUsers(id, userId) values(?,?)";
+            this.jdbcTemplate.update(insertSql,
+                                new Object[] {
+                                        notificationUser.getId(),
+                                        notificationUser.getUserId()
+                                }
+                        );
+        } catch (Exception exception) {
+            throw  exception;
+        }
+    }
+
+    @Transactional()
+    public void createNotificationPost(NotificationPost notificationPost) {
+        try {
+            String insertSql = "insert into notificationPosts(id, post_id ,comment_id) values(?,? ,?)";
+            this.jdbcTemplate.update(insertSql,
+                    new Object[] {
+                            notificationPost.getId(),
+                            notificationPost.getPost_id(),
+                            notificationPost.getComment_id()
+
+                    }
+            );
+        } catch (Exception exception) {
+            throw  exception;
+        }
+    }
+
+    @Transactional()
+    public void createNotificationReaction(NotificationReaction notificationReaction) {
+        try {
+            String insertSql = "insert into notificationReactions(id, reaction_id) values(?,?)";
+            this.jdbcTemplate.update(insertSql,
+                    new Object[] {
+                            notificationReaction.getId(),
+                            notificationReaction.getReaction_id()
+
+                    }
+            );
+        } catch (Exception exception) {
+            throw  exception;
+        }
+    }
+
+
+
 
 }
