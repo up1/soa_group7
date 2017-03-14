@@ -33,11 +33,14 @@ public class JWTAuthenticationService {
                     .parseClaimsJws(token.replace(TOKEN_PREFIX + " ", ""));
 
             // Parse token
-            int id = (int) claims.getBody().get("id");
-            String username = claims.getBody().getSubject();
+            Claims body = claims.getBody();
+
+            String username = body.getSubject();
+            long id = (long) body.get("id");
+            String role = (String) body.get("role");
 
             if(username != null) {
-               return new AuthenticatedUser(id, username);
+               return new AuthenticatedUser(id, username, role);
             }
         }
 

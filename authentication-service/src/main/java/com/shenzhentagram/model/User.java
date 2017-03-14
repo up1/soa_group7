@@ -38,9 +38,12 @@ public class User implements Serializable {
     @Column(nullable = false)
     private int followed_by;
 
+    @Column(nullable = false)
+    private String role;
+
     public User() { }
 
-    public User(String username, String firstname, String lastname, String bio, String profile_picture, String display_name, int follows, int followed_by) {
+    public User(String username, String firstname, String lastname, String bio, String profile_picture, String display_name, int follows, int followed_by, String role) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -49,6 +52,7 @@ public class User implements Serializable {
         this.display_name = display_name;
         this.follows = follows;
         this.followed_by = followed_by;
+        this.role = role;
     }
 
     public Long getId() {
@@ -121,5 +125,13 @@ public class User implements Serializable {
 
     public void setFollowed_by(int followed_by) {
         this.followed_by = followed_by;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
