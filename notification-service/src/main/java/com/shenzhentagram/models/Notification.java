@@ -2,7 +2,8 @@ package com.shenzhentagram.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * Created by Jiravat on 3/9/2017.
@@ -16,8 +17,18 @@ public class Notification {
     private String text;
     private String thumbnail;
     private int checkStatus;
+
     @JsonIgnore
     private long notificationId;
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
+            include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
+            property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = NotificationPost.class, name="comment"),
+            @JsonSubTypes.Type(value = NotificationReaction.class, name="reaction"),
+            @JsonSubTypes.Type(value = NotificationUser.class, name="followed_by")
+    })
     private NotificationAbstract notification;
 
     public Notification(){

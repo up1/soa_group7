@@ -8,10 +8,17 @@ import com.shenzhentagram.mappers.NotificationUserRowMapper;
 import com.shenzhentagram.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -151,28 +158,30 @@ public class NotificationRepository {
         try {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?)";
             for (Notification notification  : notifications) {
-                        this.jdbcTemplate.update(insertSql,
-                                new Object[] {
-                                        notification.getId(),
-                                        notification.getUserId(),
-                                        notification.getType(),
-                                        notification.getText(),
-                                        notification.getThumbnail(),
-                                        notification.getNotificationId(),
-                                        notification.getCheckStatus()
-                                }
-                        );
-                        switch (notification.getType()){
-                            case "followed_by":
-                                createNotificationUser((NotificationUser) notification.getNotification());
-                                break;
-                            case "comment":
-                                createNotificationPost((NotificationPost) notification.getNotification());
-                                break;
-                            case "reaction":
-                                createNotificationReaction((NotificationReaction) notification.getNotification());
-                                break;
+                long notificationId = 1;
+                switch (notification.getType()){
+                    case "followed_by":
+                        notificationId = createNotificationUser((NotificationUser) notification.getNotification());
+                        break;
+                    case "comment":
+                        notificationId = createNotificationPost((NotificationPost) notification.getNotification());
+                        break;
+                    case "reaction":
+                        notificationId = createNotificationReaction((NotificationReaction) notification.getNotification());
+                        break;
+                }
+                notification.setNotificationId(notificationId);
+                this.jdbcTemplate.update(insertSql,
+                        new Object[] {
+                                notification.getId(),
+                                notification.getUserId(),
+                                notification.getType(),
+                                notification.getText(),
+                                notification.getThumbnail(),
+                                notification.getNotificationId(),
+                                notification.getCheckStatus()
                         }
+                );
             }
 
 
@@ -184,54 +193,69 @@ public class NotificationRepository {
     }
 
     @Transactional()
-    public void createNotificationUser(NotificationUser notificationUser) {
+    public long createNotificationUser(NotificationUser notificationUser) {
         try {
-            String insertSql = "insert into notificationUsers(id, userId) values(?,?)";
-            this.jdbcTemplate.update(insertSql,
-                                new Object[] {
-                                        notificationUser.getId(),
-                                        notificationUser.getUserId()
-                                }
+            String insertSql = "insert into notificationUsers(userId) values(?)";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            this.jdbcTemplate.update(new PreparedStatementCreator() {
+                                         @Override
+                                         public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                                             PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+                                             statement.setLong(1, notificationUser.getUserId());
+                                             return statement;
+                                         }
+                                     },keyHolder
                         );
+            return keyHolder.getKey().longValue();
         } catch (Exception exception) {
             throw  exception;
         }
     }
 
     @Transactional()
-    public void createNotificationPost(NotificationPost notificationPost) {
+    public long createNotificationPost(NotificationPost notificationPost) {
         try {
-            String insertSql = "insert into notificationPosts(id, post_id ,comment_id) values(?,? ,?)";
-            this.jdbcTemplate.update(insertSql,
-                    new Object[] {
-                            notificationPost.getId(),
-                            notificationPost.getPost_id(),
-                            notificationPost.getComment_id()
-
-                    }
+            String insertSql = "insert into notificationPosts(post_id ,comment_id) values(? ,?)";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            this.jdbcTemplate.update(new PreparedStatementCreator() {
+                                         @Override
+                                         public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                                             PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+                                             statement.setLong(1, notificationPost.getPost_id());
+                                             statement.setLong(2, notificationPost.getComment_id());
+                                             return statement;
+                                         }
+                                     },
+                    keyHolder
             );
+            return keyHolder.getKey().longValue();
         } catch (Exception exception) {
             throw  exception;
         }
     }
 
     @Transactional()
-    public void createNotificationReaction(NotificationReaction notificationReaction) {
+    public long createNotificationReaction(NotificationReaction notificationReaction) {
         try {
-            String insertSql = "insert into notificationReactions(id, reaction_id) values(?,?)";
-            this.jdbcTemplate.update(insertSql,
-                    new Object[] {
-                            notificationReaction.getId(),
-                            notificationReaction.getReaction_id()
-
-                    }
+            String insertSql = "insert into notificationReactions(reaction_id) values(?)";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            this.jdbcTemplate.update(new PreparedStatementCreator() {
+                                         @Override
+                                         public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                                             PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+                                             statement.setLong(1, notificationReaction.getReaction_id());
+                                             return statement;
+                                         }
+                                     }
+                                     ,keyHolder
             );
+            return keyHolder.getKey().longValue();
         } catch (Exception exception) {
             throw  exception;
         }
     }
 
-
+    
 
 
 }
