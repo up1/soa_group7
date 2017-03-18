@@ -49,6 +49,9 @@
 </script>
 
 <style scoped>
+  .card {
+    margin: 50px 0;
+  }
   .profile-img {
     border-radius: 50%;
   }

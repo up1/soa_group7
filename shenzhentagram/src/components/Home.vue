@@ -3,6 +3,10 @@
     <div class="columns">
       <div class="column is-half is-offset-one-quarter">
         <card></card>
+        <card></card>
+        <card></card>
+        <card></card>
+        <card></card>
       </div>
     </div>
   </div>
@@ -22,7 +26,4 @@
 </script>
 
 <style scoped>
-  .home {
-    margin-top: 50px;
-  }
 </style>
