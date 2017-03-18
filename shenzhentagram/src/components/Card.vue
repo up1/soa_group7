@@ -48,7 +48,7 @@
   }
 </script>
 
-<style scroped>
+<style scoped>
   .profile-img {
     border-radius: 50%;
   }
