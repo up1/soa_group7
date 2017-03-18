@@ -2,9 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
+import Profile from '@/components/profile/Profile'
 import VueResource from 'vue-resource'
-// import axios from 'axios'
-// import VueAxios from 'vue-axios'
 import VueAuth from '@websanova/vue-auth'
 import custom1 from '@/driver/custom1'
 
@@ -23,6 +22,10 @@ const router = new Router({
       name: 'home',
       component: Home,
       meta: {auth: true}
+    }, {
+      path: '/users/:username',
+      name: 'users',
+      component: Profile
     }
   ]
 })

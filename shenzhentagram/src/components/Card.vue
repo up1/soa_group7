@@ -52,9 +52,6 @@
   .card {
     margin: 50px 0;
   }
-  .profile-img {
-    border-radius: 50%;
-  }
   .footer-item {
     display: flex;
     -webkit-box-align: center;
@@ -65,7 +62,6 @@
     justify-content: center;
     padding: 0.75rem 0.75rem 0 0.75rem;
   }
-
   .input {
     border: none;
     box-shadow: none;
