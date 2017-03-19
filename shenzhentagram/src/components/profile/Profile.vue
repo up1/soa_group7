@@ -1,14 +1,17 @@
 <template>
   <div class="container">
     <profile-header></profile-header>
+    <profile-media></profile-media>
   </div>
 </template>
 
 <script type="text/ecmascript">
   import ProfileHeader from './ProfileHeader'
+  import ProfileMedia from './ProfileMedia'
   export default {
       components: {
-          ProfileHeader
+          ProfileHeader,
+          ProfileMedia
       },
       data () {
           return {}
