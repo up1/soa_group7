@@ -3,7 +3,7 @@
     <div class="container">
       <div class="nav-left">
       <span class="nav-item">
-        <h1 class="title is-4">Shenzhentagram</h1>
+        <router-link :to="{name: 'home'}"><h1 class="title is-4">Shenzhentagram</h1></router-link>
         <!--<img src="http://bulma.io/images/bulma-logo.png" alt="Bulma logo">-->
       </span>
       </div>
@@ -22,9 +22,9 @@
       <!-- This "nav-menu" is hidden on mobile -->
       <!-- Add the modifier "is-active" to display it on mobile -->
       <div class="nav-right nav-menu">
-        <a v-if="$auth.ready()" class="nav-item">
+        <router-link :to="{name: 'users', params: {username: 'test'}}" v-if="$auth.ready()" class="nav-item">
           <i class="fa fa-user-o fa-2x" aria-hidden="true"></i>
-        </a>
+        </router-link>
       </div>
     </div>
   </nav>
