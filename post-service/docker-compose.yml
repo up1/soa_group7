@@ -1,0 +1,25 @@
+version: "2"
+services:
+  mariadb:
+        image: mariadb:10.1.22
+        container_name: mariadb
+        restart: always
+        ports:
+          - 3307:3306
+        volumes:
+          - ./build/mysql:/docker-entrypoint-initdb.d
+          - ./tmp/mysql:/var/lib/mysql
+        environment:
+          - MYSQL_DATABASE=posts
+          - MYSQL_ROOT_PASSWORD=mysql
+
+  post:
+        image: phompang/post
+        depends_on:
+          - mariadb
+        container_name: post-service
+        restart: always
+        ports:
+          - 9002:9002
+        links:
+          - mariadb
