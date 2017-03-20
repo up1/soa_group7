@@ -28,7 +28,7 @@ public class JWTAuthenticationService {
      */
     public Authentication parseToken(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
-
+//        System.out.println("token="+token);
         if(token != null) {
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(SECRET)

@@ -37,4 +37,10 @@ public class NotificaitonController {
         int SC = this.notificationRepository.createNotifications(notifications);
         response.setStatus(SC);
     }
+
+    @RequestMapping(method = RequestMethod.PUT , path = "/notifications/update", produces = { MediaType.APPLICATION_JSON_VALUE })
+    public void updateNotification(@RequestBody List<Notification> notifications, HttpServletResponse response) {
+        int SC = this.notificationRepository.updateNotifications(notifications);
+        response.setStatus(SC);
+    }
 }

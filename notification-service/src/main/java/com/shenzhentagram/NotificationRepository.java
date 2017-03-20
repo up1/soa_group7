@@ -156,7 +156,8 @@ public class NotificationRepository {
     @Transactional()
     public int createNotifications(List<Notification> notifications) {
         try {
-            String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?)";
+            String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
+                    "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
             for (Notification notification  : notifications) {
                 long notificationId = 1;
                 switch (notification.getType()){
@@ -179,6 +180,12 @@ public class NotificationRepository {
                                 notification.getText(),
                                 notification.getThumbnail(),
                                 notification.getNotificationId(),
+                                notification.getCheckStatus(),
+                                notification.getUserId(),
+                                notification.getType(),
+                                notification.getText(),
+                                notification.getThumbnail(),
+                                notification.getNotificationId(),
                                 notification.getCheckStatus()
                         }
                 );
@@ -195,13 +202,14 @@ public class NotificationRepository {
     @Transactional()
     public long createNotificationUser(NotificationUser notificationUser) {
         try {
-            String insertSql = "insert into notificationUsers(userId) values(?)";
+            String insertSql = "insert into notificationUsers(userId) values(?) ON DUPLICATE KEY UPDATE userId=?";
             KeyHolder keyHolder = new GeneratedKeyHolder();
             this.jdbcTemplate.update(new PreparedStatementCreator() {
                                          @Override
                                          public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                                              PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
                                              statement.setLong(1, notificationUser.getUserId());
+                                             statement.setLong(2, notificationUser.getUserId());
                                              return statement;
                                          }
                                      },keyHolder
@@ -215,7 +223,7 @@ public class NotificationRepository {
     @Transactional()
     public long createNotificationPost(NotificationPost notificationPost) {
         try {
-            String insertSql = "insert into notificationPosts(post_id ,comment_id) values(? ,?)";
+            String insertSql = "insert into notificationPosts(post_id ,comment_id) values(? ,?) ON DUPLICATE KEY UPDATE post_id=?, comment_id=?;";
             KeyHolder keyHolder = new GeneratedKeyHolder();
             this.jdbcTemplate.update(new PreparedStatementCreator() {
                                          @Override
@@ -223,6 +231,8 @@ public class NotificationRepository {
                                              PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
                                              statement.setLong(1, notificationPost.getPost_id());
                                              statement.setLong(2, notificationPost.getComment_id());
+                                             statement.setLong(3, notificationPost.getPost_id());
+                                             statement.setLong(4, notificationPost.getComment_id());
                                              return statement;
                                          }
                                      },
@@ -237,13 +247,14 @@ public class NotificationRepository {
     @Transactional()
     public long createNotificationReaction(NotificationReaction notificationReaction) {
         try {
-            String insertSql = "insert into notificationReactions(reaction_id) values(?)";
+            String insertSql = "insert into notificationReactions(reaction_id) values(?) ON DUPLICATE KEY UPDATE reaction_id=?;";
             KeyHolder keyHolder = new GeneratedKeyHolder();
             this.jdbcTemplate.update(new PreparedStatementCreator() {
                                          @Override
                                          public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                                              PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
                                              statement.setLong(1, notificationReaction.getReaction_id());
+                                             statement.setLong(2, notificationReaction.getReaction_id());
                                              return statement;
                                          }
                                      }
@@ -255,7 +266,106 @@ public class NotificationRepository {
         }
     }
 
-    
+    @Transactional()
+    public int updateNotifications(List<Notification> notifications) {
+        try {
+            String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
+                    "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
 
+            for (Notification notification  : notifications) {
+                int notificationResponse = 0;
+                switch (notification.getType()){
+                    case "followed_by":
+                        notificationResponse = updateNotificationUser((NotificationUser) notification.getNotification());
+                        break;
+                    case "comment":
+                        notificationResponse = updateNotificationPost((NotificationPost) notification.getNotification());
+                        break;
+                    case "reaction":
+                        notificationResponse = updateNotificationReaction((NotificationReaction) notification.getNotification());
+                        break;
+                }
+                this.jdbcTemplate.update(insertSql,
+                        new Object[] {
+                                notification.getId(),
+                                notification.getUserId(),
+                                notification.getType(),
+                                notification.getText(),
+                                notification.getThumbnail(),
+                                notification.getNotification().getId(),
+                                notification.getCheckStatus(),
+                                notification.getUserId(),
+                                notification.getType(),
+                                notification.getText(),
+                                notification.getThumbnail(),
+                                notification.getNotification().getId(),
+                                notification.getCheckStatus()
+                        }
+                );
+                if(notificationResponse == HttpServletResponse.SC_NOT_MODIFIED){
+                    throw new Exception();
+                }
+            }
+
+
+            return HttpServletResponse.SC_OK;
+        } catch (Exception exception) {
+            System.out.print(exception);
+            return HttpServletResponse.SC_NOT_MODIFIED;
+        }
+    }
+
+    @Transactional()
+    public int updateNotificationUser(NotificationUser notificationUser) {
+        try {
+            String insertSql = "insert into notificationUsers(id, userId) values(?, ?) ON DUPLICATE KEY UPDATE userId=?";
+            this.jdbcTemplate.update(insertSql,
+                    new Object[] {
+                            notificationUser.getId(),
+                            notificationUser.getUserId(),
+                            notificationUser.getUserId()
+                    }
+            );
+            return HttpServletResponse.SC_OK;
+        } catch (Exception exception) {
+            return HttpServletResponse.SC_NOT_MODIFIED;
+        }
+    }
+
+    @Transactional()
+    public int updateNotificationPost(NotificationPost notificationPost) {
+        try {
+            String insertSql = "insert into notificationPosts(id,post_id ,comment_id) values(?, ? ,?) ON DUPLICATE KEY UPDATE post_id=?, comment_id=?;";
+            this.jdbcTemplate.update(insertSql,
+                    new Object[] {
+                            notificationPost.getId(),
+                            notificationPost.getPost_id(),
+                            notificationPost.getComment_id(),
+                            notificationPost.getPost_id(),
+                            notificationPost.getComment_id()
+                    }
+            );
+            return HttpServletResponse.SC_OK;
+        } catch (Exception exception) {
+            return HttpServletResponse.SC_NOT_MODIFIED;
+        }
+    }
+
+    @Transactional()
+    public int updateNotificationReaction(NotificationReaction notificationReaction) {
+        try {
+            String insertSql = "insert into notificationReactions(id,reaction_id) values(?,?) ON DUPLICATE KEY UPDATE reaction_id=?;";
+            this.jdbcTemplate.update(insertSql,
+                    new Object[] {
+                            notificationReaction.getId(),
+                            notificationReaction.getReaction_id(),
+                            notificationReaction.getReaction_id()
+                    }
+            );
+            return HttpServletResponse.SC_OK;
+        } catch (Exception exception) {
+            return HttpServletResponse.SC_NOT_MODIFIED;
+        }
+    }
 
 }

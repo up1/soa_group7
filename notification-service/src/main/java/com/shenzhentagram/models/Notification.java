@@ -18,7 +18,6 @@ public class Notification {
     private String thumbnail;
     private int checkStatus;
 
-    @JsonIgnore
     private long notificationId;
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
