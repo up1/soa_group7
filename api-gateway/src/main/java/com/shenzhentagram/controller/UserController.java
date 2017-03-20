@@ -15,27 +15,28 @@ import java.util.List;
  * Created by Meranote on 3/20/2017.
  */
 @RestController
+@RequestMapping(path = "/users")
 public class UserController extends TemplateRestController {
 
     public UserController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "user");
     }
 
-    @RequestMapping(method = RequestMethod.GET , path = "/users/{user_id}", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @GetMapping(path = "/{user_id}")
     public User getUser(
             @PathVariable("user_id") long id
     ) {
         return restTemplate.getForObject("/users/{user_id}", User.class, id);
     }
 
-    @RequestMapping(method = RequestMethod.GET , path = "/users/search", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @GetMapping(path = "/search")
     public List<User> searchUser(
             @RequestParam("name") String name
     ) {
         return restTemplate.getForObject("/users/search?name" + name, List.class);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/users", consumes = { MediaType.APPLICATION_JSON_VALUE })
+    @PostMapping()
     public void createUser(
             @RequestParam("email") String email,
             @RequestParam("password") String password,
@@ -47,7 +48,7 @@ public class UserController extends TemplateRestController {
         restTemplate.postForObject("/users", new UserRegisterDetail(email, password, full_name, bio, profile_picture, display_name), Void.class);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/users/self", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @GetMapping(path = "/self")
     public ResponseEntity<String> getSelf(
             HttpServletRequest request
     ) {
@@ -58,7 +59,7 @@ public class UserController extends TemplateRestController {
         return restTemplate.exchange("/users/self", HttpMethod.GET, entity, String.class);
     }
 
-    @RequestMapping(method = { RequestMethod.PUT, RequestMethod.PATCH }, path = "/users/self", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(method = { RequestMethod.PUT, RequestMethod.PATCH }, path = "/self")
     public void updateSelf(
             @RequestParam("full_name") String full_name,
             @RequestParam("bio") String bio,

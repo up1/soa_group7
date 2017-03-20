@@ -5,7 +5,6 @@ import com.shenzhentagram.model.AuthenticateDetail;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -18,7 +17,7 @@ public class AuthenticationController extends TemplateRestController {
         super(environment, restTemplateBuilder, "authentication");
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/auth", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @PostMapping(path = "/auth")
     public AuthenticateDetail auth(
             @RequestParam("username") String username,
             @RequestParam("password") String password
