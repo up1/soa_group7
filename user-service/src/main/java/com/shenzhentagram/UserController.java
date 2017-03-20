@@ -30,8 +30,7 @@ public class UserController {
     public List<User> searchUser(
             @RequestParam("name") String name
     ) {
-        // TODO Implement search user
-        throw new NotImplementedException();
+        return this.userRepository.findByName(name);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/users", consumes = { MediaType.APPLICATION_JSON_VALUE })
