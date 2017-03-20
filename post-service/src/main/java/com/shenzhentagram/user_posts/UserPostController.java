@@ -2,6 +2,7 @@ package com.shenzhentagram.user_posts;
 
 import com.shenzhentagram.model.AuthenticatedUser;
 import com.shenzhentagram.posts.Post;
+import com.shenzhentagram.posts.PostRepository;
 import com.shenzhentagram.posts.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,21 +19,23 @@ import org.springframework.web.bind.annotation.*;
 public class UserPostController {
 
     private PostService postService;
+    private PostRepository postRepository;
 
     @Autowired
-    public UserPostController(PostService postService) {
+    public UserPostController(PostService postService, PostRepository postRepository) {
         this.postService = postService;
+        this.postRepository = postRepository;
     }
 
     @GetMapping(value = "/self/posts")
     public Page<Post> getPosts(Authentication authentication, Pageable pageable) {
         AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
-        return postService.findAllByUserId(userDetails.getId().longValue(), pageable);
+        return postRepository.findAllByUserId(userDetails.getId().longValue(), pageable);
     }
 
     @GetMapping(value = "/{user_id}/posts")
     public Page<Post> getPosts(Pageable pageable,
                                @PathVariable("user_id") long user_id) {
-        return postService.findAllByUserId(user_id, pageable);
+        return postRepository.findAllByUserId(user_id, pageable);
     }
 }
