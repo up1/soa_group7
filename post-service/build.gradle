@@ -27,6 +27,9 @@ repositories {
     mavenCentral()
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
 
 dependencies {
     runtime('com.h2database:h2')
