@@ -74,6 +74,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
         // Set claims (payloads)
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("id", user.getId());
+        claims.put("role", user.getRole());
 
         // Build JWT token
         String JWT = Jwts.builder()

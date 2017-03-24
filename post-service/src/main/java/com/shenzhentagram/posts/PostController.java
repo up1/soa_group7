@@ -1,5 +1,6 @@
 package com.shenzhentagram.posts;
 
+import com.shenzhentagram.exception.UserIdNotMatchException;
 import com.shenzhentagram.model.AuthenticatedUser;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,24 +26,26 @@ import java.util.UUID;
 @RequestMapping(value = "/posts")
 public class PostController {
     private PostService postService;
+    private PostRepository postRepository;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostRepository postRepository) {
         this.postService = postService;
+        this.postRepository = postRepository;
     }
 
     @GetMapping()
     public Page<Post> getPosts(Pageable pageable) {
-        return postService.findAllByPage(pageable);
+        return postRepository.findAll(pageable);
     }
 
     @GetMapping(value = "/{id}")
     public Post getPosts(@PathVariable("id") long id) {
-        return postService.findById(id);
+        return postService.findPostOrFail(id);
     }
 
     @PostMapping()
-    public ResponseEntity<?> postPost(Authentication authentication,
+    public ResponseEntity<Post> postPost(Authentication authentication,
                                   @RequestParam(value = "caption") String caption,
                                   @RequestParam(value = "type") String type,
                                   @RequestParam(value = "file") MultipartFile file) throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
@@ -59,36 +62,36 @@ public class PostController {
     }
 
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<?> patchPost(Authentication authentication,
+    public ResponseEntity<Post> patchPost(Authentication authentication,
                                        @PathVariable("id") long id,
                                        @RequestParam(value = "caption") String caption) {
         AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
 
-        Post post = postService.findById(id);
+        Post post = postService.findPostOrFail(id);
 
         if (userDetails.getId() != post.getUserId()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            throw new UserIdNotMatchException(String.format("User ID %d not match with post's user ID", userDetails.getId()));
         }
 
         post.setCaption(caption);
-        postService.patchPost(post);
+        postRepository.save(post);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deletePost(Authentication authentication,
+    public ResponseEntity<Post> deletePost(Authentication authentication,
                                        @PathVariable("id") long id) {
         AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
 
-        Post post = postService.findById(id);
+        Post post = postService.findPostOrFail(id);
 
         if (userDetails.getId() != post.getUserId()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            throw new UserIdNotMatchException(String.format("User ID %d not match with post's user ID", userDetails.getId()));
         }
 
-        postService.deletePost(id);
+        postRepository.delete(id);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 }
