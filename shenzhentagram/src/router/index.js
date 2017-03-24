@@ -33,9 +33,8 @@ const router = new Router({
 Vue.router = router
 Vue.use(Router)
 Vue.use(VueResource)
-Vue.http.options.root = 'http://127.0.0.1:9005'
+Vue.http.options.root = 'http://127.0.0.1:9010'
 Vue.http.options.xhr = {withCredentials: true}
-Vue.http.options.emulateJSON = true
 // Vue.use(VueAxios, axios)
 // Vue.axios.defaults.baseURL = 'http://localhost:9005'
 // Vue.axios.defaults.withCredentials = true
