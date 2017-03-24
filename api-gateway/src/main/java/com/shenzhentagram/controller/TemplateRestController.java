@@ -1,8 +1,12 @@
 package com.shenzhentagram.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * Created by Meranote on 3/20/2017.
@@ -18,4 +22,9 @@ public abstract class TemplateRestController {
 
         this.restTemplate = restTemplateBuilder.rootUri(protocol + "://" + ip + ":" + port).build();
     }
+
+    protected <T> T extractBody(HttpServletRequest request, Class<T> tClass) throws IOException {
+        return new ObjectMapper().readValue(request.getInputStream(), tClass);
+    }
+
 }
