@@ -24,6 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Authentication Config
         http.authorizeRequests()
+                // permit CORS pre-flight request
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // permit ANY "/"
                 .antMatchers("/").permitAll()
                 // permit POST "/auth" for authentication

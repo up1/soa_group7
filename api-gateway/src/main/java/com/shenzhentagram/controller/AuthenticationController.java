@@ -7,9 +7,13 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
 /**
  * Created by Meranote on 3/20/2017.
  */
+@CrossOrigin
 @RestController
 @RequestMapping(path = "/auth")
 public class AuthenticationController extends TemplateRestController {
@@ -19,11 +23,8 @@ public class AuthenticationController extends TemplateRestController {
     }
 
     @PostMapping()
-    public AuthenticateDetail auth(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password
-    ) {
-        return restTemplate.postForObject("/auth", new AuthenticateCredential(username, password), AuthenticateDetail.class);
+    public AuthenticateDetail auth(HttpServletRequest request) throws IOException {
+        return restTemplate.postForObject("/auth", extractBody(request, AuthenticateCredential.class), AuthenticateDetail.class);
     }
 
 }

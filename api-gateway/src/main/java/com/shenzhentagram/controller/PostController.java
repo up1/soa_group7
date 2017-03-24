@@ -28,7 +28,7 @@ public class PostController extends TemplateRestController {
         return restTemplate.getForObject("/posts", Page.class);
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(path = "/{id}")
     public Post getPosts(
             @PathVariable("id") long id
     ) {
@@ -36,7 +36,7 @@ public class PostController extends TemplateRestController {
     }
 
     @PostMapping()
-    public Post postPost(
+    public Post createPost(
             @RequestParam(value = "caption") String caption,
             @RequestParam(value = "type") String type,
             @RequestParam(value = "file") MultipartFile file
@@ -45,8 +45,8 @@ public class PostController extends TemplateRestController {
         throw new NotImplementedException();
     }
 
-    @PatchMapping(value = "/{id}")
-    public Post patchPost(
+    @PatchMapping(path = "/{id}")
+    public Post updatePost(
             @PathVariable("id") long id,
             @RequestParam(value = "caption") String caption
     ) {
@@ -55,7 +55,7 @@ public class PostController extends TemplateRestController {
         return restTemplate.patchForObject(String.format("/posts/{id}?id=%d&caption=%s", id, caption), null, Post.class, id);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(path = "/{id}")
     public void deletePost(
             @PathVariable("id") long id
     ) {

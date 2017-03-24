@@ -6,14 +6,17 @@ import com.shenzhentagram.model.UserUpdateDetail;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by Meranote on 3/20/2017.
  */
+@CrossOrigin
 @RestController
 @RequestMapping(path = "/users")
 public class UserController extends TemplateRestController {
@@ -37,21 +40,12 @@ public class UserController extends TemplateRestController {
     }
 
     @PostMapping()
-    public void createUser(
-            @RequestParam("email") String email,
-            @RequestParam("password") String password,
-            @RequestParam("full_name") String full_name,
-            @RequestParam("bio") String bio,
-            @RequestParam("profile_picture") String profile_picture,
-            @RequestParam("display_name") String display_name
-    ){
-        restTemplate.postForObject("/users", new UserRegisterDetail(email, password, full_name, bio, profile_picture, display_name), Void.class);
+    public void createUser(HttpServletRequest request) throws IOException {
+        restTemplate.postForObject("/users", extractBody(request, UserRegisterDetail.class), Void.class);
     }
 
     @GetMapping(path = "/self")
-    public ResponseEntity<String> getSelf(
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<String> getSelf(HttpServletRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", request.getHeader("Authorization"));
         HttpEntity<String> entity = new HttpEntity<>("", headers);
@@ -60,13 +54,8 @@ public class UserController extends TemplateRestController {
     }
 
     @RequestMapping(method = { RequestMethod.PUT, RequestMethod.PATCH }, path = "/self")
-    public void updateSelf(
-            @RequestParam("full_name") String full_name,
-            @RequestParam("bio") String bio,
-            @RequestParam("profile_picture") String profile_picture,
-            @RequestParam("display_name") String display_name
-    ) {
-        restTemplate.put("/users/self", new UserUpdateDetail(full_name, bio, profile_picture, display_name), Void.class);
+    public void updateSelf(HttpServletRequest request) throws IOException {
+        restTemplate.put("/users/self", extractBody(request, UserUpdateDetail.class), Void.class);
     }
 
 }
