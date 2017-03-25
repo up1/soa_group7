@@ -28,14 +28,16 @@ public class NotificationRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly = true)
-    public List<Notification> findByUserId(Long id) {
+    public List<Notification> findByUserId(Long id, int limit, int page) {
         try {
             List<Notification> notifications = this.jdbcTemplate.query(
-                    "SELECT id, userId, type_, text, thumbnail, notificationId, checkStatus " +
+                    "SELECT id, userId, type_, time, text, thumbnail, notificationId, checkStatus " +
                             "FROM notifications " +
-                            "WHERE userId = ?",
+                            "WHERE userId = ? LIMIT ? OFFSET ?",
                     new Object[] {
-                            id
+                            id,
+                            limit,
+                            limit*page
                     },
                     new NotificationRowMapper()
             );
@@ -64,7 +66,7 @@ public class NotificationRepository {
     public Notification findById(Long id) {
         try {
             Notification notification = this.jdbcTemplate.queryForObject(
-                    "SELECT id, userId, type_, text, thumbnail, notificationId, checkStatus " +
+                    "SELECT id, userId, type_, text, time, thumbnail, notificationId, checkStatus " +
                             "FROM notifications " +
                             "WHERE id = ?",
                     new Object[] {

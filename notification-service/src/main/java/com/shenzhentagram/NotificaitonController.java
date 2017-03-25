@@ -25,11 +25,11 @@ public class NotificaitonController {
     }
 
     @RequestMapping(method = RequestMethod.GET , path = "/notifications", produces = { MediaType.APPLICATION_JSON_VALUE })
-    public List<Notification> getNotificationsByUser(HttpServletRequest request) {
+    public List<Notification> getNotificationsByUser(@RequestParam("limit") int limit,@RequestParam("page") int page,HttpServletRequest request) {
         JWTAuthenticationService authen = new JWTAuthenticationService();
         authen.parseToken(request);
         long id = authen.getUserId();
-        return this.notificationRepository.findByUserId(id);
+        return this.notificationRepository.findByUserId(id, limit, page);
     }
 
     @RequestMapping(method = RequestMethod.POST , path = "/notifications/create")

@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 /**
  * Created by Jiravat on 3/9/2017.
  */
@@ -17,7 +20,9 @@ public class Notification {
     private String text;
     private String thumbnail;
     private int checkStatus;
+    private Timestamp time;
 
+    @JsonIgnore
     private long notificationId;
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
@@ -96,5 +101,13 @@ public class Notification {
 
     public void setCheckStatus(int checkStatus) {
         this.checkStatus = checkStatus;
+    }
+
+    public Timestamp  getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp  time) {
+        this.time = time;
     }
 }
