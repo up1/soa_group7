@@ -1,8 +1,9 @@
-CREATE TABLE `reactions`.`reactions` (
-  `id` BIGINT(20) NOT NULL,
-  `user_id` BIGINT(20) NOT NULL,
-  `post_id` BIGINT(20) NOT NULL,
-  `reaction` ENUM('like', 'love', 'haha', 'wow', 'sad', 'angry') NOT NULL,
-  `created_at` DATETIME NULL,
-  `updated_at` DATETIME NULL,
-  PRIMARY KEY (`id`));
+CREATE TABLE `reactions` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `post_id` bigint(20) NOT NULL,
+  `reaction` enum('like','love','haha','wow','sad','angry') NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
