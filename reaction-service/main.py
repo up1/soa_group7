@@ -44,7 +44,15 @@ def create_react(post_id, user_id, reaction):
 
 
 def update_react(post_id, user_id, reaction):
-    raise NotImplemented()
+    try:
+        cursor = mysql.get_db().cursor()
+        sql = "UPDATE reactions SET reaction = %s WHERE post_id = %s AND user_id = %s"
+        cursor.execute(sql, (reaction, post_id, user_id))
+        mysql.get_db().commit()
+
+        return get_react(post_id, user_id)
+    except Exception as e:
+        return json.dumps({'error': str(e)})
 
 
 def delete_react(post_id, user_id):
