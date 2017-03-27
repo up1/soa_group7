@@ -91,4 +91,23 @@ public class PostController {
 
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
+
+    @PostMapping(value = "/{id}/comments")
+    public ResponseEntity<Post> increaseComments(@PathVariable("id") long id) {
+        Post post = postService.findPostOrFail(id);
+        post.setComments(post.getComments()+1);
+        postRepository.save(post);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "/{id}/reactions")
+    public ResponseEntity<Post> increaseReactions(@PathVariable("id") long id) {
+        Post post = postService.findPostOrFail(id);
+        post.setReactions(post.getReactions()+1);
+        postRepository.save(post);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
 }
