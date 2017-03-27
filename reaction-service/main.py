@@ -56,7 +56,15 @@ def update_react(post_id, user_id, reaction):
 
 
 def delete_react(post_id, user_id):
-    raise NotImplemented()
+    try:
+        cursor = mysql.get_db().cursor()
+        sql = "DELETE FROM reactions WHERE post_id = %s AND user_id = %s"
+        cursor.execute(sql, (post_id, user_id))
+        mysql.get_db().commit()
+
+        return '', 200
+    except Exception as e:
+        return json.dumps({'error': str(e)})
 
 
 @app.route('/posts/<int:post_id>/reacts', methods=['GET', 'POST', 'PUT', 'DELETE'])
