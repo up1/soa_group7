@@ -9,7 +9,7 @@ mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'mysql'
 app.config['MYSQL_DATABASE_DB'] = 'reactions'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_HOST'] = 'mariadb'
 mysql.init_app(app)
 
 
@@ -84,4 +84,4 @@ def reacts(post_id):
         return delete_react(post_id, user_id)
 
 if __name__ == "__main__":
-    app.run(port=9007, debug=True)
+    app.run(host='0.0.0.0', port=9007, debug=True)
