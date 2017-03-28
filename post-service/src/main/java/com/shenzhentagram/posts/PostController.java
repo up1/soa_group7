@@ -110,4 +110,23 @@ public class PostController {
 
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/{id}/comments")
+    public ResponseEntity<Post> decreaseComments(@PathVariable("id") long id) {
+        Post post = postService.findPostOrFail(id);
+        post.setComments(post.getComments()-1);
+        postRepository.save(post);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+
+    @DeleteMapping(value = "/{id}/reactions")
+    public ResponseEntity<Post> decreaseReactions(@PathVariable("id") long id) {
+        Post post = postService.findPostOrFail(id);
+        post.setReactions(post.getReactions()-1);
+        postRepository.save(post);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
 }
