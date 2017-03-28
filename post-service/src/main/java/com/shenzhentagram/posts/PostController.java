@@ -92,7 +92,7 @@ public class PostController {
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{id}/comments")
+    @PostMapping(value = "/{id}/comments/count")
     public ResponseEntity<Post> increaseComments(@PathVariable("id") long id) {
         Post post = postService.findPostOrFail(id);
         post.setComments(post.getComments()+1);
@@ -102,7 +102,7 @@ public class PostController {
     }
 
 
-    @PostMapping(value = "/{id}/reactions")
+    @PostMapping(value = "/{id}/reactions/count")
     public ResponseEntity<Post> increaseReactions(@PathVariable("id") long id) {
         Post post = postService.findPostOrFail(id);
         post.setReactions(post.getReactions()+1);
@@ -111,7 +111,7 @@ public class PostController {
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}/comments")
+    @PutMapping(value = "/{id}/comments/count")
     public ResponseEntity<Post> decreaseComments(@PathVariable("id") long id) {
         Post post = postService.findPostOrFail(id);
         post.setComments(post.getComments()-1);
@@ -121,7 +121,7 @@ public class PostController {
     }
 
 
-    @DeleteMapping(value = "/{id}/reactions")
+    @PutMapping(value = "/{id}/reactions/count")
     public ResponseEntity<Post> decreaseReactions(@PathVariable("id") long id) {
         Post post = postService.findPostOrFail(id);
         post.setReactions(post.getReactions()-1);
