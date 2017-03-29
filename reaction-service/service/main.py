@@ -19,7 +19,13 @@ POST_SERVICE_URL = "http://104.154.167.139:9002/posts"
 def increase_react(post_id):
     url = "{0}/{1}/reactions/count".format(POST_SERVICE_URL, post_id)
     r = requests.post(url)
-    print(r)
+    return r.status_code
+
+
+def decrease_react(post_id):
+    url = "{0}/{1}/reactions/count".format(POST_SERVICE_URL, post_id)
+    r = requests.put(url)
+    return r.status_code
 
 
 def get_react(post_id, user_id):
@@ -42,15 +48,18 @@ def get_reacts(post_id):
 
 def create_react(post_id, user_id, reaction):
     try:
+        status_code = increase_react(post_id)
+        if status_code != 200:
+            return '', status_code
+
         cursor = mysql.get_db().cursor()
         sql = "INSERT INTO reactions(user_id, post_id, reaction) VALUES (%s, %s, %s)"
         cursor.execute(sql, (user_id, post_id, reaction))
         mysql.get_db().commit()
 
-        increase_react(post_id)
-
         return get_react(post_id, user_id)
     except Exception as e:
+        decrease_react(post_id)
         return json.dumps({'error': str(e)})
 
 
@@ -68,6 +77,10 @@ def update_react(post_id, user_id, reaction):
 
 def delete_react(post_id, user_id):
     try:
+        status_code = decrease_react(post_id)
+        if status_code != 200:
+            return '', status_code
+
         cursor = mysql.get_db().cursor()
         sql = "DELETE FROM reactions WHERE post_id = %s AND user_id = %s"
         cursor.execute(sql, (post_id, user_id))
@@ -75,6 +88,7 @@ def delete_react(post_id, user_id):
 
         return '', 200
     except Exception as e:
+        increase_react(post_id)
         return json.dumps({'error': str(e)})
 
 
