@@ -1,5 +1,6 @@
 import pymysql
 from flask import Flask, request, json, jsonify
+import requests
 from flaskext.mysql import MySQL
 
 
@@ -11,6 +12,14 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'mysql'
 app.config['MYSQL_DATABASE_DB'] = 'reactions'
 app.config['MYSQL_DATABASE_HOST'] = 'mariadb'
 mysql.init_app(app)
+
+POST_SERVICE_URL = "http://104.154.167.139:9002/posts"
+
+
+def increase_react(post_id):
+    url = "{0}/{1}/reactions/count".format(POST_SERVICE_URL, post_id)
+    r = requests.post(url)
+    print(r)
 
 
 def get_react(post_id, user_id):
@@ -37,6 +46,8 @@ def create_react(post_id, user_id, reaction):
         sql = "INSERT INTO reactions(user_id, post_id, reaction) VALUES (%s, %s, %s)"
         cursor.execute(sql, (user_id, post_id, reaction))
         mysql.get_db().commit()
+
+        increase_react(post_id)
 
         return get_react(post_id, user_id)
     except Exception as e:
@@ -67,7 +78,7 @@ def delete_react(post_id, user_id):
         return json.dumps({'error': str(e)})
 
 
-@app.route('/posts/<int:post_id>/reacts', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/posts/<int:post_id>/reactions', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def reacts(post_id):
     if request.method == 'GET':
         return get_reacts(post_id)
