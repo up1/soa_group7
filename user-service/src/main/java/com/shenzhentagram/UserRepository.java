@@ -73,19 +73,23 @@ public class UserRepository {
         String sql = "INSERT INTO " +
                 "users(username, password, full_name, bio, profile_picture, display_name, follows, followed_by, role) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try{
+            this.jdbcTemplate.update(
+                    sql,
+                    user.getUsername(),
+                    password,
+                    user.getFull_name(),
+                    user.getBio(),
+                    user.getProfile_picture(),
+                    user.getDisplay_name(),
+                    0,
+                    0,
+                    "USER"
+            );
+        }catch (Exception e){
+            throw e;
+        }
 
-        this.jdbcTemplate.update(
-                sql,
-                user.getUsername(),
-                password,
-                user.getFull_name(),
-                user.getBio(),
-                user.getProfile_picture(),
-                user.getDisplay_name(),
-                0,
-                0,
-                "USER"
-        );
     }
 
     @Transactional

@@ -6,9 +6,6 @@ services:
         restart: always
         ports:
           - 3307:3306
-        volumes:
-          - ./build/mysql:/docker-entrypoint-initdb.d
-          - ./tmp/mysql:/var/lib/mysql
         environment:
           - MYSQL_DATABASE=posts
           - MYSQL_ROOT_PASSWORD=mysql

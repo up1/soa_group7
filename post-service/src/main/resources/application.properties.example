@@ -14,6 +14,3 @@ minio.url=
 minio.bucket=shenzhentagram
 minio.accessKey=
 minio.secretKey=
-
-jwt.header=
-jwt.secret=f078aac1-fd4d-443f-9d4f-8a5f6f1ba2bb
