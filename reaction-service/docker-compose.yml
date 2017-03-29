@@ -1,0 +1,21 @@
+version: "2"
+services:
+  mariadb:
+    build: ./database
+    container_name: mariadb
+    restart: always
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_DATABASE=reactions
+      - MYSQL_ROOT_PASSWORD=mysql
+  web:
+    container_name: reaction-service
+    depends_on:
+      - mariadb
+    restart: always
+    build: ./service
+    ports:
+      - 9007:9007
+    links:
+      - mariadb:mariadb
