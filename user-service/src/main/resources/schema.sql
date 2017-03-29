@@ -12,5 +12,6 @@ CREATE TABLE users (
   followed_by int(20) DEFAULT 0,
   role VARCHAR(255) NOT NULL,
   enable TINYINT(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  CONSTRAINT contacts_unique UNIQUE (username)
 )

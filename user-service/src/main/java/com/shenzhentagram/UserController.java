@@ -38,16 +38,24 @@ public class UserController {
             HttpServletResponse response,
             @RequestBody Map<String, Object> payload
     ){
+
+
         // Extract the password
         String password = (String) payload.remove("password");
 
         // Save new user
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.convertValue(payload, User.class);
-        this.userRepository.save(user, password);
+        try {
+            this.userRepository.save(user, password);
+            // Response 201
+            response.setStatus(HttpServletResponse.SC_CREATED);
+        }catch (Exception e){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
 
-        // Response 201
-        response.setStatus(HttpServletResponse.SC_CREATED);
+
+
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/users/self", produces = { MediaType.APPLICATION_JSON_VALUE })
