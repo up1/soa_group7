@@ -3,6 +3,7 @@
     <div class="profile-details">
       <span class="title is-2">{{$route.params.username}}</span>
       <a class="button edit-profile">Edit Profile</a>
+      <a class="logout-modal icon" v-on:click="showModal"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
     </div>
 
     <ul class="profile-details">
@@ -14,6 +15,15 @@
     <div class="profile-details">
       <span class="subtitle is-5"><strong>Pichai Sivawat</strong></span>
     </div>
+
+    <div class="modal">
+      <div class="modal-background" v-on:click="hideModal"></div>
+      <div class="modal-content">
+        <a class="button is-fullwidth is-medium" v-on:click="logout">Logout</a>
+        <a class="button is-fullwidth is-medium" v-on:click="hideModal">Cancel</a>
+      </div>
+      <button class="modal-close" v-on:click="hideModal"></button>
+    </div>
   </div>
 </template>
 
@@ -21,6 +31,24 @@
   export default {
     data () {
       return {}
+    },
+    methods: {
+      showModal () {
+        $('.modal').addClass('is-active')
+      },
+      hideModal () {
+        $('.modal').removeClass('is-active')
+      },
+      logout () {
+        this.$auth.logout({
+          success () {
+            console.log('success ' + this.context)
+          },
+          error () {
+            console.log('error ' + this.context)
+          }
+        })
+      }
     }
   }
 </script>
@@ -32,6 +60,11 @@
   .edit-profile {
     margin-left: 30px;
     vertical-align: text-bottom;
+  }
+  .logout-modal {
+    margin-left: 30px;
+    vertical-align: super;
+    color: #000;
   }
   ul {
     display: -webkit-box;

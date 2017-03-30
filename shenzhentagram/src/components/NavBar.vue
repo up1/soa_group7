@@ -22,7 +22,7 @@
       <!-- This "nav-menu" is hidden on mobile -->
       <!-- Add the modifier "is-active" to display it on mobile -->
       <div class="nav-right nav-menu">
-        <router-link :to="{name: 'users', params: {username: 'test'}}" v-if="$auth.ready()" class="nav-item">
+        <router-link :to="{name: 'users', params: {username: 'test'}}" v-if="$auth.check()" class="nav-item">
           <span class="icon is-medium">
             <i class="fa fa-user-o fa-2x" aria-hidden="true"></i>
           </span>

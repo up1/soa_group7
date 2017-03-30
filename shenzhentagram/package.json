@@ -15,6 +15,7 @@
   "dependencies": {
     "@websanova/vue-auth": "^2.8.2-beta",
     "bulma": "^0.4.0",
+    "jquery": "^3.2.1",
     "vue": "^2.2.1",
     "vue-moment": "^2.0.2",
     "vue-resource": "^1.2.1",
