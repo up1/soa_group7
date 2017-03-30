@@ -3,10 +3,12 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import moment from 'vue-moment'
 import './styles/style.css'
 
 Vue.config.productionTip = false
 
+Vue.use(moment)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

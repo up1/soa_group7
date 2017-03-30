@@ -28,37 +28,37 @@
   </form>
 </template>
 
-<script type="application/ecmascript">
+<script type="text/babel">
   export default {
-      data () {
-          return {
-            context: 'login context',
-            data: {
-              body: {
-                username: 'admin',
-                password: 'password'
-              },
-              rememberMe: false
-            },
-            error: null
-          }
-      },
-    mounted() {
+    data () {
+      return {
+        context: 'login context',
+        data: {
+          body: {
+            username: 'admin',
+            password: 'password'
+          },
+          rememberMe: false
+        },
+        error: null
+      }
+    },
+    mounted () {
       console.log(this.$auth.redirect())
-      console.log("test")
+      console.log('test')
       // Can set query parameter here for auth redirect or just do it silently in login redirect.
     },
     methods: {
-      login() {
-        var redirect = this.$auth.redirect();
+      login () {
+        var redirect = this.$auth.redirect()
         this.$auth.login({
           body: this.data.body,
           rememberMe: this.data.rememberMe,
           redirect: {name: redirect ? redirect.from.name : 'home'},
-          success() {
+          success () {
             console.log('success ' + this.context)
           },
-          error(res) {
+          error (res) {
             console.log('error ' + this.context)
             this.error = res.data
           }

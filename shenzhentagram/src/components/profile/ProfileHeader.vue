@@ -9,15 +9,15 @@
   </div>
 </template>
 
-<script type="text/ecmascript">
+<script type="text/babel">
   import ProfileDetails from './ProfileDetails'
   export default {
-      components: {
-          ProfileDetails
-      },
-      data() {
-          return {}
-      }
+    components: {
+      ProfileDetails
+    },
+    data () {
+      return {}
+    }
   }
 </script>
 

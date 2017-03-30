@@ -5,17 +5,17 @@
   </div>
 </template>
 
-<script type="text/ecmascript">
+<script type="text/babel">
   import ProfileHeader from './ProfileHeader'
   import ProfileMedia from './ProfileMedia'
   export default {
-      components: {
-          ProfileHeader,
-          ProfileMedia
-      },
-      data () {
-          return {}
-      }
+    components: {
+      ProfileHeader,
+      ProfileMedia
+    },
+    data () {
+      return {}
+    }
   }
 </script>
 

@@ -30,10 +30,10 @@
   </nav>
 </template>
 
-<script type="application/ecmascript">
+<script type="text/babel">
   export default {
     data () {
-        return {}
+      return {}
     }
   }
 </script>

@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-image">
       <figure class="image is-1by1">
-        <img src="http://placehold.it/960x960.png" alt="Image">
+        <img :src="'https://s3-ap-southeast-1.amazonaws.com/shenzhentagram/' + this.post.media" alt="Image">
       </figure>
     </div>
     <div class="card-content">
@@ -19,11 +19,9 @@
       </div>
 
       <div class="content">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-        <a>#css</a> <a>#responsive</a>
+        {{this.post.caption}}
         <br>
-        <small>11:09 PM - 1 Jan 2016</small>
+        <small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small>
       </div>
 
       <footer class="card-footer">
@@ -40,11 +38,12 @@
   </div>
 </template>
 
-<script type="text/ecmascript">
+<script type="text/babel">
   export default {
-      data() {
-          return {}
-      }
+    props: ['post'],
+    data () {
+      return {}
+    }
   }
 </script>
 

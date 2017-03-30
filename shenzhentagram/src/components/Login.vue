@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/babel">
   import LoginForm from './LoginForm'
   export default {
     name: 'login',
@@ -20,8 +20,7 @@
       LoginForm
     },
     data () {
-      return {
-      }
+      return {}
     }
   }
 </script>

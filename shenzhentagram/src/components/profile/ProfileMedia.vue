@@ -10,15 +10,15 @@
   </div>
 </template>
 
-<script type="text/ecmascript">
+<script type="text/babel">
   import Media from './Media'
   export default {
-      components: {
-          Media
-      },
-      data() {
-          return {}
-      }
+    components: {
+      Media
+    },
+    data () {
+      return {}
+    }
   }
 </script>
 

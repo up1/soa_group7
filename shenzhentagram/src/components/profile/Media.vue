@@ -6,11 +6,11 @@
   </div>
 </template>
 
-<script type="text/ecmascript">
+<script type="text/babel">
   export default {
-      data () {
-          return {}
-      }
+    data () {
+      return {}
+    }
   }
 </script>
 
