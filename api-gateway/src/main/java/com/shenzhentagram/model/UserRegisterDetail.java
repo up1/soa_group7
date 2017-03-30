@@ -5,30 +5,26 @@ package com.shenzhentagram.model;
  */
 public class UserRegisterDetail {
 
-    private String email;
+    private String username;
     private String password;
     private String full_name;
-    private String bio;
-    private String profile_picture;
     private String display_name;
 
     public UserRegisterDetail() { }
 
-    public UserRegisterDetail(String email, String password, String full_name, String bio, String profile_picture, String display_name) {
-        this.email = email;
+    public UserRegisterDetail(String username, String password, String full_name, String display_name) {
+        this.username = username;
         this.password = password;
         this.full_name = full_name;
-        this.bio = bio;
-        this.profile_picture = profile_picture;
         this.display_name = display_name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -47,22 +43,6 @@ public class UserRegisterDetail {
         this.full_name = full_name;
     }
 
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getProfile_picture() {
-        return profile_picture;
-    }
-
-    public void setProfile_picture(String profile_picture) {
-        this.profile_picture = profile_picture;
-    }
-
     public String getDisplay_name() {
         return display_name;
     }
@@ -70,5 +50,4 @@ public class UserRegisterDetail {
     public void setDisplay_name(String display_name) {
         this.display_name = display_name;
     }
-
 }
