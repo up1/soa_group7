@@ -47,11 +47,11 @@
   export default {
     data () {
       return {
-        context: 'login context',
+        context: 'register context',
         data: {
           body: {
-            username: 'admin',
-            password: 'password',
+            username: '',
+            password: '',
             full_name: '',
             display_name: ''
           }
@@ -66,13 +66,11 @@
     },
     methods: {
       register () {
-        var redirect = this.$auth.redirect()
         this.$auth.register({
           body: this.data.body,
-          rememberMe: this.data.rememberMe,
-          redirect: {name: redirect ? redirect.from.name : 'home'},
           success () {
             console.log('success ' + this.context)
+            this.$emit('showLogin')
           },
           error (res) {
             console.log('error ' + this.context)

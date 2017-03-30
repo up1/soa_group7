@@ -48,8 +48,8 @@
         context: 'login context',
         data: {
           body: {
-            username: 'admin',
-            password: 'password'
+            username: '',
+            password: ''
           },
           rememberMe: false
         },

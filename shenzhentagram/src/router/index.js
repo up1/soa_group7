@@ -52,6 +52,9 @@ Vue.use(VueAuth, {
   loginData: {
     url: 'auth',
     fetchUser: false
+  },
+  registerData: {
+    url: 'users'
   }
 })
 
