@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import moment from 'vue-moment'
 import './styles/style.css'
+import 'bulma'
 
 Vue.config.productionTip = false
 

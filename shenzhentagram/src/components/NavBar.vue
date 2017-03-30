@@ -23,7 +23,9 @@
       <!-- Add the modifier "is-active" to display it on mobile -->
       <div class="nav-right nav-menu">
         <router-link :to="{name: 'users', params: {username: 'test'}}" v-if="$auth.ready()" class="nav-item">
-          <i class="fa fa-user-o fa-2x" aria-hidden="true"></i>
+          <span class="icon is-medium">
+            <i class="fa fa-user-o fa-2x" aria-hidden="true"></i>
+          </span>
         </router-link>
       </div>
     </div>

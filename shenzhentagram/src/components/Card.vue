@@ -25,7 +25,7 @@
       </div>
 
       <footer class="card-footer">
-        <a href="" class="footer-item"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
+        <a href="" class="footer-item icon is-medium"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
         <span class="footer-item">
           <div class="field">
             <p class="control">
@@ -53,13 +53,12 @@
   }
   .footer-item {
     display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 0.75rem 0.75rem 0 0.75rem;
+    padding: 0.2rem 0.75rem;
+  }
+  .icon {
+    padding-top: 0.75rem;
   }
   .input {
     border: none;

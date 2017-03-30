@@ -1,30 +1,43 @@
 <template>
   <form v-on:submit.prevent="login()">
-    <p class="control has-icon">
-      <input v-model="data.body.username" class="input is-medium" type="text" placeholder="Username">
-      <span class="icon">
+    <div class="field">
+      <p class="control has-icon">
+        <input v-model="data.body.username" class="input is-medium" type="text" placeholder="Username">
+        <span class="icon">
         <i class="fa fa-user"></i>
       </span>
-    </p>
-    <p class="control has-icon">
-      <input v-model="data.body.password" class="input is-medium" type="password" placeholder="Password">
-      <span class="icon">
+      </p>
+    </div>
+    <div class="field">
+      <p class="control has-icon">
+        <input v-model="data.body.password" class="input is-medium" type="password" placeholder="Password">
+        <span class="icon">
         <i class="fa fa-lock"></i>
       </span>
-    </p>
-    <p class="control">
-      <label class="checkbox">
-        <input v-model="data.rememberMe" type="checkbox" />
-        Remember me
-      </label>
-    </p>
+      </p>
+    </div>
+    <div class="field">
+      <p class="control">
+        <label class="checkbox">
+          <input v-model="data.rememberMe" type="checkbox" />
+          Remember me
+        </label>
+      </p>
+    </div>
 
-    <div v-show="error" style="color:red; word-wrap:break-word;">{{ error }}</div>
-    <p class="control">
-      <button class="button is-primary is-medium">
-        Login
-      </button>
-    </p>
+    <div v-show="error" class="help is-danger" style="color:red; word-wrap:break-word;">{{ error }}</div>
+    <div class="field is-grouped">
+      <p class="control">
+        <button class="button is-primary is-medium">
+          Login
+        </button>
+      </p>
+      <p class="control">
+        <button class="button is-link is-medium">
+          Register
+        </button>
+      </p>
+    </div>
   </form>
 </template>
 
