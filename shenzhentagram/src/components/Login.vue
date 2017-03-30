@@ -6,7 +6,8 @@
       </div>
       <div class="column box auth-form">
         <h1 class="title">Shenzhentagram</h1>
-        <login-form></login-form>
+        <register-form v-show="!isLogin" v-on:showLogin="showLogin"></register-form>
+        <login-form v-show="isLogin" v-on:showRegister="showRegister"></login-form>
       </div>
     </div>
   </div>
@@ -14,13 +15,24 @@
 
 <script type="text/babel">
   import LoginForm from './LoginForm'
+  import RegisterForm from './RegisterForm'
   export default {
     name: 'login',
     components: {
-      LoginForm
+      LoginForm, RegisterForm
     },
     data () {
-      return {}
+      return {
+        isLogin: true
+      }
+    },
+    methods: {
+      showLogin () {
+        this.isLogin = true
+      },
+      showRegister () {
+        this.isLogin = false
+      }
     }
   }
 </script>
