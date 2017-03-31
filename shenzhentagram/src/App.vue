@@ -7,11 +7,14 @@
 
 <script>
   import Navbar from './components/NavBar'
+  import store from './vuex/store'
+
   export default {
     name: 'app',
     components: {
       Navbar
-    }
+    },
+    store
   }
 </script>
 

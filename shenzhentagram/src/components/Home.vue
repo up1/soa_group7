@@ -10,48 +10,20 @@
 
 <script type="text/babel">
   import Card from './Card'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'home',
     components: {
       Card
     },
+    computed: mapGetters({
+      posts: 'getPosts'
+    }),
+    created () {
+      this.$store.dispatch('fetchPosts')
+    },
     data () {
       return {
-        posts: [
-          {
-            'id': 1,
-            'type': 'image',
-            'comments': 22,
-            'caption': 'caption',
-            'reactions': 33,
-            'media': 'photo.jpg',
-            'userId': 1,
-            'created_at': 1490781129000,
-            'updated_at': 1490781129000
-          },
-          {
-            'id': 2,
-            'type': 'image',
-            'comments': 222,
-            'caption': 'caption11',
-            'reactions': 333,
-            'media': 'photo.jpg',
-            'userId': 1,
-            'created_at': 1490781129000,
-            'updated_at': 1490781129000
-          },
-          {
-            'id': 3,
-            'type': 'image',
-            'comments': 0,
-            'caption': 'dksfjsadkfjklasdjklfjs',
-            'reactions': 4,
-            'media': 'photo.jpg',
-            'userId': 1,
-            'created_at': 1490781129000,
-            'updated_at': 1490781129000
-          }
-        ]
       }
     }
   }
