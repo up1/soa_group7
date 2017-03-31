@@ -23,7 +23,7 @@ const router = new Router({
       component: Home,
       meta: {auth: true}
     }, {
-      path: '/users/:username',
+      path: '/users/:userId',
       name: 'users',
       component: Profile
     }
@@ -52,6 +52,13 @@ Vue.use(VueAuth, {
   loginData: {
     url: 'auth',
     fetchUser: false
+  },
+  fetchData: {
+    url: 'users'
+  },
+  parseUserData: function (data) {
+    console.log(data)
+    return data
   },
   registerData: {
     url: 'users'

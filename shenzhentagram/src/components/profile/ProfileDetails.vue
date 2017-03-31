@@ -1,19 +1,19 @@
 <template>
   <div class="column">
     <div class="profile-details">
-      <span class="title is-2">{{$route.params.username}}</span>
+      <span class="title is-2">{{this.user.display_name}}</span>
       <a class="button edit-profile">Edit Profile</a>
       <a class="logout-modal icon" v-on:click="showModal"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
     </div>
 
     <ul class="profile-details">
       <li><span class="subtitle is-5"><strong>112 </strong>posts</span></li>
-      <li><span class="subtitle is-5"><strong>44 </strong>followers</span></li>
-      <li><span class="subtitle is-5"><strong>44 </strong>following</span></li>
+      <li><span class="subtitle is-5"><strong>{{this.user.followed_by}} </strong>followers</span></li>
+      <li><span class="subtitle is-5"><strong>{{this.user.follows}} </strong>following</span></li>
     </ul>
 
     <div class="profile-details">
-      <span class="subtitle is-5"><strong>Pichai Sivawat</strong></span>
+      <span class="subtitle is-5"><strong>{{this.user.bio}}</strong></span>
     </div>
 
     <div class="modal">
@@ -28,10 +28,14 @@
 </template>
 
 <script type="text/babel">
+  import { mapGetters } from 'vuex'
   export default {
     data () {
       return {}
     },
+    computed: mapGetters({
+      user: 'getUser'
+    }),
     methods: {
       showModal () {
         $('.modal').addClass('is-active')

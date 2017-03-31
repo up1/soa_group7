@@ -6,6 +6,7 @@ import Vuex from 'vuex'
 import * as actions from './actions'
 import * as getters from './getters'
 import * as types from './mutation-types'
+import user from './modules/user'
 import posts from './modules/posts'
 
 // Make vue aware of Vuex
@@ -32,7 +33,8 @@ export default new Vuex.Store({
   getters,
   mutations,
   modules: {
-    posts
+    posts,
+    user
   },
   strict: process.env.NODE_ENV !== 'production'
 })

@@ -13,6 +13,10 @@
       ProfileHeader,
       ProfileMedia
     },
+    created () {
+      this.$store.dispatch('fetchUser', this.$route.params.userId)
+      console.log(this.$auth.user())
+    },
     data () {
       return {}
     }
