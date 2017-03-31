@@ -70,7 +70,7 @@
           body: this.data.body,
           success () {
             console.log('success ' + this.context)
-            this.$emit('showLogin')
+            this.$store.dispatch('showLogin', true)
           },
           error (res) {
             console.log('error ' + this.context)
@@ -79,7 +79,7 @@
         })
       },
       showLogin () {
-        this.$emit('showLogin')
+        this.$store.dispatch('showLogin', true)
       }
     }
   }

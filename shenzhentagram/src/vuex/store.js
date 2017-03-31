@@ -5,7 +5,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import * as actions from './actions'
 import * as getters from './getters'
-import { FETCH_POSTS } from './mutation-types'
+import * as types from './mutation-types'
+import posts from './modules/posts'
 
 // Make vue aware of Vuex
 Vue.use(Vuex)
@@ -13,13 +14,13 @@ Vue.use(Vuex)
 // Create an object to hold the initial state when
 // the app starts up
 const state = {
-  posts: []
+  showLogin: true
 }
 
 // Create an object storing various mutations. We will write the mutation
 const mutations = {
-  [FETCH_POSTS] (state, posts) {
-    state.posts = posts
+  [types.SHOW_LOGIN] (state, show) {
+    state.showLogin = show
   }
 }
 
@@ -30,5 +31,8 @@ export default new Vuex.Store({
   actions,
   getters,
   mutations,
+  modules: {
+    posts
+  },
   strict: process.env.NODE_ENV !== 'production'
 })

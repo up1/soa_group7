@@ -6,8 +6,8 @@
       </div>
       <div class="column box auth-form">
         <h1 class="title">Shenzhentagram</h1>
-        <register-form v-show="!isLogin" v-on:showLogin="showLogin"></register-form>
-        <login-form v-show="isLogin" v-on:showRegister="showRegister"></login-form>
+        <register-form v-if="!showLogin"></register-form>
+        <login-form v-else></login-form>
       </div>
     </div>
   </div>
@@ -16,24 +16,18 @@
 <script type="text/babel">
   import LoginForm from './LoginForm'
   import RegisterForm from './RegisterForm'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'login',
     components: {
       LoginForm, RegisterForm
     },
     data () {
-      return {
-        isLogin: true
-      }
+      return {}
     },
-    methods: {
-      showLogin () {
-        this.isLogin = true
-      },
-      showRegister () {
-        this.isLogin = false
-      }
-    }
+    computed: mapGetters({
+      showLogin: 'showLogin'
+    })
   }
 </script>
 

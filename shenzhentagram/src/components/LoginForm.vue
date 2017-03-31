@@ -78,7 +78,7 @@
         })
       },
       showRegister () {
-        this.$emit('showRegister')
+        this.$store.dispatch('showLogin', false)
       }
     }
   }
