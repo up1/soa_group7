@@ -43,11 +43,9 @@ public class FileUtility {
 
         log.info("extractFileFromBase64() : mime type = " + type.getMimeType());
         log.info("extractFileFromBase64() : extension = " + type.getExtension());
+        log.info("extractFileFromBase64() : size = " + (inputStream.available() / 1024.0f / 1024.0f) + "MB");
 
-        // FIXME length is zero (should be exactly near the same size)
-        log.info("extractFileFromBase64() : length = " + type.getLength());
-
-        return new FileDetail(inputStream, type.getExtension(), type.getMimeType(), type.getLength());
+        return new FileDetail(inputStream, type.getExtension(), type.getMimeType(), inputStream.available());
     }
 
 }
