@@ -17,6 +17,7 @@ public class NotificationRowMapper implements RowMapper<Notification> {
         notification.setNotificationId(resultSet.getLong("notificationId"));
         notification.setThumbnail(resultSet.getString("thumbnail"));
         notification.setCheckStatus(resultSet.getInt("checkStatus"));
+        notification.setTime(resultSet.getTimestamp("time"));
         return notification;
     }
 }

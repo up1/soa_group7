@@ -26,6 +26,7 @@ CREATE TABLE notifications(
   type_ varchar(20),
   text varchar(255) DEFAULT '',
   thumbnail varchar(255) DEFAULT '',
+  time DATETIME DEFAULT CURRENT_TIMESTAMP,
   notificationId BIGINT(255),
   checkStatus TINYINT(1) DEFAULT 0,
   PRIMARY KEY (id)
