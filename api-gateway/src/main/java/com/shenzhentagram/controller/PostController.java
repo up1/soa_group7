@@ -1,13 +1,19 @@
 package com.shenzhentagram.controller;
 
+import com.shenzhentagram.authentication.AuthenticatedUser;
 import com.shenzhentagram.model.Post;
+import com.shenzhentagram.model.PostCreateDetail;
+import com.shenzhentagram.model.PostUpdateDetail;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * Created by Meranote on 3/20/2017.
@@ -17,50 +23,43 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 @RequestMapping(path = "/posts")
 public class PostController extends TemplateRestController {
 
-    // FIXME Extract authorization token
-
     public PostController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "post");
     }
 
     @GetMapping()
     public Page<Post> getPosts(Pageable pageable) {
-        return restTemplate.getForObject("/posts", Page.class);
+        return requestWithAuth(HttpMethod.GET, "/posts", pageable, Page.class);
     }
 
     @GetMapping(path = "/{id}")
     public Post getPosts(
             @PathVariable("id") long id
     ) {
-        return restTemplate.getForObject("/posts/{id}", Post.class, id);
+        return request(HttpMethod.GET, "/posts/{id}", Post.class, id);
     }
 
     @PostMapping()
-    public Post createPost(
-            @RequestParam(value = "caption") String caption,
-            @RequestParam(value = "type") String type,
-            @RequestParam(value = "file") MultipartFile file
-    ) {
-        // TODO Post (upload file and sent to service)
-        throw new NotImplementedException();
+    public Post createPost(HttpServletRequest request) throws IOException {
+        PostCreateDetail detail = extractBody(request, PostCreateDetail.class);
+        detail.setUser_id(((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication()).getId());
+
+        return requestWithAuth(HttpMethod.POST, "/posts", detail, Post.class);
     }
 
     @PatchMapping(path = "/{id}")
     public Post updatePost(
-            @PathVariable("id") long id,
-            @RequestParam(value = "caption") String caption
-    ) {
-        // FIXME Send JSON body (post service is accepting query params by now)
-//        return restTemplate.patchForObject("/posts/{id}", new PostUpdateDetail(id, caption), Post.class, id);
-        return restTemplate.patchForObject(String.format("/posts/{id}?id=%d&caption=%s", id, caption), null, Post.class, id);
+            HttpServletRequest request,
+            @PathVariable("id") long id
+    ) throws IOException {
+        return requestWithAuth(HttpMethod.PATCH, "/posts/{id}", extractBody(request, PostUpdateDetail.class), Post.class, id);
     }
 
     @DeleteMapping(path = "/{id}")
     public void deletePost(
             @PathVariable("id") long id
     ) {
-        // QUESTION Did this need to return the deleted post?
-        restTemplate.delete("/posts/{id}", id);
+        requestWithAuth(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
     }
 
 }

@@ -34,6 +34,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 // permit GET "/users/search" and "/users/{user_id}" for finding user
                 .antMatchers(HttpMethod.GET, "/users/**").permitAll()
+
+                // For test only
+
+                // permit POST "/users" for registration
+                .antMatchers(HttpMethod.POST, "/posts").permitAll()
+
                 // Otherwise, need authenticate
                 .anyRequest().authenticated();
 

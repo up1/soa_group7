@@ -2,6 +2,7 @@ package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.AuthenticateCredential;
 import com.shenzhentagram.model.AuthenticateDetail;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -24,7 +25,7 @@ public class AuthenticationController extends TemplateRestController {
 
     @PostMapping()
     public AuthenticateDetail auth(HttpServletRequest request) throws IOException {
-        return restTemplate.postForObject("/auth", extractBody(request, AuthenticateCredential.class), AuthenticateDetail.class);
+        return request(HttpMethod.POST, "/auth", extractBody(request, AuthenticateCredential.class), AuthenticateDetail.class);
     }
 
 }
