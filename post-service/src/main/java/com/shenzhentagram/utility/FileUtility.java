@@ -47,7 +47,7 @@ public class FileUtility {
         // FIXME length is zero (should be exactly near the same size)
         log.info("extractFileFromBase64() : length = " + type.getLength());
 
-        return new FileDetail(inputStream, type.getMimeType(), type.getExtension(), type.getLength());
+        return new FileDetail(inputStream, type.getExtension(), type.getMimeType(), type.getLength());
     }
 
 }
