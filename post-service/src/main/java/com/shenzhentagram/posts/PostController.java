@@ -1,6 +1,10 @@
 package com.shenzhentagram.posts;
 
 import com.shenzhentagram.exception.UserIdNotMatchException;
+import com.shenzhentagram.utility.FileUtility;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +18,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -44,18 +49,18 @@ public class PostController {
 
     @PostMapping()
     public ResponseEntity<Post> postPost(
-                                  @RequestParam(value = "caption") String caption,
-                                  @RequestParam(value = "type") String type,
-                                  @RequestParam(value = "file") MultipartFile file,
-                                  @RequestParam(value = "user_id") long user_id)
-            throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        String media = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
+            @RequestBody Map<String, Object> payload
+    ) throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException, MagicParseException, MagicException, MagicMatchNotFoundException {
+        String fileBase64 = (String) payload.remove("file");
+        FileUtility.FileDetail file = FileUtility.extractFileFromBase64(fileBase64);
+
+        String media = UUID.randomUUID().toString() + "." + file.extension;
 
         Post post = new Post();
-        post.setCaption(caption);
-        post.setType(type);
+        post.setCaption((String) payload.get("caption"));
+        post.setType((String) payload.get("type"));
         post.setMedia(media);
-        post.setUserId(user_id);
+        post.setUserId((int) payload.get("user_id"));
 
         return postService.storePost(post, file);
     }
@@ -129,4 +134,5 @@ public class PostController {
 
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
+
 }
