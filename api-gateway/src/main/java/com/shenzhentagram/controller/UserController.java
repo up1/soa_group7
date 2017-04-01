@@ -29,33 +29,29 @@ public class UserController extends TemplateRestController {
     public User getUser(
             @PathVariable("user_id") long id
     ) {
-        return restTemplate.getForObject("/users/{user_id}", User.class, id);
+        return request(HttpMethod.GET, "/users/{user_id}", User.class, id);
     }
 
     @GetMapping(path = "/search")
     public List<User> searchUser(
             @RequestParam("name") String name
     ) {
-        return restTemplate.getForObject("/users/search?name" + name, List.class);
+        return request(HttpMethod.GET, "/users/search?name" + name, List.class);
     }
 
     @PostMapping()
     public void createUser(HttpServletRequest request) throws IOException {
-        restTemplate.postForObject("/users", extractBody(request, UserRegisterDetail.class), Void.class);
+        request(HttpMethod.POST, "/users", extractBody(request, UserRegisterDetail.class), Void.class);
     }
 
     @GetMapping(path = "/self")
-    public ResponseEntity<String> getSelf(HttpServletRequest request) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", request.getHeader("Authorization"));
-        HttpEntity<String> entity = new HttpEntity<>("", headers);
-
-        return restTemplate.exchange("/users/self", HttpMethod.GET, entity, String.class);
+    public User getSelf() {
+        return requestWithAuth(HttpMethod.GET, "/users/self", User.class);
     }
 
     @RequestMapping(method = { RequestMethod.PUT, RequestMethod.PATCH }, path = "/self")
     public void updateSelf(HttpServletRequest request) throws IOException {
-        restTemplate.put("/users/self", extractBody(request, UserUpdateDetail.class), Void.class);
+        request(HttpMethod.PUT, "/users/self", extractBody(request, UserUpdateDetail.class), Void.class);
     }
 
 }

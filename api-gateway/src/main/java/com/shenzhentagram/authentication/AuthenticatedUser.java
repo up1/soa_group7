@@ -14,11 +14,13 @@ public class AuthenticatedUser implements Authentication {
 
     private long id;
     private String name;
+    private String token;
     private boolean authenticated = true;
 
-    public AuthenticatedUser(long id, String name) {
+    public AuthenticatedUser(long id, String name, String token) {
         this.id = id;
         this.name = name;
+        this.token = token;
     }
 
     @Override
@@ -58,6 +60,10 @@ public class AuthenticatedUser implements Authentication {
 
     public long getId() {
         return this.id;
+    }
+
+    public String getToken() {
+        return this.token;
     }
 
 }

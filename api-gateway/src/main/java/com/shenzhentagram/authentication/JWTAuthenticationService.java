@@ -25,19 +25,19 @@ public class JWTAuthenticationService {
      * @return
      */
     public Authentication parseToken(HttpServletRequest request) {
-        String token = request.getHeader(HEADER_STRING);
+        String token = request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX + " ", "");
 
         if(token != null) {
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX + " ", ""));
+                    .parseClaimsJws(token);
 
             // Parse token
             int id = (int) claims.getBody().get("id");
             String username = claims.getBody().getSubject();
 
             if(username != null) {
-               return new AuthenticatedUser(id, username);
+               return new AuthenticatedUser(id, username, token);
             }
         }
 

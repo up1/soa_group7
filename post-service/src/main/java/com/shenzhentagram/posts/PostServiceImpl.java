@@ -1,6 +1,7 @@
 package com.shenzhentagram.posts;
 
 import com.shenzhentagram.exception.PostNotFoundException;
+import com.shenzhentagram.utility.FileUtility;
 import io.minio.MinioClient;
 import io.minio.errors.MinioException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,14 +58,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResponseEntity<Post> storePost(Post post, MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException, XmlPullParserException {
+    public ResponseEntity<Post> storePost(Post post, FileUtility.FileDetail file) throws IOException, NoSuchAlgorithmException, InvalidKeyException, XmlPullParserException {
         try {
-            minioClient.putObject(bucket, post.getMedia(), file.getInputStream(), file.getSize(), file.getContentType());
+            minioClient.putObject(bucket, post.getMedia(), file.inputStream, file.size, file.type);
 
             postRepository.save(post);
             System.out.println("Success");
             return new ResponseEntity<>(post, HttpStatus.OK);
         } catch (MinioException e) {
+//        } catch (Exception e) {
             System.out.println("Error occurred: " + e);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

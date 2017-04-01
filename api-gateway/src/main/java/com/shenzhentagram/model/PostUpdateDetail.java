@@ -5,22 +5,12 @@ package com.shenzhentagram.model;
  */
 public class PostUpdateDetail {
 
-    private int id;
     private String caption;
 
     public PostUpdateDetail() { }
 
-    public PostUpdateDetail(int id, String caption) {
-        this.id = id;
+    public PostUpdateDetail(String caption) {
         this.caption = caption;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getCaption() {
