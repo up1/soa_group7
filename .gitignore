@@ -81,3 +81,11 @@ user-service/src/main/resources/application.properties
 shenzhentagram/node_modules/
 
 authentication-service/target/
+
+# dotenv
+.env
+
+# virtualenv
+.venv
+venv/
+ENV/
