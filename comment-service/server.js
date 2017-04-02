@@ -25,3 +25,33 @@ app.use(bodyParser.urlencoded({extended: false})); //If Encode Can't test with p
 app.use(cors());
 const apiRouter = express.Router();
 
+// load all routes
+_.each(require('./routes'), (verbs, url) => {
+    _.each(verbs, (def, verb) => {
+        let actions = [
+            function (req, res, next) {
+                req.signature = def.controller + '#' + def.method;
+                next();
+            },
+        ];
+        const method = require('./controllers/' + def.controller)[def.method];
+        if (!method) {
+            throw new Error(def.method + ' is undefined, for controller ' + def.controller);
+        }
+        if (def.middleware && def.middleware.length > 0) {
+            actions = actions.concat(def.middleware);
+        }
+        actions.push(method);
+        winston.info(`register ${verb} /api/v${config.API_VERSION}${url}`);
+        apiRouter[verb](`/api/v${config.API_VERSION}${url}`, helper.autoWrapExpress(actions));
+    });
+});
+
+app.use('/', apiRouter);
+app.use(errorMiddleware());
+
+http.listen(app.get('port'), () => {
+    winston.info(`Comment Service listening on port ${app.get('port')}`);
+});
+
+module.exports = app;
