@@ -86,7 +86,7 @@ public class UserRepository {
                     0,
                     "USER"
             );
-        }catch (Exception e){
+        } catch (Exception e){
             throw e;
         }
 
