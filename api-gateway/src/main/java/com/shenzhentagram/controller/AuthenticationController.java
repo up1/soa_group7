@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(path = "/auth")
+@RequestMapping("/auth")
 public class AuthenticationController extends TemplateRestController {
 
     public AuthenticationController(Environment environment, RestTemplateBuilder restTemplateBuilder) {

@@ -18,7 +18,7 @@ public class UserRepository {
     public User findById(Long id) {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by " +
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by, post_count " +
                         "FROM users " +
                         "WHERE id = ?",
                     new Object[] {

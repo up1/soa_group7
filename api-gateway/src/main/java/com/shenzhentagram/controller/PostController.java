@@ -4,6 +4,7 @@ import com.shenzhentagram.authentication.AuthenticatedUser;
 import com.shenzhentagram.model.Post;
 import com.shenzhentagram.model.PostCreateDetail;
 import com.shenzhentagram.model.PostUpdateDetail;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,9 @@ import java.io.IOException;
 @RestController
 @RequestMapping(path = "/posts")
 public class PostController extends TemplateRestController {
+
+    @Autowired
+    private UserController userController;
 
     public PostController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "post");
@@ -44,7 +48,13 @@ public class PostController extends TemplateRestController {
         PostCreateDetail detail = extractBody(request, PostCreateDetail.class);
         detail.setUser_id(((AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication()).getId());
 
-        return requestWithAuth(HttpMethod.POST, "/posts", detail, Post.class);
+        // Create post
+        Post newPost = requestWithAuth(HttpMethod.POST, "/posts", detail, Post.class);
+
+        // Increase post count
+        userController.increasePosts((int) getAuthenticatedUser().getId());
+
+        return newPost;
     }
 
     @PatchMapping(path = "/{id}")
@@ -60,6 +70,7 @@ public class PostController extends TemplateRestController {
             @PathVariable("id") long id
     ) {
         requestWithAuth(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
+        userController.decreasePosts((int) getAuthenticatedUser().getId());
     }
 
 }
