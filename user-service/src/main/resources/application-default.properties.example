@@ -1,0 +1,9 @@
+datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+datasource.url=jdbc:mysql://localhost:3306/users
+datasource.username=
+datasource.password=
+
+minio.url=
+minio.bucket=
+minio.accessKey=
+minio.secretKey=

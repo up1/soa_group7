@@ -17,6 +17,7 @@ public class UserRowMapper implements RowMapper<User> {
         user.setDisplay_name(resultSet.getString("display_name"));
         user.setFollows(resultSet.getInt("follows"));
         user.setFollowed_by(resultSet.getInt("followed_by"));
+        user.setPost_count(resultSet.getInt("post_count"));
         return user;
     }
 }
