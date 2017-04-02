@@ -1,0 +1,20 @@
+service.user.protocol = http
+service.user.ip = 127.0.0.1
+
+service.post.protocol = http
+service.post.ip = 127.0.0.1
+
+service.notification.protocol = http
+service.notification.ip = 127.0.0.1
+
+service.follow.protocol = http
+service.follow.ip = 127.0.0.1
+
+service.authentication.protocol = http
+service.authentication.ip = 127.0.0.1
+
+service.comment.protocol = http
+service.comment.ip = 127.0.0.1
+
+service.reaction.protocol = http
+service.reaction.ip = 127.0.0.1
