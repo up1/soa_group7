@@ -1,12 +1,13 @@
 package com.shenzhentagram.controller;
 
+import com.shenzhentagram.model.UserPostCount;
 import com.shenzhentagram.model.UserRegisterDetail;
 import com.shenzhentagram.model.User;
 import com.shenzhentagram.model.UserUpdateDetail;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,21 +19,21 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping("/users")
 public class UserController extends TemplateRestController {
 
     public UserController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "user");
     }
 
-    @GetMapping(path = "/{user_id}")
+    @GetMapping("/{id}")
     public User getUser(
-            @PathVariable("user_id") long id
+            @PathVariable("id") long id
     ) {
-        return request(HttpMethod.GET, "/users/{user_id}", User.class, id);
+        return request(HttpMethod.GET, "/users/{id}", User.class, id);
     }
 
-    @GetMapping(path = "/search")
+    @GetMapping("/search")
     public List<User> searchUser(
             @RequestParam("name") String name
     ) {
@@ -44,14 +45,28 @@ public class UserController extends TemplateRestController {
         request(HttpMethod.POST, "/users", extractBody(request, UserRegisterDetail.class), Void.class);
     }
 
-    @GetMapping(path = "/self")
+    @GetMapping("/self")
     public User getSelf() {
         return requestWithAuth(HttpMethod.GET, "/users/self", User.class);
     }
 
-    @RequestMapping(method = { RequestMethod.PUT, RequestMethod.PATCH }, path = "/self")
+    @PatchMapping(path = "/self")
     public void updateSelf(HttpServletRequest request) throws IOException {
-        request(HttpMethod.PUT, "/users/self", extractBody(request, UserUpdateDetail.class), Void.class);
+        request(HttpMethod.PATCH, "/users/self", extractBody(request, UserUpdateDetail.class), Void.class);
+    }
+
+    /**
+     * [Internal only] Increase user posts count by one
+     */
+    public UserPostCount increasePosts(int id) {
+        return request(HttpMethod.POST, "/users/{id}/posts/count", UserPostCount.class, id);
+    }
+
+    /**
+     * [Internal only] Decrease user posts count by one
+     */
+    public UserPostCount decreasePosts(int id) {
+        return request(HttpMethod.PUT, "/users/{id}/posts/count", UserPostCount.class, id);
     }
 
 }

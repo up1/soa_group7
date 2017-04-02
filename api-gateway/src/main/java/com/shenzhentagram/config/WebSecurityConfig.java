@@ -24,24 +24,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Authentication Config
         http.authorizeRequests()
-                // permit CORS pre-flight request
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // permit ANY "/"
-                .antMatchers("/").permitAll()
-                // permit POST "/auth" for authentication
-                .antMatchers(HttpMethod.POST, "/auth").permitAll()
-                // permit POST "/users" for registration
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
-                // permit GET "/users/search" and "/users/{user_id}" for finding user
-                .antMatchers(HttpMethod.GET, "/users/**").permitAll()
+                // authorize "/users/self" for
+                // (GET) get self information
+                .antMatchers(HttpMethod.GET, "/users/self").authenticated()
+                // (PATCH) update self information
+                .antMatchers(HttpMethod.PATCH, "/users/self").authenticated()
+                // authorize "/posts" for
+                // (GET) getting the timeline of self's followings
+                .antMatchers(HttpMethod.GET, "/posts").authenticated()
+                // (POST) creating a new post
+                .antMatchers(HttpMethod.POST, "/posts").authenticated()
+                // authorize "/posts/{id}" for
+                // (PUT) upload owns post
+                .antMatchers("/posts/{id}").authenticated()
+                // (DELETE) delete owns post
+                .antMatchers("/posts/{id}").authenticated()
 
-                // For test only
-
-                // permit POST "/users" for registration
-                .antMatchers(HttpMethod.POST, "/posts").permitAll()
-
-                // Otherwise, need authenticate
-                .anyRequest().authenticated();
+                // Otherwise, permitted
+                .anyRequest().permitAll();
 
         // Filter Config
         // Register JWTAuthenticateFilter for filter any request to check authenticate

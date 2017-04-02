@@ -10,18 +10,20 @@ public class User {
     private String display_name;
     private int follows;
     private int followed_by;
+    private int post_count;
 
     public User() { }
 
-    public User(long id, String username, String full_name, String lastname, String bio, String profile_name, String display_name, int follows, int followed_by) {
+    public User(long id, String username, String full_name, String bio, String profile_picture, String display_name, int follows, int followed_by, int post_count) {
         this.id = id;
         this.username = username;
         this.full_name = full_name;
         this.bio = bio;
-        this.profile_picture = profile_name;
+        this.profile_picture = profile_picture;
         this.display_name = display_name;
         this.follows = follows;
         this.followed_by = followed_by;
+        this.post_count = post_count;
     }
 
     public long getId() {
@@ -88,4 +90,11 @@ public class User {
         this.followed_by = followed_by;
     }
 
+    public int getPost_count() {
+        return post_count;
+    }
+
+    public void setPost_count(int post_count) {
+        this.post_count = post_count;
+    }
 }

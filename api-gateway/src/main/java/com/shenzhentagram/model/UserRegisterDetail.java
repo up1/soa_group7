@@ -9,14 +9,16 @@ public class UserRegisterDetail {
     private String password;
     private String full_name;
     private String display_name;
+    private String profile_picture;
 
     public UserRegisterDetail() { }
 
-    public UserRegisterDetail(String username, String password, String full_name, String display_name) {
+    public UserRegisterDetail(String username, String password, String full_name, String display_name, String profile_picture) {
         this.username = username;
         this.password = password;
         this.full_name = full_name;
         this.display_name = display_name;
+        this.profile_picture = profile_picture;
     }
 
     public String getUsername() {
@@ -49,5 +51,13 @@ public class UserRegisterDetail {
 
     public void setDisplay_name(String display_name) {
         this.display_name = display_name;
+    }
+
+    public String getProfile_picture() {
+        return profile_picture;
+    }
+
+    public void setProfile_picture(String profile_picture) {
+        this.profile_picture = profile_picture;
     }
 }

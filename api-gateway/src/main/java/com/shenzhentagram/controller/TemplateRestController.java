@@ -27,7 +27,7 @@ import java.io.Serializable;
  * service.[service-name].ip = [current-service-ip]
  *
  * @author Meranote
- * @version 1.0
+ * @version 1.1
  */
 public abstract class TemplateRestController {
 
@@ -122,6 +122,14 @@ public abstract class TemplateRestController {
         HttpEntity<Object> entity = new HttpEntity<>(body, headers);
 
         return restTemplate.exchange(uri, method, entity, responseClass, uriVariables).getBody();
+    }
+
+    /**
+     * Get the current authenticated user
+     * @return current {@link AuthenticatedUser}
+     */
+    protected AuthenticatedUser getAuthenticatedUser() {
+        return (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
     }
 
 }
