@@ -1,20 +1,22 @@
 package com.shenzhentagram.posts;
 
-import com.shenzhentagram.model.AuthenticatedUser;
-import org.apache.commons.io.FilenameUtils;
+import com.shenzhentagram.exception.UserIdNotMatchException;
+import com.shenzhentagram.utility.FileUtility;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -25,70 +27,110 @@ import java.util.UUID;
 @RequestMapping(value = "/posts")
 public class PostController {
     private PostService postService;
+    private PostRepository postRepository;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, PostRepository postRepository) {
         this.postService = postService;
+        this.postRepository = postRepository;
     }
 
     @GetMapping()
     public Page<Post> getPosts(Pageable pageable) {
-        return postService.findAllByPage(pageable);
+        return postRepository.findAll(pageable);
     }
 
     @GetMapping(value = "/{id}")
     public Post getPosts(@PathVariable("id") long id) {
-        return postService.findById(id);
+        return postService.findPostOrFail(id);
     }
 
     @PostMapping()
-    public ResponseEntity<Post> postPost(Authentication authentication,
-                                  @RequestParam(value = "caption") String caption,
-                                  @RequestParam(value = "type") String type,
-                                  @RequestParam(value = "file") MultipartFile file) throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        String media = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
-        AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
+    public ResponseEntity<Post> postPost(
+            @RequestBody Map<String, Object> payload
+    ) throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException, MagicParseException, MagicException, MagicMatchNotFoundException {
+        String fileBase64 = (String) payload.remove("file");
+        FileUtility.FileDetail file = FileUtility.extractFileFromBase64(fileBase64);
+
+        String media = UUID.randomUUID().toString() + "." + file.extension;
 
         Post post = new Post();
-        post.setCaption(caption);
-        post.setType(type);
+        post.setCaption((String) payload.get("caption"));
+        post.setType((String) payload.get("type"));
         post.setMedia(media);
-        post.setUserId(userDetails.getId());
+        post.setUserId((int) payload.get("user_id"));
 
         return postService.storePost(post, file);
     }
 
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<Post> patchPost(Authentication authentication,
+    public ResponseEntity<Post> patchPost(
                                        @PathVariable("id") long id,
-                                       @RequestParam(value = "caption") String caption) {
-        AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
+                                       @RequestParam(value = "caption") String caption,
+                                       @RequestParam(value = "user_id") long user_id) {
+        Post post = postService.findPostOrFail(id);
 
-        Post post = postService.findById(id);
-
-        if (userDetails.getId() != post.getUserId()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (user_id != post.getUserId()) {
+            throw new UserIdNotMatchException(String.format("User ID %d not match with post's user ID", user_id));
         }
 
         post.setCaption(caption);
-        postService.patchPost(post);
+        postRepository.save(post);
 
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deletePost(Authentication authentication,
-                                       @PathVariable("id") long id) {
-        AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
+    public ResponseEntity<Post> deletePost(
+                                       @PathVariable("id") long id,
+                                       @RequestParam(value = "user_id") long user_id) {
+        Post post = postService.findPostOrFail(id);
 
-        Post post = postService.findById(id);
-
-        if (userDetails.getId() != post.getUserId()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (user_id != post.getUserId()) {
+            throw new UserIdNotMatchException(String.format("User ID %d not match with post's user ID", user_id));
         }
 
-        postService.deletePost(id);
+        postRepository.delete(id);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
+
+    @PostMapping(value = "/{id}/comments/count")
+    public ResponseEntity<Post> increaseComments(@PathVariable("id") long id) {
+        Post post = postService.findPostOrFail(id);
+        post.setComments(post.getComments()+1);
+        postRepository.save(post);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "/{id}/reactions/count")
+    public ResponseEntity<Post> increaseReactions(@PathVariable("id") long id) {
+        Post post = postService.findPostOrFail(id);
+        post.setReactions(post.getReactions()+1);
+        postRepository.save(post);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{id}/comments/count")
+    public ResponseEntity<Post> decreaseComments(@PathVariable("id") long id) {
+        Post post = postService.findPostOrFail(id);
+        post.setComments(post.getComments()-1);
+        postRepository.save(post);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+
+    @PutMapping(value = "/{id}/reactions/count")
+    public ResponseEntity<Post> decreaseReactions(@PathVariable("id") long id) {
+        Post post = postService.findPostOrFail(id);
+        post.setReactions(post.getReactions()-1);
+        postRepository.save(post);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
 }

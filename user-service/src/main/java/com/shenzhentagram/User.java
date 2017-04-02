@@ -4,26 +4,26 @@ public class User {
 
     private long id;
     private String username;
-    private String firstname;
-    private String lastname;
+    private String full_name;
     private String bio;
     private String profile_picture;
     private String display_name;
     private int follows;
     private int followed_by;
+    private int post_count;
 
     public User() { }
 
-    public User(long id, String username, String firstname, String lastname, String bio, String profile_name, String display_name, int follows, int followed_by) {
+    public User(long id, String username, String full_name, String bio, String profile_name, String display_name, int follows, int followed_by, int post_count) {
         this.id = id;
         this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        this.full_name = full_name;
         this.bio = bio;
         this.profile_picture = profile_name;
         this.display_name = display_name;
         this.follows = follows;
         this.followed_by = followed_by;
+        this.post_count = post_count;
     }
 
     public long getId() {
@@ -42,20 +42,12 @@ public class User {
         this.username = username;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFull_name() {
+        return full_name;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setFull_name(String full_name) {
+        this.full_name = full_name;
     }
 
     public String getBio() {
@@ -96,6 +88,14 @@ public class User {
 
     public void setFollowed_by(int followed_by) {
         this.followed_by = followed_by;
+    }
+
+    public int getPost_count() {
+        return post_count;
+    }
+
+    public void setPost_count(int post_count) {
+        this.post_count = post_count;
     }
 
 }
