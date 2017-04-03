@@ -9,7 +9,7 @@ const state = {
 }
 
 const getters = {
-  getPosts: state => state.posts
+  getPosts: state => state.posts.reverse()
 }
 
 const actions = {
