@@ -10,7 +10,8 @@ const _ = require('lodash');
 const DEFAULT_MESSAGE = 'Internal server error';
 
 function middleware(err, req, res, next) {
-    logger.logFullError(err, req.method, req.url);
+    //logger.logFullError(err, req.method, req.url);
+    console.log(err);
     if (err.isJoi) {
         res.status(httpStatus.BAD_REQUEST).json({
             error: _.map(err.details, d => d.message).join() || 'invalid request',

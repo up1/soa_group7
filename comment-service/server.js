@@ -42,8 +42,8 @@ _.each(require('./routes'), (verbs, url) => {
             actions = actions.concat(def.middleware);
         }
         actions.push(method);
-        winston.info(`register ${verb} /api/v${config.API_VERSION}${url}`);
-        apiRouter[verb](`/api/v${config.API_VERSION}${url}`, helper.autoWrapExpress(actions));
+        winston.info(`register ${verb} ${url}`);
+        apiRouter[verb](`${url}`, helper.autoWrapExpress(actions));
     });
 });
 

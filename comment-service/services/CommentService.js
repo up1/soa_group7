@@ -21,9 +21,9 @@ function* create(entity) {
     return created.toObject();
 }
 
-function* update(id, entity){
+function* update(id, entity, userId){
     try{
-        const comment = yield Comment.findOne({_id: id});
+        const comment = yield Comment.findOne({_id: id, userId: userId});
         _.extend(comment, entity);
         yield comment.save();
         return comment.toObject();
@@ -48,10 +48,11 @@ function* getSingle(id) {
 }
 
 
-function* deleteSingle(id) {
+function* deleteSingle(id, userId) {
     try{
-        const comment = yield Comment.findOne({_id: id});
+        const comment = yield Comment.findOne({_id: id, userId: userId});
         yield comment.remove();
+        return comment;
     }
     catch(e){
         return {
