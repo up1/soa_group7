@@ -14,6 +14,8 @@ import java.util.List;
 @RestController
 public class NotificationController extends TemplateRestController {
 
+    // FIXME Change return/response interface to class (implement the class)
+
     public NotificationController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "notification");
     }

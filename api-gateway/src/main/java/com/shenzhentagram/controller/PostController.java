@@ -3,11 +3,11 @@ package com.shenzhentagram.controller;
 import com.shenzhentagram.authentication.AuthenticatedUser;
 import com.shenzhentagram.model.Post;
 import com.shenzhentagram.model.PostCreateDetail;
+import com.shenzhentagram.model.PostPage;
 import com.shenzhentagram.model.PostUpdateDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,8 +32,10 @@ public class PostController extends TemplateRestController {
     }
 
     @GetMapping()
-    public Page<Post> getPosts(Pageable pageable) {
-        return requestWithAuth(HttpMethod.GET, "/posts", pageable, Page.class);
+    public PostPage getPosts(
+            Pageable pageable
+    ) {
+        return requestWithAuth(HttpMethod.GET, "/posts", pageable, PostPage.class);
     }
 
     @GetMapping(path = "/{id}")
@@ -52,7 +54,7 @@ public class PostController extends TemplateRestController {
         Post newPost = requestWithAuth(HttpMethod.POST, "/posts", detail, Post.class);
 
         // Increase post count
-        userController.increasePosts((int) getAuthenticatedUser().getId());
+//        userController.increasePosts((int) getAuthenticatedUser().getId());
 
         return newPost;
     }
@@ -69,8 +71,11 @@ public class PostController extends TemplateRestController {
     public void deletePost(
             @PathVariable("id") long id
     ) {
+        // Delete post
         requestWithAuth(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
-        userController.decreasePosts((int) getAuthenticatedUser().getId());
+
+        // Decrement post count
+//        userController.decreasePosts((int) getAuthenticatedUser().getId());
     }
 
 }

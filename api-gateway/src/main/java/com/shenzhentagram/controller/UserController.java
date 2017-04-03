@@ -1,9 +1,6 @@
 package com.shenzhentagram.controller;
 
-import com.shenzhentagram.model.UserPostCount;
-import com.shenzhentagram.model.UserRegisterDetail;
-import com.shenzhentagram.model.User;
-import com.shenzhentagram.model.UserUpdateDetail;
+import com.shenzhentagram.model.*;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -34,10 +31,10 @@ public class UserController extends TemplateRestController {
     }
 
     @GetMapping("/search")
-    public List<User> searchUser(
+    public UserList searchUser(
             @RequestParam("name") String name
     ) {
-        return request(HttpMethod.GET, "/users/search?name" + name, List.class);
+        return request(HttpMethod.GET, "/users/search?name" + name, UserList.class);
     }
 
     @PostMapping()
