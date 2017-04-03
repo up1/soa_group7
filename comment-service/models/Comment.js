@@ -9,7 +9,7 @@ const timestamps = require('mongoose-timestamp');
 //const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const CommentSchema = new mongoose.Schema({
-    comment: {
+    text: {
         type: String,
         require: true
     },

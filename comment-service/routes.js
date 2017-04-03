@@ -6,16 +6,31 @@
 const auth = require('./common/Auth.js');
 
 module.exports = {
-    '/comments/:postId': {
+    '/posts/:postId/comments': {
         get: {
             controller: 'CommentController',
-            method: 'getComments',
+            method: 'getCommentsByPostId',
         },
-    },
-    '/comment/:commend': {
         post: {
             controller: 'CommentController',
-            method: 'getSIngle',
+            method: 'createSingle',
+            middleware: [auth()],
         },
+    },
+    '/posts/:postId/comments/:commendId': {
+        get: {
+            controller: 'CommentController',
+            method: 'getSingle'
+        },
+        put: {
+            controller: 'CommentController',
+            method: 'updateSingle',
+            middleware: [auth()],
+        },
+        delete: {
+            controller: 'CommentController',
+            method: 'deleteSingle',
+            middleware: [auth()],
+        }
     }
 };
