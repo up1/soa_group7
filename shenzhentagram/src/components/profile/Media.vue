@@ -1,13 +1,14 @@
 <template>
   <div class="column is-one-third">
     <figure class="image is-1by1">
-      <img src="http://bulma.io/images/placeholders/256x256.png">
+      <img :src="'https://storage.googleapis.com/shenzhentagram-posts/' + this.post.media" alt="Image">
     </figure>
   </div>
 </template>
 
 <script type="text/babel">
   export default {
+    props: ['post'],
     data () {
       return {}
     }

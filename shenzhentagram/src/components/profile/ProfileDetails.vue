@@ -7,7 +7,7 @@
     </div>
 
     <ul class="profile-details">
-      <li><span class="subtitle is-5"><strong>112 </strong>posts</span></li>
+      <li><span class="subtitle is-5"><strong>{{this.user.post_count}} </strong>posts</span></li>
       <li><span class="subtitle is-5"><strong>{{this.user.followed_by}} </strong>followers</span></li>
       <li><span class="subtitle is-5"><strong>{{this.user.follows}} </strong>following</span></li>
     </ul>
