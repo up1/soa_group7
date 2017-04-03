@@ -34,6 +34,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/users/self").authenticated()
                 // permit GET "/users/search" and "/users/{user_id}" for finding user
                 .antMatchers(HttpMethod.GET, "/users/**").permitAll()
+                // permit POST, PUT "/users/{id}/posts/count" for increment/decrement post count
+                .antMatchers(HttpMethod.POST, "/users/{id}/posts/count").permitAll()
+                .antMatchers(HttpMethod.PUT, "/users/{id}/posts/count").permitAll()
                 // Otherwise, need authenticate
                 .anyRequest().authenticated();
 
