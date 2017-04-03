@@ -85,7 +85,7 @@ public class UserController {
 
         // If have image, extract
         FileUtility.FileDetail fileDetail = null;
-        if(payload.containsKey("profile_picture")) {
+        if(payload.containsKey("profile_picture") && payload.get("profile_picture") != null) {
             // Extract image (base64)
             String imageBase64 = (String) payload.remove("profile_picture");
             fileDetail = FileUtility.extractFileFromBase64(imageBase64);
