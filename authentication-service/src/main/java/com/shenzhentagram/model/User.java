@@ -18,10 +18,7 @@ public class User implements Serializable {
     private String username;
 
     @Column(nullable = false)
-    private String firstname;
-
-    @Column(nullable = false)
-    private String lastname;
+    private String full_name;
 
     @Column(nullable = false)
     private String bio;
@@ -41,17 +38,20 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String role;
 
+    @Column(nullable = false)
+    private int post_count;
+
     public User() { }
 
-    public User(String username, String firstname, String lastname, String bio, String profile_picture, String display_name, int follows, int followed_by, String role) {
+    public User(String username, String full_name, String bio, String profile_picture, String display_name, int follows, int followed_by, int post_count, String role) {
         this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        this.full_name = full_name;
         this.bio = bio;
         this.profile_picture = profile_picture;
         this.display_name = display_name;
         this.follows = follows;
         this.followed_by = followed_by;
+        this.post_count = post_count;
         this.role = role;
     }
 
@@ -71,20 +71,12 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFull_name() {
+        return full_name;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setFull_name(String full_name) {
+        this.full_name = full_name;
     }
 
     public String getBio() {
@@ -125,6 +117,14 @@ public class User implements Serializable {
 
     public void setFollowed_by(int followed_by) {
         this.followed_by = followed_by;
+    }
+
+    public int getPost_count() {
+        return post_count;
+    }
+
+    public void setPost_count(int post_count) {
+        this.post_count = post_count;
     }
 
     public String getRole() {
