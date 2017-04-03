@@ -34,7 +34,7 @@
               </div>
 
               <footer class="card-footer">
-                <a class="card-footer-item" v-on:click="doPost">Save</a>
+                <a class="card-footer-item" v-on:click="doPost">Post</a>
               </footer>
             </div>
 
@@ -149,5 +149,24 @@
 <style lang="scss" scoped>
   .card {
     margin: 50px 0;
+  }
+
+  a.card-footer-item {
+    font-size: 1.5rem;
+    font-weight: bold;
+
+    background-color: #00D1B2;
+    color: white;
+
+    &:hover {
+      background-color: #00c4a7;
+      color: #fff;
+    }
+
+    &:active {
+      background-color: #00b89c;
+      box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.2);
+      color: #fff;
+    }
   }
 </style>
