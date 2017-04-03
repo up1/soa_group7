@@ -27,7 +27,7 @@ import java.io.Serializable;
  * service.[service-name].ip = [current-service-ip]
  *
  * @author Meranote
- * @version 1.1
+ * @version 1.2
  */
 public abstract class TemplateRestController {
 
@@ -66,9 +66,9 @@ public abstract class TemplateRestController {
      * @param responseClass target class that will map the response body into
      * @param uriVariables path variables
      * @param <T> target class that will map the response body into
-     * @return mapped response object
+     * @return {@link ResponseEntity} => mapped response object
      */
-    protected <T> T request(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) {
+    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) {
         return request(method, uri, "", responseClass, uriVariables);
     }
 
@@ -80,12 +80,12 @@ public abstract class TemplateRestController {
      * @param body request body
      * @param uriVariables path variables
      * @param <T> target class that will map the response body into
-     * @return mapped response object
+     * @return {@link ResponseEntity} => mapped response object
      */
-    protected <T> T request(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
+    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
         HttpEntity<Object> entity = new HttpEntity<>(body, new HttpHeaders());
 
-        return restTemplate.exchange(uri, method, entity, responseClass, uriVariables).getBody();
+        return restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
     }
 
     /**
@@ -95,9 +95,9 @@ public abstract class TemplateRestController {
      * @param responseClass target class that will map the response body into
      * @param uriVariables path variables
      * @param <T> target class that will map the response body into
-     * @return mapped response object
+     * @return {@link ResponseEntity} => mapped response object
      */
-    protected <T> T requestWithAuth(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) {
+    protected <T> ResponseEntity<T> requestWithAuth(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) {
         return requestWithAuth(method, uri, "", responseClass, uriVariables);
     }
 
@@ -109,9 +109,9 @@ public abstract class TemplateRestController {
      * @param body request body
      * @param uriVariables path variables
      * @param <T> target class that will map the response body into
-     * @return mapped response object
+     * @return {@link ResponseEntity} => mapped response object
      */
-    protected <T> T requestWithAuth(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
+    protected <T> ResponseEntity<T> requestWithAuth(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
         AuthenticatedUser authenticatedUser = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
 
         HttpHeaders headers = new HttpHeaders();
@@ -121,7 +121,7 @@ public abstract class TemplateRestController {
         );
         HttpEntity<Object> entity = new HttpEntity<>(body, headers);
 
-        return restTemplate.exchange(uri, method, entity, responseClass, uriVariables).getBody();
+        return restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
     }
 
     /**
