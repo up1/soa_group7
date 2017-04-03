@@ -1,20 +1,16 @@
 package com.shenzhentagram.models;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 /**
  * Created by Jiravat on 3/13/2017.
  */
-
 public class NotificationPost extends NotificationAbstract {
-
-    long id;
 
     long post_id;
 
     long comment_id;
 
     public NotificationPost(long id, long post_id, long comment_id) {
+        this.id = id;
         this.post_id = post_id;
         this.comment_id = comment_id;
     }

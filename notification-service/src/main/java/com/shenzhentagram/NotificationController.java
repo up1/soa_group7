@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class NotificaitonController {
+public class NotificationController {
 
     @Autowired
     private NotificationRepository notificationRepository;

@@ -1,0 +1,6 @@
+datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+datasource.url=jdbc:mysql://localhost:3306/notifications
+datasource.username=
+datasource.password=
+
+logging.level.org.springframework.web=DEBUG

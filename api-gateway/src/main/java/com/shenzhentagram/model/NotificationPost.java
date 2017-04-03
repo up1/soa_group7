@@ -13,6 +13,7 @@ public class NotificationPost extends NotificationAbstract {
     long comment_id;
 
     public NotificationPost(long id, long post_id, long comment_id) {
+        this.id = id;
         this.post_id = post_id;
         this.comment_id = comment_id;
     }

@@ -1,6 +1,5 @@
 package com.shenzhentagram.mappers;
 
-import com.shenzhentagram.models.Notification;
 import com.shenzhentagram.models.NotificationPost;
 import org.springframework.jdbc.core.RowMapper;
 

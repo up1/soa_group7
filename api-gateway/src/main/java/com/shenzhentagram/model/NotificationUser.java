@@ -9,6 +9,7 @@ public class NotificationUser extends NotificationAbstract {
     long userId;
 
     public NotificationUser(long id, long userId) {
+        this.id = id;
         this.userId = userId;
     }
 

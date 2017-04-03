@@ -1,10 +1,5 @@
 package com.shenzhentagram.models;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.hibernate.mapping.RootClass;
-
 /**
  * Created by Jiravat on 3/14/2017.
  */

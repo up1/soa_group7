@@ -9,6 +9,7 @@ public class NotificationReaction extends NotificationAbstract  {
     long reaction_id;
 
     public NotificationReaction(long id, long reaction_id) {
+        this.id = id;
         this.reaction_id = reaction_id;
     }
 

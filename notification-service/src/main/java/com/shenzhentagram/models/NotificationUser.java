@@ -1,16 +1,14 @@
 package com.shenzhentagram.models;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 /**
  * Created by Jiravat on 3/13/2017.
  */
-
 public class NotificationUser extends NotificationAbstract {
     long id;
     long userId;
 
     public NotificationUser(long id, long userId) {
+        this.id = id;
         this.userId = userId;
     }
 

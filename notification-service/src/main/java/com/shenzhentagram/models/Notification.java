@@ -11,7 +11,6 @@ import java.util.Date;
 /**
  * Created by Jiravat on 3/9/2017.
  */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Notification {
     private long id;
@@ -103,7 +102,7 @@ public class Notification {
         this.checkStatus = checkStatus;
     }
 
-    public Timestamp  getTime() {
+    public Timestamp getTime() {
         return time;
     }
 
