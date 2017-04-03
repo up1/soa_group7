@@ -121,22 +121,26 @@
         }
       },
       doPost () {
-        if (this.form.selectedFile) {
-          this.$http.post('posts', this.form.body)
-          .then(
-            // Success
-            () => {
-              console.log('Post complete')
-              this.$router.push({ path: '/' })
-            },
-            // Error
-            () => {
-              console.error('Something wrong in PostForm.vue -> doPost();')
-              this.error = 'Something wrong'
-              this.showModal()
-            }
-          )
+        if (!this.form.selectedFile) {
+          this.error = 'Please select file'
+          this.showModal()
+          return
         }
+
+        this.$http.post('posts', this.form.body)
+        .then(
+          // Success
+          () => {
+            console.log('Post complete')
+            this.$router.push({ path: '/' })
+          },
+          // Error
+          () => {
+            console.error('Something wrong in PostForm.vue -> doPost();')
+            this.error = 'Something wrong'
+            this.showModal()
+          }
+        )
       }
     }
   }
