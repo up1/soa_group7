@@ -39,13 +39,13 @@ public class NotificaitonController {
         return this.notificationRepository.findByUserId(id, limit, page);
     }
 
-    @RequestMapping(method = RequestMethod.POST , path = "/notifications/create")
+    @RequestMapping(method = RequestMethod.POST , path = "/notifications")
     public void createNotifications(@RequestBody List<Notification> notifications, HttpServletResponse response) {
         int SC = this.notificationRepository.createNotifications(notifications);
         response.setStatus(SC);
     }
 
-    @RequestMapping(method = RequestMethod.PUT , path = "/notifications/update", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(method = RequestMethod.PUT , path = "/notifications", produces = { MediaType.APPLICATION_JSON_VALUE })
     public void updateNotifications(@RequestBody List<Notification> notifications, HttpServletResponse response) {
         int SC = this.notificationRepository.updateNotifications(notifications);
         response.setStatus(SC);
