@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-image">
       <figure class="image is-1by1">
-        <img :src="'https://s3-ap-southeast-1.amazonaws.com/shenzhentagram/' + this.post.media" alt="Image">
+        <img :src="'https://storage.googleapis.com/shenzhentagram-posts/' + this.post.media" alt="Image">
       </figure>
     </div>
     <div class="card-content">
