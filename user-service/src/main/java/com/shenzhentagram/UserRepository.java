@@ -35,7 +35,7 @@ public class UserRepository {
     public List<User> findByName(String name) {
         try {
             return this.jdbcTemplate.query(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by " +
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by, post_count " +
                             "FROM users " +
                             "WHERE full_name = ?",
                     new Object[] {
@@ -58,7 +58,7 @@ public class UserRepository {
         }
 
         return this.jdbcTemplate.query(
-                "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by " +
+                "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by, post_count " +
                     "FROM users " +
                     "LIMIT ?, ?",
                 new Object[] {
@@ -71,8 +71,8 @@ public class UserRepository {
     @Transactional
     public void save(User user, String password) {
         String sql = "INSERT INTO " +
-                "users(username, password, full_name, bio, profile_picture, display_name, follows, followed_by, role) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "users(username, password, full_name, bio, profile_picture, display_name, follows, followed_by, post_count, role) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try{
             this.jdbcTemplate.update(
                     sql,
@@ -82,6 +82,7 @@ public class UserRepository {
                     user.getBio(),
                     user.getProfile_picture(),
                     user.getDisplay_name(),
+                    0,
                     0,
                     0,
                     "USER"
