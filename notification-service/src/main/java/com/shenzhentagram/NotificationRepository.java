@@ -432,6 +432,8 @@ public class NotificationRepository {
                     case "reaction":
                         notificationId = createNotificationReaction((NotificationReaction) notification.getNotification());
                         break;
+                    default:
+                        System.out.println("Type not found");
                 }
                 notification.setNotificationId(notificationId);
                 this.jdbcTemplate.update(insertSql,
@@ -459,5 +461,4 @@ public class NotificationRepository {
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
-
 }
