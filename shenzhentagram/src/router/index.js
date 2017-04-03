@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
+import PostForm from '@/components/PostForm'
 import Profile from '@/components/profile/Profile'
 import ProfileEdit from '@/components/profile/ProfileEdit'
 import VueResource from 'vue-resource'
@@ -22,6 +23,11 @@ const router = new Router({
       path: '/',
       name: 'home',
       component: Home,
+      meta: {auth: true}
+    }, {
+      path: '/post/new',
+      name: 'new_post',
+      component: PostForm,
       meta: {auth: true}
     }, {
       path: '/users/:userId',

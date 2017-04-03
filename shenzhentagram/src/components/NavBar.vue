@@ -12,12 +12,12 @@
             <i class="fa fa-search fa-2x" aria-hidden="true"></i>
           </span>
         </a>
-        <a class="nav-item">
+        <router-link :to="{name: 'new_post'}" class="nav-item">
           <span class="icon is-medium" style="padding-right: 0.45rem;">
             <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
           </span>
           <span style="font-weight: bold;">New Post</span>
-        </a>
+        </router-link>
       </div>
 
       <div class="nav-center">
@@ -54,7 +54,7 @@
       logout () {
         this.$auth.logout({
           success () {
-            this.$router.push('login')
+            this.$router.push({ path: '/login' })
           },
           error () {
 
