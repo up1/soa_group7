@@ -82,6 +82,8 @@ shenzhentagram/node_modules/
 
 authentication-service/target/
 
+api-gateway/target/
+
 # dotenv
 .env
 
