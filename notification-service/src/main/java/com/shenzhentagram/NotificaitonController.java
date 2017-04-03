@@ -24,6 +24,13 @@ public class NotificaitonController {
         return this.notificationRepository.findById(id);
     }
 
+
+    @RequestMapping(method = RequestMethod.PUT , path = "/notifications/{notification_id}", produces = { MediaType.APPLICATION_JSON_VALUE })
+    public void updateNotification(@PathVariable("notification_id") long id, @RequestBody Notification notification, HttpServletResponse response) {
+        int SC = this.notificationRepository.updateNotification(notification, id);
+        response.setStatus(SC);
+    }
+
     @RequestMapping(method = RequestMethod.GET , path = "/notifications", produces = { MediaType.APPLICATION_JSON_VALUE })
     public List<Notification> getNotificationsByUser(@RequestParam("limit") int limit,@RequestParam("page") int page,HttpServletRequest request) {
         JWTAuthenticationService authen = new JWTAuthenticationService();
@@ -32,15 +39,37 @@ public class NotificaitonController {
         return this.notificationRepository.findByUserId(id, limit, page);
     }
 
-    @RequestMapping(method = RequestMethod.POST , path = "/notifications/create")
+    @RequestMapping(method = RequestMethod.POST , path = "/notifications")
     public void createNotifications(@RequestBody List<Notification> notifications, HttpServletResponse response) {
         int SC = this.notificationRepository.createNotifications(notifications);
         response.setStatus(SC);
     }
 
-    @RequestMapping(method = RequestMethod.PUT , path = "/notifications/update", produces = { MediaType.APPLICATION_JSON_VALUE })
-    public void updateNotification(@RequestBody List<Notification> notifications, HttpServletResponse response) {
+    @RequestMapping(method = RequestMethod.PUT , path = "/notifications", produces = { MediaType.APPLICATION_JSON_VALUE })
+    public void updateNotifications(@RequestBody List<Notification> notifications, HttpServletResponse response) {
         int SC = this.notificationRepository.updateNotifications(notifications);
         response.setStatus(SC);
     }
+
+    @RequestMapping(method = RequestMethod.POST , path = "/notifications/comment")
+    public void createNotificationPost(@RequestBody List<Notification> notifications, HttpServletResponse response) {
+
+        int SC = this.notificationRepository.createNotifications(notifications, "comment");
+        response.setStatus(SC);
+    }
+
+    @RequestMapping(method = RequestMethod.POST , path = "/notifications/reaction")
+    public void createNotificationReaction(@RequestBody List<Notification> notifications, HttpServletResponse response) {
+
+        int SC = this.notificationRepository.createNotifications(notifications, "reaction");
+        response.setStatus(SC);
+    }
+
+    @RequestMapping(method = RequestMethod.POST , path = "/notifications/follow")
+    public void createNotificationUser(@RequestBody List<Notification> notifications, HttpServletResponse response) {
+
+        int SC = this.notificationRepository.createNotifications(notifications, "followed_by");
+        response.setStatus(SC);
+    }
+
 }
