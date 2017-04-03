@@ -94,6 +94,28 @@ public class UserRepository {
     }
 
     @Transactional
+    public void update(User user) {
+        String sql = "UPDATE users " +
+                "SET full_name = ?, bio = ?, display_name = ?, follows = ?, followed_by = ?, post_count = ? " +
+                "WHERE id = ?";
+        try{
+            this.jdbcTemplate.update(
+                    sql,
+                    user.getFull_name(),
+                    user.getBio(),
+                    user.getDisplay_name(),
+                    user.getFollows(),
+                    user.getFollowed_by(),
+                    user.getPost_count(),
+                    user.getId()
+            );
+        } catch (Exception e){
+            throw e;
+        }
+
+    }
+
+    @Transactional
     public void delete(Long id) {
         String sql = "DELETE FROM users WHERE id = ?";
         this.jdbcTemplate.update(sql, id);
