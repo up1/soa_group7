@@ -10,11 +10,14 @@ module.exports = {
     browser: true,
     jquery: true
   },
-  // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
-  extends: 'standard',
   // required to lint *.vue files
   plugins: [
     'html'
+  ],
+  // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
+  // extend some setting value
+  extends: [
+    'standard'
   ],
   // add your custom rules here
   'rules': {
@@ -24,5 +27,8 @@ module.exports = {
     'generator-star-spacing': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
+  },
+  "globals": {
+    "_": true
   }
 }
