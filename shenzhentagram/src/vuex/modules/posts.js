@@ -14,7 +14,7 @@ const getters = {
 
 const actions = {
   fetchPosts ({commit}) {
-    Vue.http.get('http://104.154.167.139:9002/posts')
+    Vue.http.get('posts')
       .then((response) => commit(types.FETCH_POSTS, response.body.content))
   }
 }

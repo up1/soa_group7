@@ -1,7 +1,7 @@
 <template>
   <div class="columns">
     <div class="column is-narrow profile">
-      <figure class="image  profile-figure is-1by1">
+      <figure class="image profile-figure is-1by1">
         <img class="profile-img" src="http://bulma.io/images/placeholders/256x256.png">
       </figure>
     </div>
