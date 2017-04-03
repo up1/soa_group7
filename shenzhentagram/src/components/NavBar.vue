@@ -1,7 +1,7 @@
  <template>
   <nav class="nav has-shadow">
     <div class="container">
-      <div class="nav-left nav-menu">
+      <div class="nav-left nav-menu" v-if="$auth.check()">
         <router-link :to="{name: 'home'}" class="nav-item">
           <span class="icon is-medium">
             <i class="fa fa-home fa-2x" aria-hidden="true"></i>
@@ -29,13 +29,13 @@
 
       <!-- This "nav-menu" is hidden on mobile -->
       <!-- Add the modifier "is-active" to display it on mobile -->
-      <div class="nav-right nav-menu">
-        <router-link :to="{name: 'users', params: {userId: this.$auth.user().id}}" v-if="$auth.check()" class="nav-item">
+      <div class="nav-right nav-menu" v-if="$auth.check()">
+        <router-link :to="{name: 'users', params: {userId: this.$auth.user().id}}"  class="nav-item">
           <span class="icon is-medium">
             <i class="fa fa-user-o fa-2x" aria-hidden="true"></i>
           </span>
         </router-link>
-        <a class="nav-item" v-if="$auth.check()" v-on:click="logout">
+        <a class="nav-item" v-on:click="logout">
           <span class="icon is-medium">
             <i class="fa fa-sign-out fa-2x" aria-hidden="true"></i>
           </span>
