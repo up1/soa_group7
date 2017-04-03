@@ -52,23 +52,23 @@ public class NotificaitonController {
     }
 
     @RequestMapping(method = RequestMethod.POST , path = "/notifications/comment")
-    public void createNotificationPost(@RequestBody Notification notification, HttpServletResponse response) {
+    public void createNotificationPost(@RequestBody List<Notification> notifications, HttpServletResponse response) {
 
-        int SC = this.notificationRepository.createNotification(notification, "comment");
+        int SC = this.notificationRepository.createNotifications(notifications, "comment");
         response.setStatus(SC);
     }
 
     @RequestMapping(method = RequestMethod.POST , path = "/notifications/reaction")
-    public void createNotificationReaction(@RequestBody Notification notification, HttpServletResponse response) {
+    public void createNotificationReaction(@RequestBody List<Notification> notifications, HttpServletResponse response) {
 
-        int SC = this.notificationRepository.createNotification(notification, "reaction");
+        int SC = this.notificationRepository.createNotifications(notifications, "reaction");
         response.setStatus(SC);
     }
 
     @RequestMapping(method = RequestMethod.POST , path = "/notifications/follow")
-    public void createNotificationUser(@RequestBody Notification notification, HttpServletResponse response) {
+    public void createNotificationUser(@RequestBody List<Notification> notifications, HttpServletResponse response) {
 
-        int SC = this.notificationRepository.createNotification(notification, "followed_by");
+        int SC = this.notificationRepository.createNotifications(notifications, "followed_by");
         response.setStatus(SC);
     }
 

@@ -417,12 +417,13 @@ public class NotificationRepository {
     }
 
     @Transactional()
-    public int createNotification(Notification notification, String type) {
+    public int createNotifications(List<Notification> notifications, String type) {
         try {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
+            for (Notification notification  : notifications) {
                 long notificationId = 1;
-                switch (type){
+                switch (type) {
                     case "followed_by":
                         notificationId = createNotificationUser((NotificationUser) notification.getNotification());
                         break;
@@ -437,7 +438,7 @@ public class NotificationRepository {
                 }
                 notification.setNotificationId(notificationId);
                 this.jdbcTemplate.update(insertSql,
-                        new Object[] {
+                        new Object[]{
                                 notification.getId(),
                                 notification.getUserId(),
                                 notification.getType(),
@@ -453,7 +454,7 @@ public class NotificationRepository {
                                 notification.getCheckStatus()
                         }
                 );
-
+            }
 
             return HttpServletResponse.SC_CREATED;
         } catch (Exception exception) {
