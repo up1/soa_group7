@@ -4,8 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import moment from 'vue-moment'
-import './styles/style.css'
-import 'bulma'
+import './assets/scss/app.scss'
 
 Vue.config.productionTip = false
 

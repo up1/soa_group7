@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'Cloud';
+    src: url('../fonts/cloud-bold-webfont.eot');
+    src: url('../fonts/cloud-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/cloud-bold-webfont.woff2') format('woff2'),
+         url('../fonts/cloud-bold-webfont.ttf') format('truetype'),
+         url('../fonts/cloud-bold-webfont.svg#cloudbold') format('svg');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'Cloud';
+    src: url('../fonts/cloud-light-webfont.eot');
+    src: url('../fonts/cloud-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/cloud-light-webfont.woff2') format('woff2'),
+         url('../fonts/cloud-light-webfont.ttf') format('truetype'),
+         url('../fonts/cloud-light-webfont.svg#cloud_lightlight') format('svg');
+    font-weight: normal;
+}

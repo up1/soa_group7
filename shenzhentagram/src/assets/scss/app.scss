@@ -1,0 +1,17 @@
+// Import library
+@import "~bulma";
+
+// Import deps
+@import "./font";
+@import "./typo";
+
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 18px;
+}
+
+html, body, input, select, textarea {
+  // font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Cloud', Helvetica, Arial, sans-serif;
+}
