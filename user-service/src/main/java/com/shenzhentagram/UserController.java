@@ -83,26 +83,33 @@ public class UserController {
         // Extract the password
         String password = (String) payload.remove("password");
 
-        // Extract image (base64)
-        String imageBase64 = (String) payload.remove("profile_picture");
-        FileUtility.FileDetail fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+        // If have image, extract
+        FileUtility.FileDetail fileDetail = null;
+        if(payload.containsKey("profile_picture")) {
+            // Extract image (base64)
+            String imageBase64 = (String) payload.remove("profile_picture");
+            fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+        }
 
         // Extract user
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.convertValue(payload, User.class);
 
-        // Set picture & upload to storage
-        user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
-
         try {
-            // Upload file
-            minio.putObject(
-                    bucket,
-                    user.getProfile_picture(),
-                    fileDetail.inputStream,
-                    fileDetail.size,
-                    fileDetail.type
-            );
+            // if have image, upload
+            if (fileDetail != null) {
+                // Set picture & upload to storage
+                user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
+
+                // Upload file
+                minio.putObject(
+                        bucket,
+                        user.getProfile_picture(),
+                        fileDetail.inputStream,
+                        fileDetail.size,
+                        fileDetail.type
+                );
+            }
 
             // Save user
             this.userRepository.save(user, password);
