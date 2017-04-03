@@ -83,26 +83,33 @@ public class UserController {
         // Extract the password
         String password = (String) payload.remove("password");
 
-        // Extract image (base64)
-        String imageBase64 = (String) payload.remove("profile_picture");
-        FileUtility.FileDetail fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+        // If have image, extract
+        FileUtility.FileDetail fileDetail = null;
+        if(payload.containsKey("profile_picture") && payload.get("profile_picture") != null) {
+            // Extract image (base64)
+            String imageBase64 = (String) payload.remove("profile_picture");
+            fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+        }
 
         // Extract user
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.convertValue(payload, User.class);
 
-        // Set picture & upload to storage
-        user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
-
         try {
-            // Upload file
-            minio.putObject(
-                    bucket,
-                    user.getProfile_picture(),
-                    fileDetail.inputStream,
-                    fileDetail.size,
-                    fileDetail.type
-            );
+            // if have image, upload
+            if (fileDetail != null) {
+                // Set picture & upload to storage
+                user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
+
+                // Upload file
+                minio.putObject(
+                        bucket,
+                        user.getProfile_picture(),
+                        fileDetail.inputStream,
+                        fileDetail.size,
+                        fileDetail.type
+                );
+            }
 
             // Save user
             this.userRepository.save(user, password);
@@ -124,25 +131,43 @@ public class UserController {
     }
 
     @PatchMapping("/self")
-    public void updateSelf() {
-        // TODO Implement update self profile
-        throw new NotImplementedException();
+    public void updateSelf(
+            @RequestBody Map<String, Object> payload
+    ) {
+        AuthenticatedUser authUser = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
+        User user = this.userRepository.findById(authUser.getId());
+
+        if(payload.containsKey("full_name")) {
+            user.setFull_name((String) payload.get("full_name"));
+        }
+
+        if(payload.containsKey("bio")) {
+            user.setBio((String) payload.get("bio"));
+        }
+
+        if(payload.containsKey("display_name")) {
+            user.setDisplay_name((String) payload.get("display_name"));
+        }
+
+        this.userRepository.update(user);
     }
 
     @PostMapping("/{id}/posts/count")
-    public ResponseEntity<Map<String, Object>> increasePosts(
-            @PathVariable("id") int id
+    public void increasePosts(
+            @PathVariable("id") long id
     ) {
-        // TODO Make a method in UserRepository that increase post_count by one
-        throw new NotImplementedException();
+        User user = this.userRepository.findById(id);
+        user.setPost_count(user.getPost_count() + 1);
+        this.userRepository.update(user);
     }
 
     @PutMapping("/{id}/posts/count")
-    public ResponseEntity<Map<String, Object>> decreasePosts(
-            @PathVariable("id") int id
+    public void decreasePosts(
+            @PathVariable("id") long id
     ) {
-        // TODO Make a method in UserRepository that decrease post_count by one
-        throw new NotImplementedException();
+        User user = this.userRepository.findById(id);
+        user.setPost_count(user.getPost_count() - 1);
+        this.userRepository.update(user);
     }
 
 }

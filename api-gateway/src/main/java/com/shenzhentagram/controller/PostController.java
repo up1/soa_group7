@@ -53,7 +53,7 @@ public class PostController extends TemplateRestController {
         ResponseEntity<Post> response = requestWithAuth(HttpMethod.POST, "/posts", detail, Post.class);
 
         // Increase post count
-//        userController.increasePosts((int) getAuthenticatedUser().getId());
+        userController.increasePosts((int) getAuthenticatedUser().getId());
 
         return response;
     }
@@ -74,7 +74,7 @@ public class PostController extends TemplateRestController {
         ResponseEntity<Void> response = requestWithAuth(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
 
         // Decrement post count
-//        userController.decreasePosts((int) getAuthenticatedUser().getId());
+        userController.decreasePosts((int) getAuthenticatedUser().getId());
 
         return response;
     }
