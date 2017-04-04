@@ -49,8 +49,8 @@ function* getCommentsByPostId(req, res) {
     const limit = 30;
     try{
         Comment.find({'postId': postId}).exec(function(err,comments){
-            // if(err)
-            //     return res.json({"msg": "comments not found"}, 404);
+            if(err)
+                return res.json({"msg": "error"}, 404);
             res.json(comments, 200);
         });
     }
