@@ -1,6 +1,6 @@
 <template>
   <div class="column is-one-third">
-    <figure class="image is-1by1">
+    <figure class="image">
       <img :src="'https://storage.googleapis.com/shenzhentagram-posts/' + this.post.media" alt="Image">
     </figure>
   </div>
