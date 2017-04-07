@@ -35,7 +35,7 @@ public class UserRepository {
     public List<User> findByName(String name) {
         try {
             return this.jdbcTemplate.query(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by, post_count " +
+                    "SELECT id, profile_picture, display_name " +
                             "FROM users " +
                             "WHERE full_name = ?",
                     new Object[] {
