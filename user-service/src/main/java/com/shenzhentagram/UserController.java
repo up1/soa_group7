@@ -131,7 +131,7 @@ public class UserController {
     }
 
     @PatchMapping("/self")
-    public void updateSelf(
+    public User updateSelf(
             @RequestBody Map<String, Object> payload
     ) {
         AuthenticatedUser authUser = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
@@ -150,6 +150,8 @@ public class UserController {
         }
 
         this.userRepository.update(user);
+
+        return(user);
     }
 
     @PostMapping("/{id}/posts/count")
