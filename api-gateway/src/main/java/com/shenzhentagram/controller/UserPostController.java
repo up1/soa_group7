@@ -25,7 +25,7 @@ public class UserPostController extends TemplateRestController {
             Pageable pageable,
             @PathVariable("id") long id
     ) {
-        return requestWithAuth(HttpMethod.GET, "/users/{id}/posts", pageable, PostPage.class, id);
+        return request(HttpMethod.GET, "/users/{id}/posts", pageable, PostPage.class, id);
     }
 
 }
