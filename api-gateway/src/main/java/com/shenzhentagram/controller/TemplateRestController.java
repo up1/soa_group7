@@ -9,12 +9,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * Template Rest Controller<br>
@@ -33,6 +33,8 @@ public abstract class TemplateRestController {
 
     protected RestTemplate restTemplate;
 
+    private static final int TIMEOUT = 20*1000;
+
     /**
      * Setup the template for REST request
      * @param environment
@@ -45,6 +47,11 @@ public abstract class TemplateRestController {
         String port = environment.getProperty("service." + serviceName + ".port");
 
         this.restTemplate = restTemplateBuilder.rootUri(protocol + "://" + ip + ":" + port).build();
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(TIMEOUT);
+        requestFactory.setReadTimeout(TIMEOUT);
+
+        restTemplate.setRequestFactory(requestFactory);
     }
 
     /**

@@ -47,7 +47,7 @@ public class UserController extends TemplateRestController {
 
     @PatchMapping(path = "/self")
     public ResponseEntity<User> updateSelf(HttpServletRequest request) throws IOException {
-        return request(HttpMethod.PATCH, "/users/self", extractBody(request, UserUpdateDetail.class), User.class);
+        return requestWithAuth(HttpMethod.PATCH, "/users/self", extractBody(request, UserUpdateDetail.class), User.class);
     }
 
     /**
