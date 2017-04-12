@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shenzhentagram.authentication.AuthenticatedUser;
 import com.shenzhentagram.utility.FileUtility;
 import io.minio.MinioClient;
-import io.minio.errors.*;
+import io.minio.errors.MinioException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.xmlpull.v1.XmlPullParserException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -151,7 +150,7 @@ public class UserController {
 
         this.userRepository.update(user);
 
-        return(user);
+        return user;
     }
 
     @PostMapping("/{id}/posts/count")
