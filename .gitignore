@@ -84,6 +84,8 @@ authentication-service/target/
 
 api-gateway/target/
 
+comment-service/node_modules/
+
 # dotenv
 .env
 
