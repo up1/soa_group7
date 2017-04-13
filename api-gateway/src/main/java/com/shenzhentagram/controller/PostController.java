@@ -13,13 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.HashMap;
 
-/**
- * Created by Meranote on 3/20/2017.
- */
 @CrossOrigin
 @RestController
 @RequestMapping(path = "/posts", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -41,7 +36,7 @@ public class PostController extends TemplateRestController {
     )
     public ResponseEntity<PostPage> getPosts(
             Pageable pageable
-    ) throws IOException {
+    ) {
         ResponseEntity<PostPage> responseEntity = request(HttpMethod.GET, "/posts", pageable, PostPage.class);
 
         // Embed user into posts
@@ -69,7 +64,7 @@ public class PostController extends TemplateRestController {
     })
     public ResponseEntity<Post> getPost(
             @PathVariable("id") long id
-    ) throws IOException {
+    ) {
         ResponseEntity<Post> responseEntity = request(HttpMethod.GET, "/posts/{id}", Post.class, id);
 
         // Embed user into post
@@ -79,9 +74,15 @@ public class PostController extends TemplateRestController {
     }
 
     @PostMapping()
+    @ApiOperation(
+            tags = "Post-API",
+            value = "createPost",
+            nickname = "createPost",
+            notes = "Create new post"
+    )
     public ResponseEntity<Post> createPost(
             @RequestBody PostCreate detail
-    ) throws IOException {
+    ) {
         detail.setUser_id(getAuthenticatedUser().getId());
 
         // Create post
@@ -100,17 +101,37 @@ public class PostController extends TemplateRestController {
     }
 
     @PatchMapping("/{id}")
+    @ApiOperation(
+            tags = "Post-API",
+            value = "updatePost",
+            nickname = "updatePost",
+            notes = "Update post"
+    )
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Post not found")
+    })
     public ResponseEntity<Post> updatePost(
             @PathVariable("id") long id,
-            @RequestBody PostUpdateDetail detail
-    ) throws IOException {
+            @RequestBody PostUpdate detail
+    ) {
+        // FIXME check authenticated user before update or send auth user id to post service and let it handle itself
+
         return request(HttpMethod.PATCH, "/posts/{id}", detail, Post.class, id);
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation(
+            tags = "Post-API",
+            value = "deletePost",
+            nickname = "deletePost",
+            notes = "Delete post"
+    )
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Post not found")
+    })
     public ResponseEntity<Void> deletePost(
             @PathVariable("id") long id
-    ) throws IOException {
+    ) {
         // FIXME check authenticated user before delete or send auth user id to post service and let it handle itself
 
         // Delete post
@@ -128,29 +149,29 @@ public class PostController extends TemplateRestController {
     /**
      * [Internal only] Increase post comment count by one
      */
-    public ResponseEntity<Post> increaseComments(long id) throws IOException {
-        return request(HttpMethod.POST, "/posts/{id}/comments/count", Post.class, id);
+    public int increaseComments(long id) {
+        return request(HttpMethod.POST, "/posts/{id}/comments/count", Post.class, id).getBody().getComments();
     }
 
     /**
      * [Internal only] Increase post reaction count by one
      */
-    public ResponseEntity<Post> increaseReactions(long id) throws IOException {
-        return request(HttpMethod.POST, "/posts/{id}/reactions/count", Post.class, id);
+    public int increaseReactions(long id) {
+        return request(HttpMethod.POST, "/posts/{id}/reactions/count", Post.class, id).getBody().getReactions();
     }
 
     /**
      * [Internal only] Decrease post comment count by one
      */
-    public ResponseEntity<Post> decreaseComments(long id) throws IOException {
-        return request(HttpMethod.PUT, "/posts/{id}/comments/count", Post.class, id);
+    public int decreaseComments(long id) {
+        return request(HttpMethod.PUT, "/posts/{id}/comments/count", Post.class, id).getBody().getComments();
     }
 
     /**
      * [Internal only] Decrease post reaction count by one
      */
-    public ResponseEntity<Post> decreaseReactions(long id) throws IOException {
-        return request(HttpMethod.PUT, "/posts/{id}/reactions/count", Post.class, id);
+    public int decreaseReactions(long id) {
+        return request(HttpMethod.PUT, "/posts/{id}/reactions/count", Post.class, id).getBody().getReactions();
     }
 
 }

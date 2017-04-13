@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.HashMap;
 
-/**
- * Created by Meranote on 3/20/2017.
- */
 @CrossOrigin
 @RestController
 @RequestMapping(path = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -34,7 +31,7 @@ public class UserController extends TemplateRestController {
     })
     public ResponseEntity<User> getUser(
             @PathVariable("id") long id
-    ) throws IOException {
+    ) {
         return request(HttpMethod.GET, "/users/{id}", User.class, id);
     }
 
@@ -50,7 +47,7 @@ public class UserController extends TemplateRestController {
     })
     public ResponseEntity<UserList> searchUser(
             @RequestParam("name") String name
-    ) throws IOException {
+    ) {
         return request(HttpMethod.GET, "/users/search?name" + name, UserList.class);
     }
 
@@ -67,7 +64,7 @@ public class UserController extends TemplateRestController {
     })
     public ResponseEntity<Void> createUser(
             @ApiParam("Register detail") @RequestBody UserRegister detail
-    ) throws IOException {
+    ) {
         return request(HttpMethod.POST, "/users", detail, Void.class);
     }
 
@@ -84,7 +81,7 @@ public class UserController extends TemplateRestController {
     @ApiResponses({
             @ApiResponse(code = 401, message = "Not authenticated (no token)")
     })
-    public ResponseEntity<User> getSelf() throws IOException {
+    public ResponseEntity<User> getSelf() {
         return getUser(getAuthenticatedUser().getId());
     }
 
@@ -104,21 +101,21 @@ public class UserController extends TemplateRestController {
     })
     public ResponseEntity<User> updateSelf(
             @ApiParam("Update detail") @RequestBody UserUpdate detail
-    ) throws IOException {
+    ) {
         return request(HttpMethod.PATCH, "/users/{id}", detail, User.class, getAuthenticatedUser().getId());
     }
 
     /**
      * [Internal only] Increase user posts count by one
      */
-    public int increasePosts(long id) throws IOException {
+    public int increasePosts(long id) {
         return (int) request(HttpMethod.POST, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count");
     }
 
     /**
      * [Internal only] Decrease user posts count by one
      */
-    public int decreasePosts(long id) throws IOException {
+    public int decreasePosts(long id) {
         return (int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count");
     }
 

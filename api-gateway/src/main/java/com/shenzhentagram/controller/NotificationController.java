@@ -5,18 +5,16 @@ import com.shenzhentagram.model.NotificationList;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by Meranote on 4/2/2017.
- */
 @CrossOrigin
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping(path = "/notifications", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class NotificationController extends TemplateRestController {
 
     public NotificationController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
@@ -26,7 +24,7 @@ public class NotificationController extends TemplateRestController {
     @GetMapping("/{id}")
     public ResponseEntity<Notification> getNotification(
             @PathVariable("id") long id
-    ) throws IOException {
+    ) {
         return request(HttpMethod.GET, "/notifications/{id}", Notification.class, id);
     }
 
@@ -35,7 +33,14 @@ public class NotificationController extends TemplateRestController {
             @RequestParam("limit") int limit,
             @RequestParam("page") int page
     ) {
-        return requestWithAuth(HttpMethod.GET, "/notifications?limit=" + limit + "&page=" + page, NotificationList.class);
+        return request(HttpMethod.GET, "/notifications?limit=" + limit + "&page=" + page, NotificationList.class);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Void> updateNotification(
+            @RequestBody List<Notification> notifications
+    ) {
+        return request(HttpMethod.POST, "/notification/update", notifications, Void.class);
     }
 
     /**
@@ -44,14 +49,7 @@ public class NotificationController extends TemplateRestController {
     public ResponseEntity<Void> createNotifications(
             List<Notification> notifications
     ) {
-        return requestWithAuth(HttpMethod.POST, "/notification/create", notifications, Void.class);
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<Void> updateNotification(
-            @RequestBody List<Notification> notifications
-    ) {
-        return requestWithAuth(HttpMethod.POST, "/notification/update", notifications, Void.class);
+        return request(HttpMethod.POST, "/notification/create", notifications, Void.class);
     }
 
 }
