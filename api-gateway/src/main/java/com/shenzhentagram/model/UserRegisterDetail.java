@@ -1,8 +1,11 @@
 package com.shenzhentagram.model;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * Created by Meranote on 3/20/2017.
  */
+@ApiModel(value = "UserRegisterDetail", description = "User register detail")
 public class UserRegisterDetail {
 
     private String username;
