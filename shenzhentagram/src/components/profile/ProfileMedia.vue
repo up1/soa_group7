@@ -23,5 +23,6 @@
 <style scoped>
   .columns {
     padding: 30px 80px;
+    align-items: center;
   }
 </style>
