@@ -1,9 +1,6 @@
 package com.shenzhentagram.controller;
 
-import com.shenzhentagram.model.Post;
-import com.shenzhentagram.model.PostCreateDetail;
-import com.shenzhentagram.model.PostPage;
-import com.shenzhentagram.model.PostUpdateDetail;
+import com.shenzhentagram.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -14,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by Meranote on 3/20/2017.
@@ -33,21 +31,35 @@ public class PostController extends TemplateRestController {
     @GetMapping()
     public ResponseEntity<PostPage> getPosts(
             Pageable pageable
-    ) {
-        return requestWithAuth(HttpMethod.GET, "/posts", pageable, PostPage.class);
+    ) throws IOException {
+        ResponseEntity<PostPage> responseEntity = request(HttpMethod.GET, "/posts", pageable, PostPage.class);
+
+        HashMap<Integer, User> cachedUsers = new HashMap<>();
+
+        for(Post post : responseEntity.getBody().getContent()) {
+            if(!cachedUsers.containsKey(post.getUserId())) {
+                cachedUsers.put(post.getUserId(), userController.getUser(post.getUserId()).getBody());
+            }
+
+            post.setUser(cachedUsers.get(post.getUserId()));
+        }
+
+        return responseEntity;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPosts(
             @PathVariable("id") long id
     ) throws IOException {
-        return request(HttpMethod.GET, "/posts/{id}", Post.class, id);
+        ResponseEntity<Post> responseEntity = request(HttpMethod.GET, "/posts/{id}", Post.class, id);
+        responseEntity.getBody().setUser(userController.getUser(responseEntity.getBody().getUserId()).getBody());
+        return responseEntity;
     }
 
     @PostMapping()
     public ResponseEntity<Post> createPost(HttpServletRequest request) throws IOException {
-        PostCreateDetail detail = extractBody(request, PostCreateDetail.class);
-        detail.setUser_id(getAuthenticatedUser().getId());
+        PostCreate detail = extractBody(request, PostCreate.class);
+//        detail.set(getAuthenticatedUser().getId());
 
         // Create post
         ResponseEntity<Post> response = requestWithAuth(HttpMethod.POST, "/posts", detail, Post.class);
