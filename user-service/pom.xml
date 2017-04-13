@@ -114,6 +114,7 @@
             <artifactId>prometheus-spring-boot-starter</artifactId>
             <version>1.0.1</version>
         </dependency>
+
     </dependencies>
 
     <build>
