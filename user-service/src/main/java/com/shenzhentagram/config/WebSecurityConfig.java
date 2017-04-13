@@ -38,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/users/{id}/posts/count").permitAll()
                 .antMatchers(HttpMethod.PUT, "/users/{id}/posts/count").permitAll()
                 // Otherwise, need authenticate
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();
 
         // Filter Config
         // Register JWTAuthenticateFilter for filter any request to check authenticate
