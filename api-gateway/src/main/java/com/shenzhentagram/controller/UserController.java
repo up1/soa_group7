@@ -1,6 +1,10 @@
 package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.*;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -36,8 +40,16 @@ public class UserController extends TemplateRestController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createUser(HttpServletRequest request) throws IOException {
-        return request(HttpMethod.POST, "/users", extractBody(request, UserRegisterDetail.class), Void.class);
+    @ApiOperation(
+            tags = "User-API",
+            value = "createUser",
+            nickname = "createUser",
+            notes = "Create a new user (Register)"
+    )
+    public ResponseEntity<Void> createUser(
+            @ApiParam(value = "Register detail") @RequestBody UserRegisterDetail detail
+    ) throws IOException {
+        return request(HttpMethod.POST, "/users", detail, Void.class);
     }
 
     @GetMapping("/self")
