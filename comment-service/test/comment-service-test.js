@@ -8,9 +8,6 @@
 //do promise
 global.Promise = require('bluebird');
 
-// var request = require('request');
-// var rp = require('request-promise');
-
 //During the test the env variable is set to test
 // process.env.NODE_ENV = 'test';
 
@@ -22,8 +19,6 @@ let chai = require('chai');
 let chaiHttp = require('chai-http');
 let server = require('../server');
 let should = chai.should();
-
-const _ = require('lodash');
 
 const comments = require('./comments.json');
 
