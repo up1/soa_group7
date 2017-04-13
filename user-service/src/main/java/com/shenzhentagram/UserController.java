@@ -1,7 +1,6 @@
 package com.shenzhentagram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shenzhentagram.authentication.AuthenticatedUser;
 import com.shenzhentagram.utility.FileUtility;
 import io.minio.MinioClient;
 import io.minio.errors.MinioException;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -61,9 +59,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{user_id}")
+    @GetMapping("/{id}")
     public User getUser(
-            @PathVariable("user_id") long id
+            @PathVariable("id") long id
     ) {
         return this.userRepository.findById(id);
     }

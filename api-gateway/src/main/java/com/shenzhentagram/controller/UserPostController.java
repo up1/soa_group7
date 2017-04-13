@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 /**
  * Created by Meranote on 4/3/2017.
  */
@@ -32,7 +34,7 @@ public class UserPostController extends TemplateRestController {
     public ResponseEntity<PostPage> getPosts(
             Pageable pageable,
             @PathVariable("id") long id
-    ) {
+    ) throws IOException {
         return request(HttpMethod.GET, "/users/{id}/posts", pageable, PostPage.class, id);
     }
 

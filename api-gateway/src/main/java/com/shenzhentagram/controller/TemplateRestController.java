@@ -4,20 +4,26 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shenzhentagram.authentication.AuthenticatedUser;
 import com.shenzhentagram.authentication.JWTAuthenticationService;
+import com.shenzhentagram.exception.RestTemplateException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriTemplateHandler;
 import org.springframework.web.util.UriTemplateHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Template Rest Controller<br>
@@ -33,6 +39,11 @@ import java.io.IOException;
  * @version 1.2
  */
 public abstract class TemplateRestController {
+
+    /**
+     * Service Name
+     */
+    private String serviceName;
 
     /**
      * Logging
@@ -61,6 +72,8 @@ public abstract class TemplateRestController {
      * @param serviceName
      */
     public TemplateRestController(Environment environment, RestTemplateBuilder restTemplateBuilder, String serviceName) {
+        this.serviceName = serviceName;
+
         String protocol = environment.getProperty("service." + serviceName + ".protocol");
         String ip = environment.getProperty("service." + serviceName + ".ip");
         String port = environment.getProperty("service." + serviceName + ".port");
@@ -97,7 +110,7 @@ public abstract class TemplateRestController {
      * @param <T> target class that will map the response body into
      * @return {@link ResponseEntity} => mapped response object
      */
-    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) {
+    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) throws IOException {
         return request(method, uri, "", responseClass, uriVariables);
     }
 
@@ -111,17 +124,23 @@ public abstract class TemplateRestController {
      * @param <T> target class that will map the response body into
      * @return {@link ResponseEntity} => mapped response object
      */
-    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
+    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) throws IOException {
         HttpEntity<Object> entity = new HttpEntity<>(body, new HttpHeaders());
-
-        // For logging
-        String targetPath = uriTemplateHandler.expand(uri, uriVariables).getPath();
 
         try {
             return restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
         } catch(RestClientResponseException e) {
+            String targetPath = uriTemplateHandler.expand(uri, uriVariables).getPath();
+            HashMap<String, Object> responseBody = new ObjectMapper().readValue(e.getResponseBodyAsString(), HashMap.class);
+
             log.error("Error calling  " + method.toString() + " '" + targetPath + "' : " + e.getRawStatusCode() + " " + e.getStatusText());
-            return new ResponseEntity<>((T) null, HttpStatus.valueOf(e.getRawStatusCode()));
+            throw new RestTemplateException(
+                    (long) responseBody.get("timestamp"),
+                    HttpStatus.valueOf((int) responseBody.get("status")),
+                    (String) responseBody.get("message"),
+                    targetPath,
+                    serviceName
+            );
         }
     }
 
@@ -175,6 +194,81 @@ public abstract class TemplateRestController {
      */
     protected AuthenticatedUser getAuthenticatedUser() {
         return (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    /**
+     * Exception message format
+     */
+    public static class ExceptionMessage {
+
+        private long timestamp;
+        private int status;
+        private String error;
+        private String message;
+        private String service;
+        private String path;
+
+        public ExceptionMessage(RestTemplateException exception) {
+            this.timestamp = exception.getTimestamps();
+            this.status = exception.getHttpStatus().value();
+            this.error = exception.getHttpStatus().getReasonPhrase();
+            this.message = exception.getMessage();
+            this.service = exception.getService();
+            this.path = exception.getPath();
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public String getError() {
+            return error;
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public String getService() {
+            return service;
+        }
+
+        public void setService(String service) {
+            this.service = service;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+    }
+
+    @ExceptionHandler(RestTemplateException.class)
+    public ResponseEntity<ExceptionMessage> restRequestExceptionHandler(RestTemplateException e) throws IOException {
+        return new ResponseEntity<>(new ExceptionMessage(e), e.getHttpStatus());
     }
 
 }

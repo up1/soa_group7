@@ -40,7 +40,7 @@ public class PostController extends TemplateRestController {
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPosts(
             @PathVariable("id") long id
-    ) {
+    ) throws IOException {
         return request(HttpMethod.GET, "/posts/{id}", Post.class, id);
     }
 
@@ -69,7 +69,7 @@ public class PostController extends TemplateRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(
             @PathVariable("id") long id
-    ) {
+    ) throws IOException {
         // Delete post
         ResponseEntity<Void> response = requestWithAuth(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
 
@@ -82,28 +82,28 @@ public class PostController extends TemplateRestController {
     /**
      * [Internal only] Increase post comment count by one
      */
-    public ResponseEntity<Post> increaseComments(long id) {
+    public ResponseEntity<Post> increaseComments(long id) throws IOException {
         return request(HttpMethod.POST, "/posts/{id}/comments/count", Post.class, id);
     }
 
     /**
      * [Internal only] Increase post reaction count by one
      */
-    public ResponseEntity<Post> increaseReactions(long id) {
+    public ResponseEntity<Post> increaseReactions(long id) throws IOException {
         return request(HttpMethod.POST, "/posts/{id}/reactions/count", Post.class, id);
     }
 
     /**
      * [Internal only] Decrease post comment count by one
      */
-    public ResponseEntity<Post> decreaseComments(long id) {
+    public ResponseEntity<Post> decreaseComments(long id) throws IOException {
         return request(HttpMethod.PUT, "/posts/{id}/comments/count", Post.class, id);
     }
 
     /**
      * [Internal only] Decrease post reaction count by one
      */
-    public ResponseEntity<Post> decreaseReactions(long id) {
+    public ResponseEntity<Post> decreaseReactions(long id) throws IOException {
         return request(HttpMethod.PUT, "/posts/{id}/reactions/count", Post.class, id);
     }
 
