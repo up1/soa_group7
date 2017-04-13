@@ -34,7 +34,7 @@ describe('Comment', function() {
     //     });
     // });
 
-    describe('/GET Comments => /posts/:potId/comments', () => {
+    describe('/GET Comments => /posts/:postId/comments', () => {
         beforeEach((done) => {
                 Comment.remove({}, (err) => {
                     done();
@@ -97,7 +97,7 @@ describe('Comment', function() {
     });
 
 
-    describe('/GET Comments => /posts/:potId/comments', () => {
+    describe('/GET Comments => /posts/:postId/comments', () => {
         it('GET all the Comments by postId it should return 10 comments', (done) => {
             chai.request(server)
                 .get('/posts/1/comments')
@@ -112,12 +112,12 @@ describe('Comment', function() {
     });
 
 
-    describe('/PUT Comment => /posts/:postId/comments/:commentId?userId=:userId', () => {
+    describe('/PUT Comment => /posts/:postId/comments/:commentId', () => {
         it('Update Comment', (done) => {
             Comment.findOne({}, (err, comment) => {
                     comment.text = "Updated Comment";
                     chai.request(server)
-                        .put('/posts/1/comments/'+comment._id+"?userId="+comment.userId)
+                        .put('/posts/1/comments/'+comment._id)
                         .send(comment)
                         .end((err, res) => {
                             res.should.have.status(200);
@@ -127,12 +127,12 @@ describe('Comment', function() {
         });
     });
 
-    describe('/DELETE Comment => /posts/:postId/comments/:commentId?userId=:userId', () => {
+    describe('/DELETE Comment => /posts/:postId/comments/:commentId', () => {
         it('Delete Comment', (done) => {
             Comment.findOne({}, (err, comment) => {
                 comment.text = "Delete Comment";
                 chai.request(server)
-                    .delete('/posts/1/comments/'+comment._id+"?userId="+comment.userId)
+                    .delete('/posts/1/comments/'+comment._id)
                     .send(comment)
                     .end((err, res) => {
                         res.should.have.status(200);

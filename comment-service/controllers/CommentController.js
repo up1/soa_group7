@@ -27,16 +27,14 @@ function* createSingle(req, res) {
 
 function* updateSingle(req, res) {
     // const userId = req.auth.id;
-    const userId = req.query.userId;
-    const comment = yield CommentService.update(req.params.commentId, req.body, userId);
+    const comment = yield CommentService.update(req.params.commentId, req.body);
     if (comment.error) res.json({"msg": "not found"}, 404);
     else res.status(200).json({msg: "update success"});
 }
 
 function* deleteSingle(req, res) {
     // const userId = req.auth.id;
-    const userId = req.query.userId;
-    const comment = yield CommentService.deleteSingle(req.params.commentId, userId);
+    const comment = yield CommentService.deleteSingle(req.params.commentId);
     if (comment.error) res.json({"msg": "not found"}, 404);
     else res.status(200).json({"msg": "delete success"});
 }
