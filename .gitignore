@@ -77,3 +77,4 @@ Temporary Items
 .apdisk
 
 user-service/src/main/resources/application.properties
+notification-service/
