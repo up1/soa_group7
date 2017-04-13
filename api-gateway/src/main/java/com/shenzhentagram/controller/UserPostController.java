@@ -1,7 +1,7 @@
 package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.PostPage;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
@@ -12,16 +12,32 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-/**
- * Created by Meranote on 4/3/2017.
- */
 @CrossOrigin
 @RestController
-@RequestMapping(path = "/users", produces = { MediaType.APPLICATION_JSON_VALUE })
+@RequestMapping(path = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class UserPostController extends TemplateRestController {
 
     public UserPostController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "post");
+    }
+
+    @GetMapping("/self/posts")
+    @ApiOperation(
+            tags = "User-API",
+            value = "getSelfPosts",
+            nickname = "getSelfPosts",
+            notes = "Get current authenticated user posts"
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Auth token", required = true, dataType = "string", paramType = "header", defaultValue = "Bearer ")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "Not authenticated (no token)")
+    })
+    public ResponseEntity<PostPage> getSelfPosts(
+            Pageable pageable
+    ) {
+        return request(HttpMethod.GET, "/users/{id}/posts", pageable, PostPage.class, getAuthenticatedUser().getId());
     }
 
     @GetMapping("/{id}/posts")
@@ -34,7 +50,7 @@ public class UserPostController extends TemplateRestController {
     public ResponseEntity<PostPage> getPosts(
             Pageable pageable,
             @PathVariable("id") long id
-    ) throws IOException {
+    ) {
         return request(HttpMethod.GET, "/users/{id}/posts", pageable, PostPage.class, id);
     }
 

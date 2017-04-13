@@ -24,11 +24,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Authentication Config
         http.authorizeRequests()
-                // authorize "/users/self" for
-                // (GET) get self information
-                .antMatchers(HttpMethod.GET, "/users/self").authenticated()
-                // (PATCH) update self information
-                .antMatchers(HttpMethod.PATCH, "/users/self").authenticated()
                 // authorize "/posts" for
                 // (GET) getting the timeline of self's followings
                 .antMatchers(HttpMethod.GET, "/posts").authenticated()
@@ -39,6 +34,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/posts/{id}").authenticated()
                 // (DELETE) delete owns post
                 .antMatchers(HttpMethod.DELETE, "/posts/{id}").authenticated()
+                // authorize "/users/self" for
+                // (GET) get self information
+                .antMatchers(HttpMethod.GET, "/users/self").authenticated()
+                // (PATCH) update self information
+                .antMatchers(HttpMethod.PATCH, "/users/self").authenticated()
+                // authorize "/users/self/posts" for
+                // (GET) Get self posts
+                .antMatchers(HttpMethod.GET, "/users/self/posts").authenticated()
 
                 // Otherwise, permitted
                 .anyRequest().permitAll();
