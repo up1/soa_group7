@@ -14,7 +14,7 @@ module.exports = {
         post: {
             controller: 'CommentController',
             method: 'createSingle',
-            middleware: [auth()],
+            // middleware: [auth()],
         },
     },
     '/posts/:postId/comments/:commentId': {
@@ -25,12 +25,12 @@ module.exports = {
         put: {
             controller: 'CommentController',
             method: 'updateSingle',
-            middleware: [auth()],
+            // middleware: [auth()],
         },
         delete: {
             controller: 'CommentController',
             method: 'deleteSingle',
-            middleware: [auth()],
+            // middleware: [auth()],
         }
     }
 };
