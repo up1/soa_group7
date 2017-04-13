@@ -123,18 +123,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @GetMapping("/self")
-    public User getSelf() {
-        AuthenticatedUser auth = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
-        return this.userRepository.findById(auth.getId());
-    }
-
-    @PatchMapping("/self")
+    @PatchMapping("/{id}")
     public User updateSelf(
+            @PathVariable("id") long id,
             @RequestBody Map<String, Object> payload
     ) {
-        AuthenticatedUser authUser = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
-        User user = this.userRepository.findById(authUser.getId());
+        User user = this.userRepository.findById(id);
 
         if(payload.containsKey("full_name")) {
             user.setFull_name((String) payload.get("full_name"));
