@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(path = "/users", produces = { MediaType.APPLICATION_JSON_VALUE })
+@RequestMapping(path = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class UserController extends TemplateRestController {
 
     public UserController(Environment environment, RestTemplateBuilder restTemplateBuilder) {

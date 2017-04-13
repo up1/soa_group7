@@ -1,11 +1,15 @@
 package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +22,7 @@ import java.util.HashMap;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/posts")
+@RequestMapping(path = "/posts", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class PostController extends TemplateRestController {
 
     @Autowired
@@ -29,6 +33,12 @@ public class PostController extends TemplateRestController {
     }
 
     @GetMapping()
+    @ApiOperation(
+            tags = "Post-API",
+            value = "getPosts",
+            nickname = "getPosts",
+            notes = "Get all posts (Timeline)"
+    )
     public ResponseEntity<PostPage> getPosts(
             Pageable pageable
     ) throws IOException {
@@ -48,7 +58,16 @@ public class PostController extends TemplateRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPosts(
+    @ApiOperation(
+            tags = "Post-API",
+            value = "getPost",
+            nickname = "getPost",
+            notes = "Get post detail by ID"
+    )
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Post not found")
+    })
+    public ResponseEntity<Post> getPost(
             @PathVariable("id") long id
     ) throws IOException {
         ResponseEntity<Post> responseEntity = request(HttpMethod.GET, "/posts/{id}", Post.class, id);
