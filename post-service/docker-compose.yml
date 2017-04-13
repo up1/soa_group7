@@ -1,19 +1,5 @@
 version: "2"
 services:
-  mariadb:
-        image: mariadb:10.1.22
-        container_name: mariadb
-        restart: always
-        ports:
-          - 3307:3306
-        command:
-          - --character-set-server=utf8mb4
-          - --collation-server=utf8mb4_unicode_ci
-          - --skip-character-set-client-handshake
-        environment:
-          - MYSQL_DATABASE=posts
-          - MYSQL_ROOT_PASSWORD=mysql
-
   post:
         build: build/docker
         depends_on:
@@ -22,5 +8,3 @@ services:
         restart: always
         ports:
           - 9002:9002
-        links:
-          - mariadb
