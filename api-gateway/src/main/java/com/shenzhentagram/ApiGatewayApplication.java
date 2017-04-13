@@ -33,7 +33,8 @@ public class ApiGatewayApplication {
 					.apis(RequestHandlerSelectors.any())
 					.paths(apiPaths())
 				.build()
-				.pathMapping("/");
+				.pathMapping("/")
+				.useDefaultResponseMessages(false);
 	}
 
 	private Predicate<String> apiPaths() {
