@@ -25,8 +25,10 @@ public class AuthenticationController extends TemplateRestController {
     }
 
     @PostMapping()
-    public ResponseEntity<AuthenticateDetail> auth(HttpServletRequest request) throws IOException {
-        return request(HttpMethod.POST, "/auth", extractBody(request, AuthenticateCredential.class), AuthenticateDetail.class);
+    public ResponseEntity<AuthenticateDetail> auth(
+            @RequestBody AuthenticateCredential credential
+    ) throws IOException {
+        return request(HttpMethod.POST, "/auth", credential, AuthenticateDetail.class);
     }
 
 }

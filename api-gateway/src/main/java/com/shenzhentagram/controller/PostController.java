@@ -34,8 +34,8 @@ public class PostController extends TemplateRestController {
     ) throws IOException {
         ResponseEntity<PostPage> responseEntity = request(HttpMethod.GET, "/posts", pageable, PostPage.class);
 
+        // Embed user into posts
         HashMap<Integer, User> cachedUsers = new HashMap<>();
-
         for(Post post : responseEntity.getBody().getContent()) {
             if(!cachedUsers.containsKey(post.getUserId())) {
                 cachedUsers.put(post.getUserId(), userController.getUser(post.getUserId()).getBody());
@@ -52,41 +52,56 @@ public class PostController extends TemplateRestController {
             @PathVariable("id") long id
     ) throws IOException {
         ResponseEntity<Post> responseEntity = request(HttpMethod.GET, "/posts/{id}", Post.class, id);
+
+        // Embed user into post
         responseEntity.getBody().setUser(userController.getUser(responseEntity.getBody().getUserId()).getBody());
+
         return responseEntity;
     }
 
     @PostMapping()
-    public ResponseEntity<Post> createPost(HttpServletRequest request) throws IOException {
-        PostCreate detail = extractBody(request, PostCreate.class);
-//        detail.set(getAuthenticatedUser().getId());
+    public ResponseEntity<Post> createPost(
+            @RequestBody PostCreate detail
+    ) throws IOException {
+        detail.setUser_id(getAuthenticatedUser().getId());
 
         // Create post
-        ResponseEntity<Post> response = requestWithAuth(HttpMethod.POST, "/posts", detail, Post.class);
+        ResponseEntity<Post> response = request(HttpMethod.POST, "/posts", detail, Post.class);
 
-        // Increase post count
-        userController.increasePosts((int) getAuthenticatedUser().getId());
+        // Increase user post count
+        // FIXME catch the exception (by now just ignored)
+        try {
+            userController.increasePosts((int) getAuthenticatedUser().getId());
+        } catch(Exception ignored) {}
+
+        // Embed user into post
+        response.getBody().setUser(userController.getUser(response.getBody().getUserId()).getBody());
 
         return response;
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Post> updatePost(
-            HttpServletRequest request,
-            @PathVariable("id") long id
+            @PathVariable("id") long id,
+            @RequestBody PostUpdateDetail detail
     ) throws IOException {
-        return requestWithAuth(HttpMethod.PATCH, "/posts/{id}", extractBody(request, PostUpdateDetail.class), Post.class, id);
+        return request(HttpMethod.PATCH, "/posts/{id}", detail, Post.class, id);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(
             @PathVariable("id") long id
     ) throws IOException {
-        // Delete post
-        ResponseEntity<Void> response = requestWithAuth(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
+        // FIXME check authenticated user before delete or send auth user id to post service and let it handle itself
 
-        // Decrement post count
-        userController.decreasePosts((int) getAuthenticatedUser().getId());
+        // Delete post
+        ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
+
+        // Decrease user post count
+        // FIXME catch the exception (by now just ignored)
+        try {
+            userController.decreasePosts((int) getAuthenticatedUser().getId());
+        } catch(Exception ignored) {}
 
         return response;
     }
