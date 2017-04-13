@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class NotificationController extends TemplateRestController {
     @GetMapping("/{id}")
     public ResponseEntity<Notification> getNotification(
             @PathVariable("id") long id
-    ) {
+    ) throws IOException {
         return request(HttpMethod.GET, "/notifications/{id}", Notification.class, id);
     }
 

@@ -36,9 +36,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/posts").authenticated()
                 // authorize "/posts/{id}" for
                 // (PUT) upload owns post
-                .antMatchers("/posts/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/posts/{id}").authenticated()
                 // (DELETE) delete owns post
-                .antMatchers("/posts/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/posts/{id}").authenticated()
 
                 // Otherwise, permitted
                 .anyRequest().permitAll();

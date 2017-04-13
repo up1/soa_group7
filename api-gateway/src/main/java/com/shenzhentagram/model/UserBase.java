@@ -1,23 +1,20 @@
 package com.shenzhentagram.model;
 
-/**
- * Created by Meranote on 3/20/2017.
- */
-public class UserUpdateDetail {
+import io.swagger.annotations.ApiModelProperty;
 
+public abstract class UserBase {
+
+    @ApiModelProperty(required = true, position = 4)
     private String full_name;
+
+    @ApiModelProperty(position = 5)
     private String bio;
+
+    @ApiModelProperty(position = 6)
     private String profile_picture;
+
+    @ApiModelProperty(required = true, position = 3)
     private String display_name;
-
-    public UserUpdateDetail() { }
-
-    public UserUpdateDetail(String full_name, String bio, String profile_picture, String display_name) {
-        this.full_name = full_name;
-        this.bio = bio;
-        this.profile_picture = profile_picture;
-        this.display_name = display_name;
-    }
 
     public String getFull_name() {
         return full_name;

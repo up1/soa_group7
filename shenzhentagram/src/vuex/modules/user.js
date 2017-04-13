@@ -16,6 +16,14 @@ const actions = {
   fetchUser ({commit}, userId) {
     Vue.http.get('users/' + userId)
       .then((response) => commit(types.FETCH_USER, response.body))
+  },
+  editProfile ({commit}, body) {
+    Vue.http.patch('users/self', {
+      'full_name': body.full_name,
+      'display_name': body.display_name,
+      'bio': body.bio
+    })
+      .then((response) => commit(types.FETCH_USER, response.body))
   }
 }
 

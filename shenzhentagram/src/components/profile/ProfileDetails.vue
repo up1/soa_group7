@@ -2,7 +2,7 @@
   <div class="column">
     <div class="profile-details">
       <span class="title is-2">{{this.user.display_name}}</span>
-      <a class="button edit-profile">Edit Profile</a>
+      <router-link :to="{name: 'account_edit'}" class="button edit-profile">Edit Profile</router-link>
       <a class="logout-modal icon" v-on:click="showModal"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
     </div>
 
