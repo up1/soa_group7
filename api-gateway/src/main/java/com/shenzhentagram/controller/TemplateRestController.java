@@ -1,29 +1,19 @@
 package com.shenzhentagram.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shenzhentagram.authentication.AuthenticatedUser;
-import com.shenzhentagram.authentication.JWTAuthenticationService;
 import com.shenzhentagram.exception.RestTemplateException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriTemplateHandler;
 import org.springframework.web.util.UriTemplateHandler;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Template Rest Controller<br>
@@ -36,7 +26,7 @@ import java.util.HashMap;
  * service.[service-name].ip = [current-service-ip]
  *
  * @author Meranote
- * @version 1.2
+ * @version 2.0
  */
 public abstract class TemplateRestController {
 
@@ -53,7 +43,7 @@ public abstract class TemplateRestController {
     /**
      * URI Template Handler (For logging)
      */
-    UriTemplateHandler uriTemplateHandler = new DefaultUriTemplateHandler();
+    private UriTemplateHandler uriTemplateHandler = new DefaultUriTemplateHandler();
 
     /**
      * Rest template for calling apis
@@ -89,19 +79,6 @@ public abstract class TemplateRestController {
     }
 
     /**
-     * Extract the request body into object
-     * @param request {@link HttpServletRequest}
-     * @param mapToClass class to map into
-     * @param <T> class to map into
-     * @return mapped body object
-     * @throws IOException
-     */
-    @Deprecated
-    protected <T> T extractBody(HttpServletRequest request, Class<T> mapToClass) throws IOException {
-        return new ObjectMapper().readValue(request.getInputStream(), mapToClass);
-    }
-
-    /**
      * Send a request (without Authorization)
      * @param method {@link HttpMethod} to call service
      * @param uri path to call service
@@ -110,7 +87,7 @@ public abstract class TemplateRestController {
      * @param <T> target class that will map the response body into
      * @return {@link ResponseEntity} => mapped response object
      */
-    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) throws IOException {
+    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) {
         return request(method, uri, "", responseClass, uriVariables);
     }
 
@@ -124,68 +101,16 @@ public abstract class TemplateRestController {
      * @param <T> target class that will map the response body into
      * @return {@link ResponseEntity} => mapped response object
      */
-    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) throws IOException {
+    protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
         HttpEntity<Object> entity = new HttpEntity<>(body, new HttpHeaders());
 
         try {
             return restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
         } catch(RestClientResponseException e) {
             String targetPath = uriTemplateHandler.expand(uri, uriVariables).getPath();
-            HashMap<String, Object> responseBody = new ObjectMapper().readValue(e.getResponseBodyAsString(), HashMap.class);
-
-            log.error("Error calling  " + method.toString() + " '" + targetPath + "' : " + e.getRawStatusCode() + " " + e.getStatusText());
-            throw new RestTemplateException(
-                    (long) responseBody.get("timestamp"),
-                    HttpStatus.valueOf((int) responseBody.get("status")),
-                    (String) responseBody.get("message"),
-                    targetPath,
-                    serviceName
-            );
+            log.error("Error calling " + method.toString() + " '" + targetPath + "' : " + e.getRawStatusCode() + " " + e.getStatusText());
+            throw new RestTemplateException(e, targetPath, serviceName);
         }
-    }
-
-    /**
-     * Send a request (with Authorization)
-     * @param method {@link HttpMethod} to call service
-     * @param uri path to call service
-     * @param responseClass target class that will map the response body into
-     * @param uriVariables path variables
-     * @param <T> target class that will map the response body into
-     * @return {@link ResponseEntity} => mapped response object
-     */
-    @Deprecated
-    protected <T> ResponseEntity<T> requestWithAuth(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) {
-        return requestWithAuth(method, uri, "", responseClass, uriVariables);
-    }
-
-    /**
-     * Send a request (with Authorization)
-     * @param method {@link HttpMethod} to call service
-     * @param uri path to call service
-     * @param responseClass target class that will map the response body into
-     * @param body request body
-     * @param uriVariables path variables
-     * @param <T> target class that will map the response body into
-     * @return {@link ResponseEntity} => mapped response object
-     */
-    @Deprecated
-    protected <T> ResponseEntity<T> requestWithAuth(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
-        AuthenticatedUser authenticatedUser = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(
-                JWTAuthenticationService.HEADER_STRING,
-                JWTAuthenticationService.TOKEN_PREFIX + " " + authenticatedUser.getToken()
-        );
-        HttpEntity<Object> entity = new HttpEntity<>(body, headers);
-
-        try {
-            log.debug(new ObjectMapper().writeValueAsString(body));
-        } catch (JsonProcessingException e) {
-            log.trace(e);
-        }
-
-        return restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
     }
 
     /**
@@ -266,8 +191,13 @@ public abstract class TemplateRestController {
         }
     }
 
+    /**
+     * {@link RestTemplateException} handler
+     * @param e Exception object throw by request()
+     * @return {@link ExceptionMessage}
+     */
     @ExceptionHandler(RestTemplateException.class)
-    public ResponseEntity<ExceptionMessage> restRequestExceptionHandler(RestTemplateException e) throws IOException {
+    public ResponseEntity<ExceptionMessage> restRequestExceptionHandler(RestTemplateException e) {
         return new ResponseEntity<>(new ExceptionMessage(e), e.getHttpStatus());
     }
 
