@@ -110,6 +110,22 @@
         </dependency>
 
         <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <version>0.0.21</version>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_hotspot</artifactId>
+            <version>0.0.21</version>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_spring_boot</artifactId>
+            <version>0.0.21</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.moelholm</groupId>
             <artifactId>prometheus-spring-boot-starter</artifactId>
             <version>1.0.1</version>
