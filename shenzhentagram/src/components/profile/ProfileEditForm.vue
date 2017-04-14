@@ -76,7 +76,7 @@
 </template>
 
 <script type="text/babel">
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   export default {
     created () {
       this.$store.dispatch('fetchUser', this.$auth.user().id)
@@ -85,15 +85,9 @@
       user: 'getUser'
     }),
     methods: {
-      setFullName (e) {
-        this.user.full_name = e.target.value
-      },
-      setDisplayName (e) {
-        this.user.display_name = e.target.value
-      },
-      setBio (e) {
-        this.user.bio = e.target.value
-      },
+      ...mapActions([
+        'setFullName', 'setDisplayName', 'setBio'
+      ]),
       editProfile () {
         this.$store.dispatch('editProfile', this.user)
       }
