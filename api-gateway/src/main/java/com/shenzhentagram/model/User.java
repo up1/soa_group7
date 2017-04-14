@@ -10,13 +10,16 @@ public class User extends UserBase {
     @ApiModelProperty(required = true, position = 2)
     private String username;
 
-    @ApiModelProperty(position = 7)
-    private int follows;
+    @ApiModelProperty(required = true, position = 7)
+    private String role;
 
     @ApiModelProperty(position = 8)
-    private int followed_by;
+    private int follows;
 
     @ApiModelProperty(position = 9)
+    private int followed_by;
+
+    @ApiModelProperty(position = 10)
     private int post_count;
 
     public long getId() {
@@ -33,6 +36,14 @@ public class User extends UserBase {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public int getFollows() {
