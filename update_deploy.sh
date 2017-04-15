@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./build_service.sh
+
 docker push meranote/api-gateway
 docker push meranote/authentication-service
 docker push meranote/user-service
