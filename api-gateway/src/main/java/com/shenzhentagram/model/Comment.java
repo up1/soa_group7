@@ -10,6 +10,7 @@ public class Comment {
     private int id;
     private int postId;
     private int userId;
+    private String text;
     private Date createAt;
     private Date updateAt;
     private User user;
@@ -36,6 +37,14 @@ public class Comment {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public Date getCreateAt() {
