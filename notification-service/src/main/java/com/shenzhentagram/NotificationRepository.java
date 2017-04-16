@@ -45,13 +45,13 @@ public class NotificationRepository {
             notifications.forEach(notification->{
                 switch (notification.getType()){
                     case "followed_by":
-                        notification.setNotification(findNotificationUserById(notification.getNotificationId()));
+                        notification.setForm(findNotificationUserById(notification.getNotificationId()));
                         break;
                     case "comment":
-                        notification.setNotification(findNotificationPostById(notification.getNotificationId()));
+                        notification.setForm(findNotificationPostById(notification.getNotificationId()));
                         break;
                     case "reaction":
-                        notification.setNotification(findNotificationReactionById(notification.getNotificationId()));
+                        notification.setForm(findNotificationReactionById(notification.getNotificationId()));
                         break;
                 }
             });
@@ -76,13 +76,13 @@ public class NotificationRepository {
             );
             switch (notification.getType()){
                 case "followed_by":
-                    notification.setNotification(findNotificationUserById(notification.getNotificationId()));
+                    notification.setForm(findNotificationUserById(notification.getNotificationId()));
                     break;
                 case "comment":
-                    notification.setNotification(findNotificationPostById(notification.getNotificationId()));
+                    notification.setForm(findNotificationPostById(notification.getNotificationId()));
                     break;
                 case "reaction":
-                    notification.setNotification(findNotificationReactionById(notification.getNotificationId()));
+                    notification.setForm(findNotificationReactionById(notification.getNotificationId()));
                     break;
             };
             return notification;
@@ -164,13 +164,13 @@ public class NotificationRepository {
                 long notificationId = 1;
                 switch (notification.getType()){
                     case "followed_by":
-                        notificationId = createNotificationUser((NotificationUser) notification.getNotification());
+                        notificationId = createNotificationUser((NotificationUser) notification.getForm());
                         break;
                     case "comment":
-                        notificationId = createNotificationPost((NotificationPost) notification.getNotification());
+                        notificationId = createNotificationPost((NotificationPost) notification.getForm());
                         break;
                     case "reaction":
-                        notificationId = createNotificationReaction((NotificationReaction) notification.getNotification());
+                        notificationId = createNotificationReaction((NotificationReaction) notification.getForm());
                         break;
                 }
                 notification.setNotificationId(notificationId);
@@ -278,13 +278,13 @@ public class NotificationRepository {
                 int notificationResponse = 0;
                 switch (notification.getType()){
                     case "followed_by":
-                        notificationResponse = updateNotificationUser((NotificationUser) notification.getNotification());
+                        notificationResponse = updateNotificationUser((NotificationUser) notification.getForm());
                         break;
                     case "comment":
-                        notificationResponse = updateNotificationPost((NotificationPost) notification.getNotification());
+                        notificationResponse = updateNotificationPost((NotificationPost) notification.getForm());
                         break;
                     case "reaction":
-                        notificationResponse = updateNotificationReaction((NotificationReaction) notification.getNotification());
+                        notificationResponse = updateNotificationReaction((NotificationReaction) notification.getForm());
                         break;
                 }
                 this.jdbcTemplate.update(insertSql,
@@ -294,13 +294,13 @@ public class NotificationRepository {
                                 notification.getType(),
                                 notification.getText(),
                                 notification.getThumbnail(),
-                                notification.getNotification().getId(),
+                                notification.getForm().getId(),
                                 notification.getCheckStatus(),
                                 notification.getUserId(),
                                 notification.getType(),
                                 notification.getText(),
                                 notification.getThumbnail(),
-                                notification.getNotification().getId(),
+                                notification.getForm().getId(),
                                 notification.getCheckStatus()
                         }
                 );
@@ -379,13 +379,13 @@ public class NotificationRepository {
             int notificationResponse = 0;
             switch (notification.getType()){
                 case "followed_by":
-                    notificationResponse = updateNotificationUser((NotificationUser) notification.getNotification());
+                    notificationResponse = updateNotificationUser((NotificationUser) notification.getForm());
                     break;
                 case "comment":
-                    notificationResponse = updateNotificationPost((NotificationPost) notification.getNotification());
+                    notificationResponse = updateNotificationPost((NotificationPost) notification.getForm());
                     break;
                 case "reaction":
-                    notificationResponse = updateNotificationReaction((NotificationReaction) notification.getNotification());
+                    notificationResponse = updateNotificationReaction((NotificationReaction) notification.getForm());
                     break;
             }
             this.jdbcTemplate.update(insertSql,
@@ -395,13 +395,13 @@ public class NotificationRepository {
                                 notification.getType(),
                                 notification.getText(),
                                 notification.getThumbnail(),
-                                notification.getNotification().getId(),
+                                notification.getForm().getId(),
                                 notification.getCheckStatus(),
                                 notification.getUserId(),
                                 notification.getType(),
                                 notification.getText(),
                                 notification.getThumbnail(),
-                                notification.getNotification().getId(),
+                                notification.getForm().getId(),
                                 notification.getCheckStatus()
                         }
                 );
@@ -425,13 +425,13 @@ public class NotificationRepository {
                 long notificationId = 1;
                 switch (type) {
                     case "followed_by":
-                        notificationId = createNotificationUser((NotificationUser) notification.getNotification());
+                        notificationId = createNotificationUser((NotificationUser) notification.getForm());
                         break;
                     case "comment":
-                        notificationId = createNotificationPost((NotificationPost) notification.getNotification());
+                        notificationId = createNotificationPost((NotificationPost) notification.getForm());
                         break;
                     case "reaction":
-                        notificationId = createNotificationReaction((NotificationReaction) notification.getNotification());
+                        notificationId = createNotificationReaction((NotificationReaction) notification.getForm());
                         break;
                     default:
                         System.out.println("Type not found");

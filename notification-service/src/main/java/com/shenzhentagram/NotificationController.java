@@ -2,7 +2,9 @@ package com.shenzhentagram;
 
 import com.shenzhentagram.models.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,22 @@ public class NotificationController {
     public void updateNotification(@PathVariable("notification_id") long id, @RequestBody Notification notification, HttpServletResponse response) {
         int SC = this.notificationRepository.updateNotification(notification, id);
         response.setStatus(SC);
+    }
+
+    @PatchMapping(path = "/notifications/status/checked")
+    public ResponseEntity<Void> checkedNotifications(
+            @RequestBody List<Integer> notificationIds
+    ) {
+        int SC = this.notificationRepository.updateNotificationsStatus(notificationIds, 1);
+        return new ResponseEntity<>(HttpStatus.valueOf(SC));
+    }
+
+    @PatchMapping(path = "/notifications/status/unchecked")
+    public ResponseEntity<Void> uncheckedNotifications(
+            @RequestBody List<Integer> notificationIds
+    ) {
+        int SC = this.notificationRepository.updateNotificationsStatus(notificationIds, 0);
+        return new ResponseEntity<>(HttpStatus.valueOf(SC));
     }
 
     @RequestMapping(method = RequestMethod.GET , path = "/notifications", produces = { MediaType.APPLICATION_JSON_VALUE })
