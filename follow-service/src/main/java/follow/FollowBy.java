@@ -8,31 +8,29 @@ import java.util.List;
 /**
  * Created by nut on 15/4/2560.
  */
+
 @Document(collection = "followBy")
 public class FollowBy {
     @Id
     String id;
     long userId;
-    List<User> follows;
+    List<User> users;
 
     public FollowBy() {
     }
 
-    public FollowBy(long userId, List<User> follows) {
+    public FollowBy(long userId, List<User> users) {
         this.userId = userId;
-        this.follows = follows;
+        this.users = users;
+
     }
 
-    public FollowBy(List<User> follows) {
-        this.follows = follows;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public List<User> getFollows() {
-        return follows;
-    }
-
-    public void setFollows(List<User> follows) {
-        this.follows = follows;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     public long getUserId() {
@@ -41,13 +39,5 @@ public class FollowBy {
 
     public void setUserId(long userId) {
         this.userId = userId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }
