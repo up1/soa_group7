@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,7 +22,7 @@ public class FollowController {
     MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoTemplate");
 
     @Autowired
-    private FollowRepository repository;
+    private FollowByRepository followByRepository;
 
     @RequestMapping(path = "/follow", method = RequestMethod.GET)
     public void postFollow() {
@@ -34,25 +32,25 @@ public class FollowController {
         follows.add(new User(3,"Im Profile Picture", "I'm Name"));
 
 //        mongoOperation.save(new FollowBy(1, follows));
-        repository.save(new FollowBy(1, follows));
+        followByRepository.save(new FollowBy(1, follows));
     }
 
-    @RequestMapping(path = "/follow2", method = RequestMethod.GET)
-    public void getFoll() {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("userId").lt(1));
-
-//        FollowBy foloFollowBy = mongoOperation.findOne(query, FollowBy.class);
-        try {
-            FollowBy foloFollowBy = repository.findByUserId(1);
-            foloFollowBy.setUserId(9999999);
-            foloFollowBy.setId("1");
-            repository.save(foloFollowBy);
-        }
-        catch (Exception e){
-        }
-
-    }
+//    @RequestMapping(path = "/follow2", method = RequestMethod.GET)
+//    public void getFoll() {
+//        Query query = new Query();
+//        query.addCriteria(Criteria.where("userId").lt(1));
+//
+////        FollowBy foloFollowBy = mongoOperation.findOne(query, FollowBy.class);
+//        try {
+//            FollowBy foloFollowby = repository.findByUserId(1);
+//            foloFollowby.setUserId(9999999);
+//            foloFollowby.setId("1");
+//            repository.save(foloFollowBy);
+//        }
+//        catch (Exception e){
+//        }
+//
+//    }
 
 
 
