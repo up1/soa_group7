@@ -23,16 +23,25 @@ public class FollowController {
 
     @Autowired
     private FollowByRepository followByRepository;
+    @Autowired
+    private FollowingRepository followingRepository;
 
     @RequestMapping(path = "/follow", method = RequestMethod.GET)
-    public void postFollow() {
-        List<User> follows = new ArrayList<User>();
-        follows.add(new User(4,"Im Profile Picture", "I'm Name"));
-        follows.add(new User(2,"Im Profile Picture", "I'm Name"));
-        follows.add(new User(3,"Im Profile Picture", "I'm Name"));
+    public FollowBy postFollow() {
+        List<User> followby = new ArrayList<User>();
+        followby.add(new User(4,"Im Profile Picture", "I'm Name"));
+        followby.add(new User(2,"Im Profile Picture", "I'm Name"));
+        followby.add(new User(3,"Im Profile Picture", "I'm Name"));
 
+        List<User> following = new ArrayList<User>();
+        following.add(new User(4,"Im Profile following", "I'm following"));
+        following.add(new User(2,"Im Profile following", "I'm following"));
+        following.add(new User(3,"Im Profile following", "I'm following"));
 //        mongoOperation.save(new FollowBy(1, follows));
-        followByRepository.save(new FollowBy(1, follows));
+        followByRepository.save(new FollowBy(1, followby));
+        followingRepository.save(new Following(1,following));
+
+        return followByRepository.findByUserId(1);
     }
 
 //    @RequestMapping(path = "/follow2", method = RequestMethod.GET)
