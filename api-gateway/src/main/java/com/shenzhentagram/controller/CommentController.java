@@ -47,4 +47,13 @@ public class CommentController extends TemplateRestController {
         return responseEntity;
     }
 
+    @PostMapping("/{post_id}/comments")
+    public ResponseEntity<Void> createComment(
+            @PathVariable("post_id") int post_id,
+            @RequestBody Comment comment
+    ) {
+        ResponseEntity<HashMap> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments", comment, HashMap.class, post_id);
+        return new ResponseEntity<>(responseEntity.getStatusCode());
+    }
+
 }
