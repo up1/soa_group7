@@ -28,10 +28,10 @@ public class FollowController {
 
     @RequestMapping(path = "/follow", method = RequestMethod.GET)
     public void postFollow() {
-        List<Follow> follows = new ArrayList<Follow>();
-        follows.add(new Follow(4,"Im Profile Picture", "I'm Name"));
-        follows.add(new Follow(2,"Im Profile Picture", "I'm Name"));
-        follows.add(new Follow(3,"Im Profile Picture", "I'm Name"));
+        List<User> follows = new ArrayList<User>();
+        follows.add(new User(4,"Im Profile Picture", "I'm Name"));
+        follows.add(new User(2,"Im Profile Picture", "I'm Name"));
+        follows.add(new User(3,"Im Profile Picture", "I'm Name"));
 
 //        mongoOperation.save(new FollowBy(1, follows));
         repository.save(new FollowBy(1, follows));

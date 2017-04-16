@@ -13,25 +13,25 @@ public class FollowBy {
     @Id
     String id;
     long userId;
-    List<Follow> follows;
+    List<User> follows;
 
     public FollowBy() {
     }
 
-    public FollowBy(long userId, List<Follow> follows) {
+    public FollowBy(long userId, List<User> follows) {
         this.userId = userId;
         this.follows = follows;
     }
 
-    public FollowBy(List<Follow> follows) {
+    public FollowBy(List<User> follows) {
         this.follows = follows;
     }
 
-    public List<Follow> getFollows() {
+    public List<User> getFollows() {
         return follows;
     }
 
-    public void setFollows(List<Follow> follows) {
+    public void setFollows(List<User> follows) {
         this.follows = follows;
     }
 

@@ -7,14 +7,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * Created by nut on 15/4/2560.
  */
 
-@Document(collection = "follows")
-public class Follow {
-    @Id
-    private String id;
+//@Document(collection = "follows")
+public class User {
 
     long userId;
 
-    public Follow(long userId, String profilePicture, String displayName) {
+    public User(long userId, String profilePicture, String displayName) {
+        this.userId = userId;
         this.profilePicture = profilePicture;
         this.displayName = displayName;
     }
@@ -22,14 +21,6 @@ public class Follow {
     private String profilePicture;
 
     private String displayName;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getProfilePicture() {
         return profilePicture;
