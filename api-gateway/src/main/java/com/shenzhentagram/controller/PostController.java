@@ -114,7 +114,7 @@ public class PostController extends TemplateRestController {
             @PathVariable("id") long id,
             @RequestBody PostUpdate detail
     ) {
-        // FIXME check authenticated user before update or send auth user id to post service and let it handle itself
+        detail.setUser_id(getAuthenticatedUser().getId());
 
         return request(HttpMethod.PATCH, "/posts/{id}", detail, Post.class, id);
     }
