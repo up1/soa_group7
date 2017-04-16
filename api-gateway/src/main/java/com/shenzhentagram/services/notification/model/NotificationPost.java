@@ -1,4 +1,4 @@
-package com.shenzhentagram.model;
+package com.shenzhentagram.services.notification.model;
 
 /**
  * Created by Jiravat on 3/13/2017.

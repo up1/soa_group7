@@ -1,7 +1,7 @@
 package com.shenzhentagram.controller;
 
-import com.shenzhentagram.model.Notification;
-import com.shenzhentagram.model.NotificationList;
+import com.shenzhentagram.services.notification.model.Notification;
+import com.shenzhentagram.services.notification.model.NotificationList;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin
@@ -29,11 +28,24 @@ public class NotificationController extends TemplateRestController {
     }
 
     @GetMapping()
-    public ResponseEntity<NotificationList> getNotificationsByUser(
-            @RequestParam("limit") int limit,
-            @RequestParam("page") int page
+    public ResponseEntity<NotificationList> getSelfNotifications(
+            @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page
+    ) throws Exception {
+        String uri = String.format("/notifications?limit=%d&page=%d&userId=%d",
+                limit,
+                page,
+                getAuthenticatedUser().getId()
+        );
+
+        return request(HttpMethod.GET, uri, NotificationList.class);
+    }
+
+    @PatchMapping("/status/checked")
+    public ResponseEntity<Void> checkedNotification(
+            @RequestBody List<Integer> notificationIds
     ) {
-        return request(HttpMethod.GET, "/notifications?limit=" + limit + "&page=" + page, NotificationList.class);
+        return request(HttpMethod.PATCH, "/notification/status/checked", notificationIds, Void.class);
     }
 
     @PutMapping("/update")

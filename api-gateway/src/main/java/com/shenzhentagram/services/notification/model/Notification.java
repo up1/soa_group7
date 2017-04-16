@@ -1,4 +1,4 @@
-package com.shenzhentagram.models;
+package com.shenzhentagram.services.notification.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 /**
  * Created by Jiravat on 3/9/2017.
  */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Notification {
     private long id;
@@ -89,7 +90,7 @@ public class Notification {
         return from;
     }
 
-    public void setFrom(NotificationAbstract from) {
+    public void getFrom(NotificationAbstract notification) {
         this.from = from;
     }
 
@@ -101,7 +102,7 @@ public class Notification {
         this.checkStatus = checkStatus;
     }
 
-    public Timestamp getTime() {
+    public Timestamp  getTime() {
         return time;
     }
 
@@ -109,3 +110,4 @@ public class Notification {
         this.time = time;
     }
 }
+

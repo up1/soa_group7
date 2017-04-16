@@ -1,4 +1,4 @@
---Notification Data--
+# Notification Data
 insert into notifications (id, userId, type_, text, thumbnail, notificationId, checkStatus) values (1, 5, 'reaction', 'p3WA5r8699W138M8061P', 'http://dummyimage.com/120x236.png/dddddd/000000', 1, 1);
 insert into notifications (id, userId, type_, text, thumbnail, notificationId, checkStatus) values (2, 6, 'comment', '37skrH8907rRwj2i4tZA', 'http://dummyimage.com/181x116.bmp/5fa2dd/ffffff', 2, 1);
 insert into notifications (id, userId, type_, text, thumbnail, notificationId, checkStatus) values (3, 4, 'reaction', '628O8r6x4S3D61jVBEcj', 'http://dummyimage.com/138x232.png/dddddd/000000', 3, 1);
@@ -99,7 +99,7 @@ insert into notifications (id, userId, type_, text, thumbnail, notificationId, c
 insert into notifications (id, userId, type_, text, thumbnail, notificationId, checkStatus) values (98, 4, 'followed_by', '668XAAh3T1Zb7P05M4zR', 'http://dummyimage.com/231x211.png/cc0000/ffffff', 98, 1);
 insert into notifications (id, userId, type_, text, thumbnail, notificationId, checkStatus) values (99, 5, 'comment', 'e4k4L4S1Pau0r3dth0EC', 'http://dummyimage.com/134x134.jpg/5fa2dd/ffffff', 99, 0);
 insert into notifications (id, userId, type_, text, thumbnail, notificationId, checkStatus) values (100, 2, 'comment', '37GZwv31832109r3J531', 'http://dummyimage.com/230x230.jpg/dddddd/000000', 100, 0);
---NotificationPost Data--
+# NotificationPost Data
 insert into notificationPosts (id, post_id, comment_id) values (1, 1, 1);
 insert into notificationPosts (id, post_id, comment_id) values (2, 2, 2);
 insert into notificationPosts (id, post_id, comment_id) values (3, 3, 3);
@@ -301,7 +301,7 @@ insert into notificationReactions (id, reaction_id) values (97, 97);
 insert into notificationReactions (id, reaction_id) values (98, 98);
 insert into notificationReactions (id, reaction_id) values (99, 99);
 insert into notificationReactions (id, reaction_id) values (100, 100);
---Notification User Data--
+# Notification User Data
 insert into notificationUsers (id, userId) values (1, 1);
 insert into notificationUsers (id, userId) values (2, 2);
 insert into notificationUsers (id, userId) values (3, 3);
