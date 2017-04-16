@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -34,18 +36,23 @@ public class NotificationController {
 
     @PatchMapping(path = "/notifications/status/checked")
     public ResponseEntity<Void> checkedNotifications(
-            @RequestBody List<Integer> notificationIds
+            @RequestBody Map<String, Object> body
     ) {
-        int SC = this.notificationRepository.updateNotificationsStatus(notificationIds, 1);
-        return new ResponseEntity<>(HttpStatus.valueOf(SC));
+        return new ResponseEntity<>(HttpStatus.valueOf(callUpdateStatus((List<Object>) body.get("id"), 1)));
     }
 
     @PatchMapping(path = "/notifications/status/unchecked")
     public ResponseEntity<Void> uncheckedNotifications(
-            @RequestBody List<Integer> notificationIds
+            @RequestBody Map<String, Object> body
     ) {
-        int SC = this.notificationRepository.updateNotificationsStatus(notificationIds, 0);
-        return new ResponseEntity<>(HttpStatus.valueOf(SC));
+        return new ResponseEntity<>(HttpStatus.valueOf(callUpdateStatus((List<Object>) body.get("id"), 0)));
+    }
+
+    private int callUpdateStatus(List<Object> idObjectList, int status) {
+        List<Integer> ids = new ArrayList<>();
+        idObjectList.forEach((id) -> ids.add((Integer) id));
+
+        return this.notificationRepository.updateNotificationsStatus(ids, status);
     }
 
     @RequestMapping(method = RequestMethod.GET , path = "/notifications", produces = { MediaType.APPLICATION_JSON_VALUE })

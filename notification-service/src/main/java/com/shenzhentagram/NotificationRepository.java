@@ -268,6 +268,28 @@ public class NotificationRepository {
         }
     }
 
+    @Transactional
+    public int updateNotificationsStatus(List<Integer> notificationIds, int status) {
+        try {
+            String insertSql = "UPDATE notifications SET checkStatus = ? " +
+                    "WHERE id = ?";
+
+            for (int id  : notificationIds) {
+                this.jdbcTemplate.update(insertSql,
+                        new Object[] {
+                                status,
+                                id
+                        }
+                );
+            }
+
+            return HttpServletResponse.SC_OK;
+        } catch (Exception exception) {
+            System.out.print(exception);
+            return HttpServletResponse.SC_NOT_MODIFIED;
+        }
+    }
+
     @Transactional()
     public int updateNotifications(List<Notification> notifications) {
         try {

@@ -1,4 +1,4 @@
-package com.shenzhentagram.services.notification.model;
+package com.shenzhentagram.model;
 
 import java.util.ArrayList;
 

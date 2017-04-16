@@ -27,7 +27,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // authorize "/notifications" for
                 // (GET) get self notification
                 .antMatchers(HttpMethod.GET, "notifications").authenticated()
-
+                // (PATCH) update notification status
+                .antMatchers(HttpMethod.PATCH, "notifications/status/checked").authenticated()
+                .antMatchers(HttpMethod.PATCH, "notifications/status/unchecked").authenticated()
                 // authorize "/posts" for
                 // (GET) getting the timeline of self's followings
                 .antMatchers(HttpMethod.GET, "/posts").authenticated()
