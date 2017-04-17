@@ -60,6 +60,14 @@ public class FollowController {
 
     }
 
+    @RequestMapping(path = "/{id}/followed_by", method = RequestMethod.GET)
+    public FollowBy getFollowed_by    (@PathVariable("id") Long id) {
+
+        FollowBy foloFollowby = followByRepository.findByUserId(id);
+        return foloFollowby;
+
+    }
+
 
 
 
