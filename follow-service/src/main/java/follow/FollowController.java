@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -26,41 +27,29 @@ public class FollowController {
     @RequestMapping(path = "/createdata", method = RequestMethod.GET)
     public void postCreateData() {
         List<User> followby = new ArrayList<User>();
-        followby.add(new User(4,"Im Profile Picture", "I'm Name"));
-        followby.add(new User(2,"Im Profile Picture", "I'm Name"));
-        followby.add(new User(3,"Im Profile Picture", "I'm Name"));
+        followby.add(new User(4));
+        followby.add(new User(2));
+        followby.add(new User(3));
 
         List<User> following = new ArrayList<User>();
-        following.add(new User(4,"Im Profile following", "I'm following"));
-        following.add(new User(2,"Im Profile following", "I'm following"));
-        following.add(new User(3,"Im Profile following", "I'm following"));
-//        mongoOperation.save(new FollowBy(1, follows));
+        following.add(new User(4));
+        following.add(new User(2));
+        following.add(new User(3));
+
         followByRepository.save(new FollowBy(1, followby));
         followingRepository.save(new Following(1,following));
 
     }
 
-    @RequestMapping(path = "/{id}/follows", method = RequestMethod.GET)
+    @GetMapping("/{id}/follows")
     public Following getFollows(@PathVariable("id") Long id) {
 
-//        Query query = new Query();
-//        query.addCriteria(Criteria.where("userId").lt(1));
-
-//        FollowBy foloFollowBy = mongoOperation.findOne(query, FollowBy.class);
-//        try {
-//            FollowBy foloFollowby = repository.findByUserId(1);
-//            foloFollowby.setUserId(9999999);
-//            foloFollowby.setId("1");
-//            repository.save(foloFollowBy);
-//        }
-//        catch (Exception e){
-//        }
         Following following = followingRepository.findByUserId(id);
         return following;
 
     }
 
-    @RequestMapping(path = "/{id}/followed_by", method = RequestMethod.GET)
+    @GetMapping("/{id}/followed_by")
     public FollowBy getFollowed_by    (@PathVariable("id") Long id) {
 
         FollowBy followby = followByRepository.findByUserId(id);
@@ -68,7 +57,25 @@ public class FollowController {
 
     }
 
+    @PostMapping("/{id}/followed_by")
+    public FollowBy test   (@PathVariable("id") Long id, @RequestBody Map<String, Object> payload) {
+        List<User> users = new ArrayList<>();
+        FollowBy followby;
+        followby = followByRepository.findByUserId((int)payload.get("userId"));
+        try {
+            users = followby.getUsers();
+            users.add(new User(id));
+            followby.setUsers(users);
+            followByRepository.save(followby);
+        }catch (Exception e){
+            users.add(new User(id));
+            followby = new FollowBy((int)payload.get("userId") ,users);
+            followByRepository.save(followby);
+        }
 
+        return followby;
+
+    }
 
 
 }
