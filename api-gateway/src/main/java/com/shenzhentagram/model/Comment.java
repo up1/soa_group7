@@ -1,66 +1,19 @@
 package com.shenzhentagram.model;
 
-import java.util.Date;
-
 /**
  * Created by Meranote on 4/17/2017.
  */
-public class Comment {
+public class Comment extends CommentBase {
 
-    private int id;
-    private int postId;
-    private int userId;
-    private String text;
-    private Date createAt;
-    private Date updateAt;
+    private String _id;
     private User user;
 
-    public int getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getPostId() {
-        return postId;
-    }
-
-    public void setPostId(int postId) {
-        this.postId = postId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Date getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    public Date getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public User getUser() {
