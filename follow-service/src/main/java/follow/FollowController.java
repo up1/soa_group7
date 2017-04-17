@@ -58,7 +58,7 @@ public class FollowController {
     }
 
     @PostMapping("/{id}/followed_by")
-    public FollowBy test   (@PathVariable("id") Long id, @RequestBody Map<String, Object> payload) {
+    public FollowBy createFollowed_by   (@PathVariable("id") Long id, @RequestBody Map<String, Object> payload) {
         List<User> users = new ArrayList<>();
         FollowBy followby;
         followby = followByRepository.findByUserId((int)payload.get("userId"));
@@ -77,5 +77,6 @@ public class FollowController {
 
     }
 
+    
 
 }
