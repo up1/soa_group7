@@ -23,8 +23,8 @@ public class FollowController {
     @Autowired
     private FollowingRepository followingRepository;
 
-    @RequestMapping(path = "/dummydata", method = RequestMethod.GET)
-    public void postFollow() {
+    @RequestMapping(path = "/createdata", method = RequestMethod.GET)
+    public void postCreateData() {
         List<User> followby = new ArrayList<User>();
         followby.add(new User(4,"Im Profile Picture", "I'm Name"));
         followby.add(new User(2,"Im Profile Picture", "I'm Name"));
@@ -55,16 +55,16 @@ public class FollowController {
 //        }
 //        catch (Exception e){
 //        }
-        Following foloFollowing = followingRepository.findByUserId(id);
-        return foloFollowing;
+        Following following = followingRepository.findByUserId(id);
+        return following;
 
     }
 
     @RequestMapping(path = "/{id}/followed_by", method = RequestMethod.GET)
     public FollowBy getFollowed_by    (@PathVariable("id") Long id) {
 
-        FollowBy foloFollowby = followByRepository.findByUserId(id);
-        return foloFollowby;
+        FollowBy followby = followByRepository.findByUserId(id);
+        return followby;
 
     }
 
