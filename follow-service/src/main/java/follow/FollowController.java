@@ -77,6 +77,24 @@ public class FollowController {
 
     }
 
-    
+    @PostMapping("/{id}/follows")
+    public Following createFollows   (@PathVariable("id") Long id, @RequestBody Map<String, Object> payload) {
+        List<User> users = new ArrayList<>();
+        Following following;
+        following = followingRepository.findByUserId((int)payload.get("userId"));
+        try {
+            users = following.getUsers();
+            users.add(new User(id));
+            following.setUsers(users);
+            followingRepository.save(following);
+        }catch (Exception e){
+            users.add(new User(id));
+            following = new Following((int)payload.get("userId") ,users);
+            followingRepository.save(following);
+        }
+
+        return following;
+
+    }
 
 }
