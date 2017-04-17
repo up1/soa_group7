@@ -66,9 +66,11 @@ public class PostController {
     @PatchMapping(value = "/{id}")
     public ResponseEntity<Post> patchPost(
                                        @PathVariable("id") long id,
-                                       @RequestParam(value = "caption") String caption,
-                                       @RequestParam(value = "user_id") long user_id) {
+                                       @RequestBody Map<String, Object> payload) {
         Post post = postService.findPostOrFail(id);
+
+        String caption = (String) payload.get("caption");
+        long user_id = ((Integer) payload.get("user_id")).longValue();
 
         if (user_id != post.getUserId()) {
             throw new UserIdNotMatchException(String.format("User ID %d not match with post's user ID", user_id));
