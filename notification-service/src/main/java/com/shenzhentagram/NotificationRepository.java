@@ -33,7 +33,7 @@ public class NotificationRepository {
             List<Notification> notifications = this.jdbcTemplate.query(
                     "SELECT id, userId, type_, time, text, thumbnail, notificationId, checkStatus " +
                             "FROM notifications " +
-                            "WHERE userId = ? LIMIT ? OFFSET ?",
+                            "WHERE userId = ? ORDER BY time DESC LIMIT ? OFFSET ?",
                     new Object[] {
                             id,
                             limit,
