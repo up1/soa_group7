@@ -26,15 +26,15 @@ public class FollowController {
 
     @RequestMapping(path = "/createdata", method = RequestMethod.GET)
     public void postCreateData() {
-        List<User> followby = new ArrayList<User>();
-        followby.add(new User(4));
-        followby.add(new User(2));
-        followby.add(new User(3));
+        ArrayList<String> followby = new ArrayList<>();
+        followby.add("4");
+        followby.add("2");
+        followby.add("3");
 
-        List<User> following = new ArrayList<User>();
-        following.add(new User(4));
-        following.add(new User(2));
-        following.add(new User(3));
+        ArrayList<String> following = new ArrayList<String>();
+        following.add("4");
+        following.add("2");
+        following.add("3");
 
         followByRepository.save(new FollowBy(1, followby));
         followingRepository.save(new Following(1,following));
@@ -58,17 +58,20 @@ public class FollowController {
     }
 
     @PostMapping("/{id}/followed_by")
-    public FollowBy createFollowed_by   (@PathVariable("id") Long id, @RequestBody Map<String, Object> payload) {
-        List<User> users = new ArrayList<>();
+    public FollowBy createFollowed_by   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
+        ArrayList<String> users = new ArrayList<>();
         FollowBy followby;
         followby = followByRepository.findByUserId((int)payload.get("userId"));
         try {
             users = followby.getUsers();
-            users.add(new User(id));
+
+            
+
+            users.add(id);
             followby.setUsers(users);
             followByRepository.save(followby);
         }catch (Exception e){
-            users.add(new User(id));
+            users.add(id);
             followby = new FollowBy((int)payload.get("userId") ,users);
             followByRepository.save(followby);
         }
@@ -78,17 +81,17 @@ public class FollowController {
     }
 
     @PostMapping("/{id}/follows")
-    public Following createFollows   (@PathVariable("id") Long id, @RequestBody Map<String, Object> payload) {
-        List<User> users = new ArrayList<>();
+    public Following createFollows   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
+        ArrayList<String> users = new ArrayList<>();
         Following following;
         following = followingRepository.findByUserId((int)payload.get("userId"));
         try {
             users = following.getUsers();
-            users.add(new User(id));
+            users.add(id);
             following.setUsers(users);
             followingRepository.save(following);
         }catch (Exception e){
-            users.add(new User(id));
+            users.add(id);
             following = new Following((int)payload.get("userId") ,users);
             followingRepository.save(following);
         }

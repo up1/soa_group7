@@ -3,6 +3,7 @@ package follow;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,22 +16,22 @@ public class Following {
     String id;
 
     long userId;
-    List<User> users;
+    ArrayList<String> users;
 
     public Following() {
     }
 
-    public Following(long userId, List<User> users) {
+    public Following(long userId, ArrayList<String> users) {
         this.userId = userId;
         this.users = users;
 
     }
 
-    public List<User> getUsers() {
+    public ArrayList<String> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(ArrayList<String> users) {
         this.users = users;
     }
 
