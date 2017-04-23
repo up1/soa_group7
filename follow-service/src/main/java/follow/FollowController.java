@@ -58,18 +58,16 @@ public class FollowController {
     @PostMapping("/{id}/followed_by")
     public FollowBy createFollowed_by   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
         ArrayList<String> users = new ArrayList<>();
+        ArrayList<String> useradd = new ArrayList<>();
         FollowBy followby;
         followby = followByRepository.findByUserId((int)payload.get("userId"));
         try {
             users = followby.getUsers();
-
-
-
-            users.add(id);
-            followby.setUsers(users);
+            Set<String> mySet = new HashSet<String>(users);
+            mySet.add(id);
+            useradd.addAll(mySet);
+            followby.setUsers(useradd);
             followByRepository.save(followby);
-
-
         }catch (Exception e){
             users.add(id);
             followby = new FollowBy((int)payload.get("userId") ,users);
