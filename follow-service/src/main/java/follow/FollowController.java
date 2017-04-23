@@ -6,9 +6,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -65,11 +63,13 @@ public class FollowController {
         try {
             users = followby.getUsers();
 
-            
+
 
             users.add(id);
             followby.setUsers(users);
             followByRepository.save(followby);
+
+
         }catch (Exception e){
             users.add(id);
             followby = new FollowBy((int)payload.get("userId") ,users);
@@ -83,12 +83,15 @@ public class FollowController {
     @PostMapping("/{id}/follows")
     public Following createFollows   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
         ArrayList<String> users = new ArrayList<>();
+        ArrayList<String> useradd = new ArrayList<>();
         Following following;
         following = followingRepository.findByUserId((int)payload.get("userId"));
         try {
             users = following.getUsers();
-            users.add(id);
-            following.setUsers(users);
+            Set<String> mySet = new HashSet<String>(users);
+            mySet.add(id);
+            useradd.addAll(mySet);
+            following.setUsers(useradd);
             followingRepository.save(following);
         }catch (Exception e){
             users.add(id);
