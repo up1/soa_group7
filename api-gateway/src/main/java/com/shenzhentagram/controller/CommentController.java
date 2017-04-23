@@ -27,7 +27,7 @@ public class CommentController extends TemplateRestController {
     }
 
     @GetMapping("/{post_id}/comments")
-    public ResponseEntity<CommentPost> getCommentOfPostId(
+    public ResponseEntity<CommentList> getCommentOfPostId(
             @PathVariable("post_id") int post_id
     ) {
         ResponseEntity<CommentList> responseEntity = request(HttpMethod.GET, "/posts/{post_id}/comments", CommentList.class, post_id);
@@ -42,7 +42,7 @@ public class CommentController extends TemplateRestController {
             comment.setUser(cachedUsers.get(comment.getUserId()));
         }
 
-        return new ResponseEntity<>(new CommentPost(responseEntity.getBody()), responseEntity.getStatusCode());
+        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
     }
 
     @PostMapping("/{post_id}/comments")
