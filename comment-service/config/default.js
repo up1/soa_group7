@@ -2,7 +2,19 @@
  * Created by Jiravat on 4/2/2017.
  */
 var env = require('node-env-file');
-env(__dirname + '/../.env');
+
+// const path = require('path');
+//
+// console.log(process.env.ENV_PATH+'/.env');
+// console.log(__dirname + '/../.env');
+// console.log(path.basename(process.env.ENV_PATH));
+
+try{
+    env(process.env.ENV_PATH+'/.env');
+}catch(e) {
+    console.log(e);
+    env(__dirname + '/../.env');
+}
 
 module.exports = {
 
