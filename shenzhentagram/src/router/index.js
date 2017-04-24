@@ -56,6 +56,9 @@ Vue.use(VueResource)
 Vue.http.options.root = 'http://35.185.168.160'
 Vue.http.options.xhr = {withCredentials: true}
 
+// Default error handler
+Vue.http.interceptors.push(DefaultErrorHandler)
+
 Vue.use(VueAuth, {
   auth: custom1,
   http: require('@websanova/vue-auth/drivers/http/vue-resource.1.x.js'),
