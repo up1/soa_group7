@@ -135,43 +135,51 @@ public class FollowController {
 //
 //    }
 //
-//    @DeleteMapping("/{id}/follows")
-//    public Following deleteFollows   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
-//        ArrayList<String> users = new ArrayList<>();
-//        ArrayList<String> useradd = new ArrayList<>();
-//        Following following;
-//        following = followingRepository.findByUserId((int)payload.get("userId"));
-//        try {
-//            users = following.getUsers();
-//            Set<String> mySet = new HashSet<String>(users);
-//            mySet.remove(id);
-//            useradd.addAll(mySet);
-//            following.setUsers(useradd);
-//            followingRepository.save(following);
-//        }catch (Exception e){
-//        }
-//
-//        return following;
-//
-//    }
-//
-//    @DeleteMapping("/{id}/followed_by")
-//    public FollowBy deleteFollowed_by   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
-//        ArrayList<String> users = new ArrayList<>();
-//        ArrayList<String> useradd = new ArrayList<>();
-//        FollowBy followby;
-//        followby = followByRepository.findByUserId((int)payload.get("userId"));
-//        try {
-//            users = followby.getUsers();
-//            Set<String> mySet = new HashSet<String>(users);
-//            mySet.remove(id);
-//            useradd.addAll(mySet);
-//            followby.setUsers(useradd);
-//            followByRepository.save(followby);
-//        }catch (Exception e){
-//        }
-//
-//        return followby;
-//
-//    }
+
+    @DeleteMapping("/{id}/follows")
+    public Follows deleteFollower   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
+        ArrayList<Integer> follower = new ArrayList<>();
+        ArrayList<Integer> following = new ArrayList<>();
+
+        ArrayList<Integer> useradd = new ArrayList<>();
+
+        Follows follows;
+        follows = followsRepository.findById(id);
+        try {
+            follower = follows.getFollower();
+            Set<Integer> mySet = new HashSet<Integer>(follower);
+            mySet.remove((int)payload.get("userId"));
+            useradd.addAll(mySet);
+            follows.setFollower(useradd);
+            followsRepository.save(follows);
+        }catch (Exception e){
+        }
+
+        return follows;
+
+    }
+
+    @DeleteMapping("/{id}/following")
+    public Follows deleteFollowing   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
+        ArrayList<Integer> follower = new ArrayList<>();
+        ArrayList<Integer> following = new ArrayList<>();
+
+        ArrayList<Integer> useradd = new ArrayList<>();
+
+        Follows follows;
+        follows = followsRepository.findById(id);
+        try {
+            following = follows.getFollowing();
+            Set<Integer> mySet = new HashSet<Integer>(following);
+            mySet.remove((int)payload.get("userId"));
+            useradd.addAll(mySet);
+            follows.setFollowing(useradd);
+            followsRepository.save(follows);
+        }catch (Exception e){
+        }
+
+        return follows;
+
+
+    }
 }
