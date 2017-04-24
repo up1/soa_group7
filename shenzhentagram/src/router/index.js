@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/Login'
+import AuthPage from '@/components/AuthPage'
 import Home from '@/components/Home'
 import PostForm from '@/components/PostForm'
 import Profile from '@/components/profile/Profile'
@@ -8,6 +8,7 @@ import ProfileEdit from '@/components/profile/ProfileEdit'
 import VueResource from 'vue-resource'
 import VueAuth from '@websanova/vue-auth'
 import custom1 from '@/driver/custom1'
+import { DefaultErrorHandler } from './interceptors'
 
 const router = new Router({
   hashbang: false,
@@ -17,7 +18,14 @@ const router = new Router({
     {
       path: '/login',
       name: 'login',
-      component: Login,
+      component: AuthPage,
+      props: {mode: 'LoginForm'},
+      meta: {auth: false}
+    }, {
+      path: '/register',
+      name: 'register',
+      component: AuthPage,
+      props: {mode: 'RegisterForm'},
       meta: {auth: false}
     }, {
       path: '/',
