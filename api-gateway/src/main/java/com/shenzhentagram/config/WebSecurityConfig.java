@@ -43,6 +43,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // authorize "/posts/{id}/comments for
                 // (POST) create comment
                 .antMatchers(HttpMethod.POST, "/posts/{id}/comments").authenticated()
+                // (PUT) edit comment
+                .antMatchers(HttpMethod.PUT, "/posts/{id}/comments").authenticated()
+                // (DELETE) delete comment
+                .antMatchers(HttpMethod.DELETE, "/posts/{id}/comments").authenticated()
                 // authorize "/users/self" for
                 // (GET) get self information
                 .antMatchers(HttpMethod.GET, "/users/self").authenticated()

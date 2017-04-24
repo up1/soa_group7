@@ -50,7 +50,32 @@ public class CommentController extends TemplateRestController {
             @PathVariable("post_id") int post_id,
             @RequestBody CommentCreate comment
     ) {
+        // FIXME Create notification
+
         ResponseEntity<HashMap> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id);
+        return new ResponseEntity<>(responseEntity.getStatusCode());
+    }
+
+    @PutMapping("/{post_id}/comments/{comment_id}")
+    public ResponseEntity<Void> updateComment(
+            @PathVariable("post_id") int post_id,
+            @PathVariable("comment_id") String comment_id,
+            @RequestBody CommentUpdate comment
+    ) {
+        // FIXME check authenticated user before edit or send auth user id to comment service and let it handle itself
+
+        ResponseEntity<HashMap> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id, comment_id);
+        return new ResponseEntity<>(responseEntity.getStatusCode());
+    }
+
+    @DeleteMapping("/{post_id}/comments/{comment_id}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable("post_id") int post_id,
+            @PathVariable("comment_id") String comment_id
+    ) {
+        // FIXME check authenticated user before delete or send auth user id to comment service and let it handle itself
+
+        ResponseEntity<HashMap> responseEntity = request(HttpMethod.DELETE, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), HashMap.class, post_id, comment_id);
         return new ResponseEntity<>(responseEntity.getStatusCode());
     }
 
