@@ -23,27 +23,7 @@ public class FollowController {
     private FollowingRepository followingRepository;
     @Autowired
     private FollowsRepository followsRepository;
-
-    @RequestMapping(path = "/createdata", method = RequestMethod.GET)
-    public Follows postCreateData() {
-        ArrayList<Integer> followby = new ArrayList<>();
-        followby.add(4);
-        followby.add(2);
-        followby.add(3);
-
-        ArrayList<Integer> following = new ArrayList<>();
-        following.add(4);
-        following.add(2);
-        following.add(3);
-
-//        followByRepository.save(new FollowBy(1, followby));
-//        followingRepository.save(new Following(1,following));
-        Follows follows = new Follows("1", followby, following);
-        followsRepository.save(follows);
-        return follows;
-
-    }
-
+    
     @GetMapping("/{id}/follows")
     public Follows getFollows(@PathVariable("id") String id) {
 
@@ -51,14 +31,6 @@ public class FollowController {
         return follows;
 
     }
-
-//    @GetMapping("/{id}/follows")
-//    public FollowBy getFollowed_by    (@PathVariable("id") Long id) {
-//
-//        FollowBy followby = followByRepository.findByUserId(id);
-//        return followby;
-//
-//    }
 
 
     @PostMapping("/{id}/follows")
@@ -147,27 +119,4 @@ public class FollowController {
 
     }
 
-    @DeleteMapping("/{id}/following")
-    public Follows deleteFollowing   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
-        ArrayList<Integer> follower = new ArrayList<>();
-        ArrayList<Integer> following = new ArrayList<>();
-
-        ArrayList<Integer> useradd = new ArrayList<>();
-
-        Follows follows;
-        follows = followsRepository.findById(id);
-        try {
-            following = follows.getFollowing();
-            Set<Integer> mySet = new HashSet<Integer>(following);
-            mySet.remove((int)payload.get("userId"));
-            useradd.addAll(mySet);
-            follows.setFollowing(useradd);
-            followsRepository.save(follows);
-        }catch (Exception e){
-        }
-
-        return follows;
-
-
-    }
 }
