@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import AuthPage from '@/components/AuthPage'
 import Home from '@/components/Home'
+import PostSingle from '@/components/PostSingle'
 import PostForm from '@/components/PostForm'
 import Profile from '@/components/profile/Profile'
 import ProfileEdit from '@/components/profile/ProfileEdit'
@@ -31,6 +32,12 @@ const router = new Router({
       path: '/',
       name: 'home',
       component: Home,
+      meta: {auth: true}
+    }, {
+      path: '/post/:postId',
+      name: 'post-single',
+      component: PostSingle,
+      props: true,
       meta: {auth: true}
     }, {
       path: '/post/new',

@@ -21,7 +21,7 @@
       <div class="content">
         {{this.post.caption}}
         <br>
-        <small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small>
+        <small><router-link :to="{name: 'post-single', params: { postId: this.post.id }}">{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</router-link></small>
       </div>
 
       <div v-if="comments.length > 0" class="content">
@@ -97,7 +97,7 @@
           },
           // Error
           () => {
-            console.error('Something wrong in PostForm.vue -> doPost();')
+            console.error('Something wrong in Card.vue -> doComment();')
             this.error = 'Something wrong'
             this.showModal()
           }
