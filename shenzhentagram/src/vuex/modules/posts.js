@@ -5,11 +5,13 @@ import Vue from 'vue'
 import * as types from '../mutation-types'
 
 const state = {
-  posts: []
+  posts: [],
+  userPosts: []
 }
 
 const getters = {
-  getPosts: state => state.posts
+  getPosts: state => state.posts,
+  getUserPosts: state => state.userPosts
 }
 
 const actions = {
@@ -18,17 +20,24 @@ const actions = {
       .then((response) => commit(types.FETCH_POSTS, response.body.content))
   },
   fetchUserPosts ({commit}, userId) {
+    commit(types.CLEAR_USER_POSTS)
     Vue.http.get('users/' + userId + '/posts')
       .then((response) => commit(types.FETCH_USER_POST, response.body.content))
   }
 }
 
 const mutations = {
+  [types.CLEAR_POSTS] (state) {
+    state.posts = []
+  },
+  [types.CLEAR_USER_POSTS] (state) {
+    state.userPosts = []
+  },
   [types.FETCH_POSTS] (state, posts) {
     state.posts = posts.reverse()
   },
   [types.FETCH_USER_POST] (state, posts) {
-    state.posts = posts.reverse()
+    state.userPosts = posts.reverse()
   }
 }
 
