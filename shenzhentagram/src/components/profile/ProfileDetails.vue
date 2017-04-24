@@ -2,8 +2,10 @@
   <div class="column">
     <div class="profile-details">
       <span class="title is-2">{{this.user.display_name}}</span>
-      <router-link :to="{name: 'account_edit'}" class="button edit-profile">Edit Profile</router-link>
-      <a class="logout-modal icon" v-on:click="showModal"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
+      <span v-if="$auth.user().id === user.id">
+        <router-link :to="{name: 'account_edit'}" class="button edit-profile">Edit Profile</router-link>
+        <a class="logout-modal icon" v-on:click="showModal"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
+      </span>
     </div>
 
     <ul class="profile-details">

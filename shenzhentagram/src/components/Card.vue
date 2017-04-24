@@ -14,7 +14,7 @@
         </div>
         <div class="media-content">
           <p class="title is-4">{{this.post.user.display_name}}</p>
-          <p class="subtitle is-6">@{{this.post.user.username}}</p>
+          <p class="subtitle is-6"><router-link :to="{name: 'users', params: { userId: this.post.user.id }}">@{{this.post.user.username}}</router-link></p>
         </div>
       </div>
 

@@ -10,7 +10,7 @@
     <div class="media-content">
       <div class="content">
         <p>
-          <strong>{{this.comment.user.display_name}}</strong> <small>@{{this.comment.user.username}}</small> <small>{{this.comment.createdAt | moment("MMM D, YYYY, h:mm A")}}</small>
+          <strong>{{this.comment.user.display_name}}</strong> <small><router-link :to="{name: 'users', params: { userId: this.comment.user.id }}">@{{this.comment.user.username}}</router-link></small> <small>{{this.comment.createdAt | moment("MMM D, YYYY, h:mm A")}}</small>
           <br>
           {{this.comment.text}}
         </p>
