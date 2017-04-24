@@ -13,10 +13,6 @@ import java.util.*;
 @RequestMapping("/users")
 public class FollowController {
 
-    // For Annotation
-    ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringMongoConfig.class);
-    MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoTemplate");
-
     @Autowired
     private FollowByRepository followByRepository;
     @Autowired
@@ -86,12 +82,12 @@ public class FollowController {
         following = followingRepository.findByUserId((int)payload.get("userId"));
         try {
             users = following.getUsers();
-            Set<String> mySet = new HashSet<String>(users);
+            Set<String> mySet = new HashSet<>(users);
             mySet.add(id);
             useradd.addAll(mySet);
             following.setUsers(useradd);
             followingRepository.save(following);
-        }catch (Exception e){
+        } catch (Exception e){
             users.add(id);
             following = new Following((int)payload.get("userId") ,users);
             followingRepository.save(following);
