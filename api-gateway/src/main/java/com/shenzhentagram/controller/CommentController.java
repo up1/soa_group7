@@ -1,8 +1,6 @@
 package com.shenzhentagram.controller;
 
-import com.shenzhentagram.model.Comment;
-import com.shenzhentagram.model.CommentList;
-import com.shenzhentagram.model.User;
+import com.shenzhentagram.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -44,15 +42,15 @@ public class CommentController extends TemplateRestController {
             comment.setUser(cachedUsers.get(comment.getUserId()));
         }
 
-        return responseEntity;
+        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
     }
 
     @PostMapping("/{post_id}/comments")
     public ResponseEntity<Void> createComment(
             @PathVariable("post_id") int post_id,
-            @RequestBody Comment comment
+            @RequestBody CommentCreate comment
     ) {
-        ResponseEntity<HashMap> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments", comment, HashMap.class, post_id);
+        ResponseEntity<HashMap> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id);
         return new ResponseEntity<>(responseEntity.getStatusCode());
     }
 
