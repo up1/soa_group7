@@ -1,5 +1,5 @@
 <template>
-  <form v-on:submit.prevent="">
+  <form v-on:submit.prevent="editProfile">
     <div class="columns">
       <div class="column profile is-one-quarter is-paddingless">
         <figure class="image profile-figure is-48x48 is-pulled-right">
@@ -7,7 +7,7 @@
         </figure>
       </div>
       <div class="column is-paddingless display_name">
-        <h1 class="title is-4">PhompAng</h1>
+        <h1 class="title is-4">{{this.user.username}}</h1>
       </div>
     </div>
 
@@ -18,11 +18,11 @@
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <input class="input" type="text" placeholder="Full Name">
+            <input :value="user.full_name" @input="setFullName" class="input" type="text" placeholder="Full Name">
           </div>
-          <p class="help is-danger">
-            This field is required
-          </p>
+          <!--<p class="help is-danger">-->
+            <!--This field is required-->
+          <!--</p>-->
         </div>
       </div>
     </div>
@@ -34,11 +34,11 @@
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <input class="input" type="text" placeholder="Display Name">
+            <input :value="user.display_name" @input="setDisplayName" class="input" type="text" placeholder="Display Name">
           </div>
-          <p class="help is-danger">
-            This field is required
-          </p>
+          <!--<p class="help is-danger">-->
+            <!--This field is required-->
+          <!--</p>-->
         </div>
       </div>
     </div>
@@ -50,7 +50,7 @@
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <textarea class="textarea" placeholder="Bio"></textarea>
+            <textarea :value="user.bio" @input="setBio" class="textarea" placeholder="Bio"></textarea>
           </div>
         </div>
       </div>
@@ -76,9 +76,21 @@
 </template>
 
 <script type="text/babel">
+  import {mapGetters, mapActions} from 'vuex'
   export default {
-    data () {
-      return {}
+    created () {
+      this.$store.dispatch('fetchUser', this.$auth.user().id)
+    },
+    computed: mapGetters({
+      user: 'getUser'
+    }),
+    methods: {
+      ...mapActions([
+        'setFullName', 'setDisplayName', 'setBio'
+      ]),
+      editProfile () {
+        this.$store.dispatch('editProfile', this.user)
+      }
     }
   }
 </script>

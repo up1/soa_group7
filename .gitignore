@@ -84,6 +84,8 @@ authentication-service/target/
 
 api-gateway/target/
 
+comment-service/node_modules/
+
 # dotenv
 .env
 
@@ -91,3 +93,7 @@ api-gateway/target/
 .venv
 venv/
 ENV/
+
+*.log
+
+notification-service/src/main/resources/application\.properties

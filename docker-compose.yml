@@ -1,0 +1,30 @@
+version: "2"
+services:
+  post:
+    build: post-service/build/docker
+    container_name: post-service
+    restart: always
+    ports:
+      - 9002:9002
+  user:
+    build: user-service/target/docker
+    container_name: user-service
+    restart: always
+    ports:
+      - 9001:9001
+  authentication:
+    build: authentication-service/target/docker
+    container_name: authentication-service
+    restart: always
+    ports:
+      - 9005:9005
+  api-gateway:
+    build: api-gateway/target/docker
+    container_name: api-gateway
+    restart: always
+    ports:
+      - 9010:9010
+    links:
+      - post
+      - user
+      - authentication

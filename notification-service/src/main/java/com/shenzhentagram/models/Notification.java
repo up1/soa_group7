@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * Created by Jiravat on 3/9/2017.
@@ -32,7 +31,7 @@ public class Notification {
             @JsonSubTypes.Type(value = NotificationReaction.class, name="reaction"),
             @JsonSubTypes.Type(value = NotificationUser.class, name="followed_by")
     })
-    private NotificationAbstract notification;
+    private NotificationAbstract from;
 
     public Notification(){
 
@@ -86,12 +85,12 @@ public class Notification {
         this.userId = userId;
     }
 
-    public NotificationAbstract getNotification() {
-        return notification;
+    public NotificationAbstract getFrom() {
+        return from;
     }
 
-    public void setNotification(NotificationAbstract notification) {
-        this.notification = notification;
+    public void setFrom(NotificationAbstract from) {
+        this.from = from;
     }
 
     public int getCheckStatus() {

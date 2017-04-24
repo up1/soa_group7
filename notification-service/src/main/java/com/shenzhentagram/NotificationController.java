@@ -1,14 +1,17 @@
 package com.shenzhentagram;
 
-import com.shenzhentagram.authentication.JWTAuthenticationService;
 import com.shenzhentagram.models.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -31,11 +34,30 @@ public class NotificationController {
         response.setStatus(SC);
     }
 
+    @PatchMapping(path = "/notifications/status/checked")
+    public ResponseEntity<Void> checkedNotifications(
+            @RequestBody Map<String, Object> body
+    ) {
+        return new ResponseEntity<>(HttpStatus.valueOf(callUpdateStatus((List<Object>) body.get("id"), 1)));
+    }
+
+    @PatchMapping(path = "/notifications/status/unchecked")
+    public ResponseEntity<Void> uncheckedNotifications(
+            @RequestBody Map<String, Object> body
+    ) {
+        return new ResponseEntity<>(HttpStatus.valueOf(callUpdateStatus((List<Object>) body.get("id"), 0)));
+    }
+
+    private int callUpdateStatus(List<Object> idObjectList, int status) {
+        List<Integer> ids = new ArrayList<>();
+        idObjectList.forEach((id) -> ids.add((Integer) id));
+
+        return this.notificationRepository.updateNotificationsStatus(ids, status);
+    }
+
     @RequestMapping(method = RequestMethod.GET , path = "/notifications", produces = { MediaType.APPLICATION_JSON_VALUE })
-    public List<Notification> getNotificationsByUser(@RequestParam("limit") int limit,@RequestParam("page") int page,HttpServletRequest request) {
-        JWTAuthenticationService authen = new JWTAuthenticationService();
-        authen.parseToken(request);
-        long id = authen.getUserId();
+    public List<Notification> getNotificationsByUser(@RequestParam("limit") int limit,@RequestParam("page") int page,@RequestParam("userId") long id) {
+
         return this.notificationRepository.findByUserId(id, limit, page);
     }
 

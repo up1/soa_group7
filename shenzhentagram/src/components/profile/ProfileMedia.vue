@@ -12,7 +12,7 @@
       Media
     },
     computed: mapGetters({
-      posts: 'getPosts'
+      posts: 'getUserPosts'
     }),
     data () {
       return {}
@@ -23,5 +23,6 @@
 <style scoped>
   .columns {
     padding: 30px 80px;
+    align-items: center;
   }
 </style>

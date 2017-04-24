@@ -1,30 +1,26 @@
 package com.shenzhentagram.model;
 
-public class User {
+import io.swagger.annotations.ApiModelProperty;
 
+public class User extends UserBase {
+
+    @ApiModelProperty(required = true, position = 1)
     private long id;
+
+    @ApiModelProperty(required = true, position = 2)
     private String username;
-    private String full_name;
-    private String bio;
-    private String profile_picture;
-    private String display_name;
+
+    @ApiModelProperty(required = true, position = 7)
+    private String role;
+
+    @ApiModelProperty(position = 8)
     private int follows;
+
+    @ApiModelProperty(position = 9)
     private int followed_by;
+
+    @ApiModelProperty(position = 10)
     private int post_count;
-
-    public User() { }
-
-    public User(long id, String username, String full_name, String bio, String profile_picture, String display_name, int follows, int followed_by, int post_count) {
-        this.id = id;
-        this.username = username;
-        this.full_name = full_name;
-        this.bio = bio;
-        this.profile_picture = profile_picture;
-        this.display_name = display_name;
-        this.follows = follows;
-        this.followed_by = followed_by;
-        this.post_count = post_count;
-    }
 
     public long getId() {
         return id;
@@ -42,36 +38,12 @@ public class User {
         this.username = username;
     }
 
-    public String getFull_name() {
-        return full_name;
+    public String getRole() {
+        return role;
     }
 
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getProfile_picture() {
-        return profile_picture;
-    }
-
-    public void setProfile_picture(String profile_picture) {
-        this.profile_picture = profile_picture;
-    }
-
-    public String getDisplay_name() {
-        return display_name;
-    }
-
-    public void setDisplay_name(String display_name) {
-        this.display_name = display_name;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public int getFollows() {
@@ -97,4 +69,5 @@ public class User {
     public void setPost_count(int post_count) {
         this.post_count = post_count;
     }
+
 }

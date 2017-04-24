@@ -1,5 +1,10 @@
 <template>
   <form v-on:submit.prevent="login()">
+    <div v-if="error" class="notification is-danger">
+      <button type="button" class="delete" v-on:click="clearError"></button>
+      Incorrect username or password
+    </div>
+
     <div class="field">
       <p class="control has-icon">
         <input v-model="data.body.username" class="input is-medium" type="text" placeholder="Username">
@@ -25,7 +30,6 @@
       </p>
     </div>
 
-    <div v-show="error" class="help is-danger" style="color:red; word-wrap:break-word;">{{ error }}</div>
     <div class="field is-grouped">
       <p class="control">
         <button type="submit" class="button is-primary is-medium">
@@ -57,8 +61,6 @@
       }
     },
     mounted () {
-      console.log(this.$auth.redirect())
-      console.log('test')
       // Can set query parameter here for auth redirect or just do it silently in login redirect.
     },
     methods: {
@@ -68,17 +70,19 @@
           body: this.data.body,
           rememberMe: this.data.rememberMe,
           redirect: {name: redirect ? redirect.from.name : 'home'},
-          success () {
-            console.log('success ' + this.context)
+          success (request) {
+            // TODO Toasting some login success ?
           },
-          error (res) {
-            console.log('error ' + this.context)
-            this.error = res.data
+          error (response) {
+            this.error = response.body
           }
         })
       },
+      clearError () {
+        this.error = null
+      },
       showRegister () {
-        this.$store.dispatch('showLogin', false)
+        this.$router.push({ path: '/register' })
       }
     }
   }

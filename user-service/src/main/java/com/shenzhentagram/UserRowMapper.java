@@ -15,6 +15,7 @@ public class UserRowMapper implements RowMapper<User> {
         user.setBio(resultSet.getString("bio"));
         user.setProfile_picture(resultSet.getString("profile_picture"));
         user.setDisplay_name(resultSet.getString("display_name"));
+        user.setRole(resultSet.getString("role"));
         user.setFollows(resultSet.getInt("follows"));
         user.setFollowed_by(resultSet.getInt("followed_by"));
         user.setPost_count(resultSet.getInt("post_count"));

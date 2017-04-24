@@ -60,8 +60,6 @@
       }
     },
     mounted () {
-      console.log(this.$auth.redirect())
-      console.log('test')
       // Can set query parameter here for auth redirect or just do it silently in login redirect.
     },
     methods: {
@@ -70,7 +68,7 @@
           body: this.data.body,
           success () {
             console.log('success ' + this.context)
-            this.$store.dispatch('showLogin', true)
+            this.showLogin()
           },
           error (res) {
             console.log('error ' + this.context)
@@ -79,7 +77,7 @@
         })
       },
       showLogin () {
-        this.$store.dispatch('showLogin', true)
+        this.$router.push({ path: '/login' })
       }
     }
   }

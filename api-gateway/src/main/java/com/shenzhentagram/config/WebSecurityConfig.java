@@ -24,11 +24,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Authentication Config
         http.authorizeRequests()
-                // authorize "/users/self" for
-                // (GET) get self information
-                .antMatchers(HttpMethod.GET, "/users/self").authenticated()
-                // (PATCH) update self information
-                .antMatchers(HttpMethod.PATCH, "/users/self").authenticated()
+                // authorize "/notifications" for
+                // (GET) get self notification
+                .antMatchers(HttpMethod.GET, "notifications").authenticated()
+                // (PATCH) update notification status
+                .antMatchers(HttpMethod.PATCH, "notifications/status/checked").authenticated()
+                .antMatchers(HttpMethod.PATCH, "notifications/status/unchecked").authenticated()
                 // authorize "/posts" for
                 // (GET) getting the timeline of self's followings
                 .antMatchers(HttpMethod.GET, "/posts").authenticated()
@@ -36,9 +37,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/posts").authenticated()
                 // authorize "/posts/{id}" for
                 // (PUT) upload owns post
-                .antMatchers("/posts/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/posts/{id}").authenticated()
                 // (DELETE) delete owns post
-                .antMatchers("/posts/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/posts/{id}").authenticated()
+                // authorize "/posts/{id}/comments for
+                // (POST) create comment
+                .antMatchers(HttpMethod.POST, "/posts/{id}/comments").authenticated()
+                // (PUT) edit comment
+                .antMatchers(HttpMethod.PUT, "/posts/{id}/comments").authenticated()
+                // (DELETE) delete comment
+                .antMatchers(HttpMethod.DELETE, "/posts/{id}/comments").authenticated()
+                // authorize "/users/self" for
+                // (GET) get self information
+                .antMatchers(HttpMethod.GET, "/users/self").authenticated()
+                // (PATCH) update self information
+                .antMatchers(HttpMethod.PATCH, "/users/self").authenticated()
+                // authorize "/users/self/posts" for
+                // (GET) Get self posts
+                .antMatchers(HttpMethod.GET, "/users/self/posts").authenticated()
 
                 // Otherwise, permitted
                 .anyRequest().permitAll();

@@ -2,34 +2,15 @@ package com.shenzhentagram.model;
 
 import java.util.Date;
 
-/**
- * Created by phompang on 3/4/2017 AD.
- */
-public class Post {
+public class Post extends PostBase {
 
     private long id;
-    private String type;
     private int comments;
-    private String caption;
     private int reactions;
-    private String media;
-    private long userId;
     private Date created_at;
     private Date updated_at;
-
-    public Post(String type, int comments, String caption, int reactions, String media, long userId, Date created_at, Date updated_at) {
-        this.type = type;
-        this.comments = comments;
-        this.caption = caption;
-        this.reactions = reactions;
-        this.media = media;
-        this.userId = userId;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-    }
-
-    public Post() {
-    }
+    private int userId;
+    private User user;
 
     public long getId() {
         return id;
@@ -37,14 +18,6 @@ public class Post {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public int getComments() {
@@ -55,28 +28,12 @@ public class Post {
         this.comments = comments;
     }
 
-    public String getCaption() {
-        return caption;
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
     public int getReactions() {
         return reactions;
     }
 
     public void setReactions(int reactions) {
         this.reactions = reactions;
-    }
-
-    public String getMedia() {
-        return media;
-    }
-
-    public void setMedia(String media) {
-        this.media = media;
     }
 
     public Date getCreated_at() {
@@ -95,11 +52,19 @@ public class Post {
         this.updated_at = updated_at;
     }
 
-    public long getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

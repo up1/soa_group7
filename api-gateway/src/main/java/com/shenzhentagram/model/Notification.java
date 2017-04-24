@@ -32,7 +32,7 @@ public class Notification {
             @JsonSubTypes.Type(value = NotificationReaction.class, name="reaction"),
             @JsonSubTypes.Type(value = NotificationUser.class, name="followed_by")
     })
-    private NotificationAbstract notification;
+    private NotificationAbstract from;
 
     public Notification(){
 
@@ -86,12 +86,12 @@ public class Notification {
         this.userId = userId;
     }
 
-    public NotificationAbstract getNotification() {
-        return notification;
+    public NotificationAbstract getFrom() {
+        return from;
     }
 
-    public void setNotification(NotificationAbstract notification) {
-        this.notification = notification;
+    public void setFrom(NotificationAbstract notification) {
+        this.from = from;
     }
 
     public int getCheckStatus() {
