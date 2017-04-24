@@ -163,4 +163,40 @@ public class UserController {
         this.userRepository.update(user);
     }
 
+    @PostMapping("/{id}/follows")
+    public void increaseFollows(
+            @PathVariable("id") long id
+    ) {
+        User user = this.userRepository.findById(id);
+        user.setFollows(user.getFollows() + 1);
+        this.userRepository.update(user);
+    }
+
+    @PutMapping("/{id}/follows")
+    public void decreaseFollows(
+            @PathVariable("id") long id
+    ) {
+        User user = this.userRepository.findById(id);
+        user.setFollows(user.getFollows() - 1);
+        this.userRepository.update(user);
+    }
+
+    @PostMapping("/{id}/followed_by")
+    public void increaseFollowed_by(
+            @PathVariable("id") long id
+    ) {
+        User user = this.userRepository.findById(id);
+        user.setFollowed_by(user.getFollowed_by() + 1);
+        this.userRepository.update(user);
+    }
+
+    @PutMapping("/{id}/followed_by")
+    public void decreaseFollowed_by(
+            @PathVariable("id") long id
+    ) {
+        User user = this.userRepository.findById(id);
+        user.setFollowed_by(user.getFollowed_by() - 1);
+        this.userRepository.update(user);
+    }
+
 }
