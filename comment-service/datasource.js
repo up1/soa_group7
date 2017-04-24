@@ -5,9 +5,6 @@
 // The mongoose instance.
 const _mongoose = require('mongoose');
 
-var env = require('node-env-file');
-env(__dirname + '/.env');
-
 // use bluebird promise library instead of mongoose default promise library
 _mongoose.Promise = global.Promise;
 
@@ -15,23 +12,23 @@ _mongoose.Promise = global.Promise;
 _mongoose.set('debug', false);
 
 // The database mapping.
-const dbs = { };
+var dbs;
 
-function getDb(url, poolSize) {
-    if (!dbs[url]) {
+function getDB() {
+    if (!dbs) {
         var options = {
             db: { native_parser: true },
-            server: { poolSize: 5 },
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            auth: {
-                authdb: 'admin'
-            }
+            server: { poolSize: process.env.DB_POOL_SIZE }
         }
-        const db = _mongoose.createConnection(process.env.DB_URL, options);
-        dbs[url] = db;
+        
+        if(process.env.DB_AUTH) {
+          dbs = _mongoose.createConnection(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=${process.env.DB_NAME}`, options);
+        } else {
+          dbs = _mongoose.createConnection(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`, options);
+        }
     }
-    return dbs[url];
+
+    return dbs;
 }
 
 function getMongoose() {
@@ -40,6 +37,6 @@ function getMongoose() {
 
 // exports the functions
 module.exports = {
-    getDb,
+    getDB,
     getMongoose,
 };

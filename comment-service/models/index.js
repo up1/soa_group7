@@ -3,9 +3,7 @@
  */
 'use strict';
 
-const config = require('config');
-
-const db = require('../datasource').getDb(config.db.url, config.db.poolSize);
+const db = require('../datasource').getDB();
 
 // Comment model
 const CommentSchema = require('./Comment').CommentSchema;
