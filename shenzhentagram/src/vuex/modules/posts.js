@@ -9,7 +9,7 @@ const state = {
 }
 
 const getters = {
-  getPosts: state => state.posts.reverse()
+  getPosts: state => state.posts
 }
 
 const actions = {
@@ -25,10 +25,10 @@ const actions = {
 
 const mutations = {
   [types.FETCH_POSTS] (state, posts) {
-    state.posts = posts
+    state.posts = posts.reverse()
   },
   [types.FETCH_USER_POST] (state, posts) {
-    state.posts = posts
+    state.posts = posts.reverse()
   }
 }
 
