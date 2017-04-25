@@ -49,8 +49,10 @@ function* getSingle(req, res) {
 function* getCommentsByPostId(req, res) {
     const postId = req.params.postId;
     const limit = req.query.limit || 10;
+    const page = req.query.page || 0;
     try{
         Comment.find({'postId': postId})
+            .skip(page*limit)
             .limit(limit)
             .exec(function(err,comments){
             if(err)
