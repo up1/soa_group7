@@ -16,6 +16,10 @@ module.exports = {
             method: 'createSingle',
             // middleware: [auth()],
         },
+        delete:{
+            controller: 'CommentController',
+            method: 'deleteCommentsByPostId'
+        }
     },
     '/posts/comments/:commentId': {
         get: {

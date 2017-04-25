@@ -12,7 +12,8 @@ module.exports = {
     updateSingle,
     getSingle,
     deleteSingle,
-    getCommentsByPostId
+    getCommentsByPostId,
+    deleteCommentsByPostId
 };
 
 function* createSingle(req, res) {
@@ -65,6 +66,18 @@ function* getCommentsByPostId(req, res) {
             };
             res.status(200).json(comments);
         });
+    }
+    catch(e){
+        return res.json({"msg": "error"}, 404);
+    }
+
+}
+
+function* deleteCommentsByPostId(req, res) {
+    const postId = req.params.postId;
+    try{
+        Comment.remove({'postId': postId});
+        res.status(200).json({ "msg": "Done"});
     }
     catch(e){
         return res.json({"msg": "error"}, 404);
