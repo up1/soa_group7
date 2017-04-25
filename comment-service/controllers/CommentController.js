@@ -54,10 +54,15 @@ function* getCommentsByPostId(req, res) {
         Comment.find({'postId': postId})
             .skip(page*limit)
             .limit(limit)
-            .exec(function(err,comments){
-            if(err)
+            .exec(function(err,comments) {
+                if (err) {
+
                 return res.json({"msg": "error"}, 404);
-            // res.json(comments, 200);
+            }
+            comments = {
+                "postId": postId,
+                "comments" :comments
+            };
             res.status(200).json(comments);
         });
     }
