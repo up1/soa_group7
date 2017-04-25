@@ -76,11 +76,18 @@ function* getCommentsByPostId(req, res) {
 function* deleteCommentsByPostId(req, res) {
     const postId = req.params.postId;
     try{
-        Comment.remove({'postId': postId});
-        res.status(200).json({ "msg": "Done"});
+        Comment.remove({'postId': postId})
+            .exec(function(err) {
+            if (!err) {
+                res.status(200).json({"msg": "Removed"});
+            }
+            else {
+                res.status(404).json({"msg": "error"});
+            }
+        });
     }
     catch(e){
-        return res.json({"msg": "error"}, 404);
+        return res.status(404).json({"msg": "error"});
     }
 
 }
