@@ -17,7 +17,7 @@ module.exports = {
             // middleware: [auth()],
         },
     },
-    '/posts/:postId/comments/:commentId': {
+    '/posts/comments/:commentId': {
         get: {
             controller: 'CommentController',
             method: 'getSingle'
