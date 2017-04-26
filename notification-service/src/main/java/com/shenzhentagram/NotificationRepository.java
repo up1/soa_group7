@@ -232,9 +232,9 @@ public class NotificationRepository {
                                          public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                                              PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
                                              statement.setLong(1, notificationPost.getPost_id());
-                                             statement.setLong(2, notificationPost.getComment_id());
+                                             statement.setString(2, notificationPost.getComment_id());
                                              statement.setLong(3, notificationPost.getPost_id());
-                                             statement.setLong(4, notificationPost.getComment_id());
+                                             statement.setString(4, notificationPost.getComment_id());
                                              return statement;
                                          }
                                      },

@@ -38,7 +38,7 @@ public abstract class TemplateRestController {
     /**
      * Logging
      */
-    private Log log = LogFactory.getLog(this.getClass());
+    protected Log log = LogFactory.getLog(this.getClass());
 
     /**
      * URI Template Handler (For logging)

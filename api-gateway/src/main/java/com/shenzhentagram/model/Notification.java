@@ -34,10 +34,6 @@ public class Notification {
     })
     private NotificationAbstract from;
 
-    public Notification(){
-
-    }
-
     public long getId() {
         return id;
     }

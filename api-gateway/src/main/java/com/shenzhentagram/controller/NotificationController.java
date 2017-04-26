@@ -1,5 +1,7 @@
 package com.shenzhentagram.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shenzhentagram.model.*;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -22,14 +24,14 @@ public class NotificationController extends TemplateRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Notification> getNotification(
+    public ResponseEntity<Object> getNotification(
             @PathVariable("id") long id
     ) {
-        return request(HttpMethod.GET, "/notifications/{id}", Notification.class, id);
+        return request(HttpMethod.GET, "/notifications/{id}", Object.class, id);
     }
 
     @GetMapping()
-    public ResponseEntity<NotificationList> getSelfNotifications(
+    public ResponseEntity<ArrayList> getSelfNotifications(
             @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page
     ) throws Exception {
@@ -39,7 +41,7 @@ public class NotificationController extends TemplateRestController {
                 getAuthenticatedUser().getId()
         );
 
-        return request(HttpMethod.GET, uri, NotificationList.class);
+        return request(HttpMethod.GET, uri, ArrayList.class);
     }
 
     @PatchMapping("/status/checked")
@@ -92,7 +94,7 @@ public class NotificationController extends TemplateRestController {
      * [Internal only] create new comment notification
      */
     public ResponseEntity<Void> createCommentNotification(
-            int targetUserId, int targetPostId, int targetCommentId
+            int targetUserId, int targetPostId, String targetCommentId
     ) {
         // Create empty base notification
         Notification notification = new Notification();
@@ -116,6 +118,12 @@ public class NotificationController extends TemplateRestController {
         // AND WHY THE FUCK I NEED TO SENT IT AS ARRAY JUST TO CREATE ONLY ONE NOTIFICATION -_-
         List<Notification> notifications = new ArrayList<>();
         notifications.add(notification);
+
+        try {
+            log.info(new ObjectMapper().writeValueAsString(notifications));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
         // Send to notification-service
         return request(HttpMethod.POST, "/notifications/comment", notifications, Void.class);
