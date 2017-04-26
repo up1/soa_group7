@@ -47,6 +47,7 @@ const router = new Router({
     }, {
       path: '/users/:userId',
       name: 'users',
+      props: true,
       component: Profile
     }, {
       path: '/account/edit/',

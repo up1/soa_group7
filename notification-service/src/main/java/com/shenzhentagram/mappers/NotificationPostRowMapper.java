@@ -14,7 +14,7 @@ public class NotificationPostRowMapper implements RowMapper<NotificationPost> {
     public NotificationPost mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
         NotificationPost notification = new NotificationPost();
         notification.setId(resultSet.getLong("id"));
-        notification.setComment_id(resultSet.getLong("comment_id"));
+        notification.setComment_id(resultSet.getString("comment_id"));
         notification.setPost_id(resultSet.getLong("post_id"));
         return notification;
     }

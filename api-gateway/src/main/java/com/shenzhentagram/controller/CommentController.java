@@ -20,7 +20,13 @@ import java.util.HashMap;
 public class CommentController extends TemplateRestController {
 
     @Autowired
+    private PostController postController;
+
+    @Autowired
     private UserController userController;
+
+    @Autowired
+    private NotificationController notificationController;
 
     public CommentController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "comment");
@@ -34,7 +40,7 @@ public class CommentController extends TemplateRestController {
 
         // Embed user into comments
         HashMap<Integer, User> cachedUsers = new HashMap<>();
-        for(Comment comment : responseEntity.getBody()) {
+        for(Comment comment : responseEntity.getBody().getComments()) {
             if(!cachedUsers.containsKey(comment.getUserId())) {
                 cachedUsers.put(comment.getUserId(), userController.getUser(comment.getUserId()).getBody());
             }
@@ -50,9 +56,23 @@ public class CommentController extends TemplateRestController {
             @PathVariable("post_id") int post_id,
             @RequestBody CommentCreate comment
     ) {
-        // FIXME Create notification
-
+        // FIXME Response created comment
         ResponseEntity<HashMap> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id);
+
+        // Increase post comment count
+        try {
+            postController.increaseComments(post_id);
+        } catch(Exception ignored) {
+            log.warn("Increase post '" + post_id + "' comment count", ignored);
+        }
+
+        // Create comment notification
+        try {
+            notificationController.createCommentNotification(Math.toIntExact(getAuthenticatedUser().getId()), post_id, "abc");
+        } catch(Exception ignored) {
+            log.warn("Create notification failed", ignored);
+        }
+
         return new ResponseEntity<>(responseEntity.getStatusCode());
     }
 
@@ -62,8 +82,6 @@ public class CommentController extends TemplateRestController {
             @PathVariable("comment_id") String comment_id,
             @RequestBody CommentUpdate comment
     ) {
-        // FIXME check authenticated user before edit or send auth user id to comment service and let it handle itself
-
         ResponseEntity<HashMap> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id, comment_id);
         return new ResponseEntity<>(responseEntity.getStatusCode());
     }
@@ -73,9 +91,15 @@ public class CommentController extends TemplateRestController {
             @PathVariable("post_id") int post_id,
             @PathVariable("comment_id") String comment_id
     ) {
-        // FIXME check authenticated user before delete or send auth user id to comment service and let it handle itself
-
         ResponseEntity<HashMap> responseEntity = request(HttpMethod.DELETE, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), HashMap.class, post_id, comment_id);
+
+        // Decrease post comment count
+        try {
+            postController.decreaseComments(post_id);
+        } catch(Exception ignored) {
+            log.warn("Decrease post '" + post_id + "' comment count", ignored);
+        }
+
         return new ResponseEntity<>(responseEntity.getStatusCode());
     }
 

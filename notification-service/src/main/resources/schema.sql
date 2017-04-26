@@ -30,6 +30,6 @@ CREATE TABLE notificationReactions(
 CREATE TABLE notificationPosts(
   id BIGINT(20) NOT NULL AUTO_INCREMENT,
   post_id BIGINT(20),
-  comment_id BIGINT(20),
+  comment_id varchar(255),
   PRIMARY KEY (id)
 );

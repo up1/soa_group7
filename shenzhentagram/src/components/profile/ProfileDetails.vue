@@ -2,6 +2,10 @@
   <div class="column">
     <div class="profile-details">
       <span class="title is-2">{{this.user.display_name}}</span>
+      <span v-if="$auth.user().id !== user.id">
+        <a v-if="!isFollowed" href="javascript:;" class="button edit-profile">Follow</a>
+        <a v-if="isFollowed" href="javascript:;" class="button edit-profile" disabled>Followed</a>
+      </span>
       <span v-if="$auth.user().id === user.id">
         <router-link :to="{name: 'account_edit'}" class="button edit-profile">Edit Profile</router-link>
         <a class="logout-modal icon" v-on:click="showModal"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
@@ -33,11 +37,16 @@
   import { mapGetters } from 'vuex'
   export default {
     data () {
-      return {}
+      return {
+        isFollowed: false
+      }
     },
     computed: mapGetters({
       user: 'getUser'
     }),
+    created () {
+      // TODO Fetch follow
+    },
     methods: {
       showModal () {
         $('.modal').addClass('is-active')

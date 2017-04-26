@@ -5,17 +5,24 @@ import Vue from 'vue'
 import * as types from '../mutation-types'
 
 const state = {
-  user: {}
+  user: {},
+  posts: []
 }
 
 const getters = {
-  getUser: state => state.user
+  getUser: state => state.user,
+  getUserPosts: state => state.userPosts
 }
 
 const actions = {
   fetchUser ({commit}, userId) {
     Vue.http.get('users/' + userId)
       .then((response) => commit(types.FETCH_USER, response.body))
+  },
+  fetchUserPosts ({commit}, userId) {
+    commit(types.CLEAR_USER_POSTS)
+    Vue.http.get('users/' + userId + '/posts')
+      .then((response) => commit(types.FETCH_USER_POST, response.body.content))
   },
   setFullName ({commit}, e) {
     commit(types.SET_FULL_NAME, e.target.value)
@@ -39,6 +46,9 @@ const actions = {
 const mutations = {
   [types.FETCH_USER] (state, user) {
     state.user = user
+  },
+  [types.FETCH_USER_POST] (state, posts) {
+    state.userPosts = posts.reverse()
   },
   [types.SET_FULL_NAME] (state, fullName) {
     state.user.full_name = fullName
