@@ -57,7 +57,6 @@ public class NotificationRepository {
             });
             return notifications;
         } catch (Exception exception) {
-            System.out.println(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -87,7 +86,6 @@ public class NotificationRepository {
             };
             return notification;
         } catch (Exception exception) {
-            System.out.println(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -112,7 +110,6 @@ public class NotificationRepository {
             );
             return notification;
         } catch (Exception exception) {
-            System.out.println(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -131,7 +128,6 @@ public class NotificationRepository {
             );
             return notification;
         } catch (Exception exception) {
-            System.out.println(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -150,7 +146,6 @@ public class NotificationRepository {
             );
             return notification;
         } catch (Exception exception) {
-            System.out.println(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -285,7 +280,6 @@ public class NotificationRepository {
 
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
-            System.out.print(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -334,7 +328,6 @@ public class NotificationRepository {
 
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
-            System.out.print(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -433,7 +426,6 @@ public class NotificationRepository {
 
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
-            System.out.print(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -456,7 +448,7 @@ public class NotificationRepository {
                         notificationId = createNotificationReaction((NotificationReaction) notification.getFrom());
                         break;
                     default:
-                        System.out.println("Type not found");
+                        break;
                 }
                 notification.setNotificationId(notificationId);
                 this.jdbcTemplate.update(insertSql,
@@ -480,7 +472,6 @@ public class NotificationRepository {
 
             return HttpServletResponse.SC_CREATED;
         } catch (Exception exception) {
-            System.out.print(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }

@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan
 @EnableTransactionManagement
-@PropertySource(value = {"classpath:application.properties"})
+@PropertySource(value = {"classpath:application-default.properties"})
 public class DatabaseConfiguration {
 
     @Autowired
