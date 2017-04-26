@@ -23,7 +23,7 @@ function* createSingle(req, res) {
     req.body.postId = req.params.postId;
     const comment = yield CommentService.create(req.body);
     if(comment.error)res.json({"msg": "not create"}, 304);
-    else{ res.status(201).json({"msg": "create success"});}
+    else{ res.status(201).json(comment);}
 }
 
 function* updateSingle(req, res) {
