@@ -97,3 +97,5 @@ ENV/
 *.log
 
 notification-service/src/main/resources/application\.properties
+
+comment-service/\.scannerwork/

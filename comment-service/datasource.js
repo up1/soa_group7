@@ -24,7 +24,7 @@ function getDB() {
         if(process.env.DB_AUTH) {
           dbs = _mongoose.createConnection(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=${process.env.DB_NAME}`, options);
         } else {
-          dbs = _mongoose.createConnection(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`, options);
+          dbs = _mongoose.createConnection(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME || "shenzhentagram-comment"}`, options);
         }
     }
 

@@ -12,7 +12,8 @@ module.exports = {
     updateSingle,
     getSingle,
     deleteSingle,
-    getCommentsByPostId
+    getCommentsByPostId,
+    deleteCommentsByPostId
 };
 
 function* createSingle(req, res) {
@@ -49,16 +50,44 @@ function* getSingle(req, res) {
 function* getCommentsByPostId(req, res) {
     const postId = req.params.postId;
     const limit = req.query.limit || 10;
+    const page = req.query.page || 0;
     try{
-        Comment.find({'postId': postId}).exec(function(err,comments){
-            if(err)
+        Comment.find({'postId': postId})
+            .skip(page*limit)
+            .limit(limit)
+            .exec(function(err,comments) {
+                if (err) {
+
                 return res.json({"msg": "error"}, 404);
-            // res.json(comments, 200);
+            }
+            comments = {
+                "postId": postId,
+                "comments" :comments
+            };
             res.status(200).json(comments);
         });
     }
     catch(e){
         return res.json({"msg": "error"}, 404);
+    }
+
+}
+
+function* deleteCommentsByPostId(req, res) {
+    const postId = req.params.postId;
+    try{
+        Comment.remove({'postId': postId})
+            .exec(function(err) {
+            if (!err) {
+                res.status(200).json({"msg": "Removed"});
+            }
+            else {
+                res.status(404).json({"msg": "error"});
+            }
+        });
+    }
+    catch(e){
+        return res.status(404).json({"msg": "error"});
     }
 
 }
