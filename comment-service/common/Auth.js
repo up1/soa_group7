@@ -6,7 +6,6 @@
 const jwt = require('express-jwt');
 
 const jwtCheck = jwt({
-    // the auth0 doesn't base 64 encode the jwt secret now
     secret: new Buffer(process.env.JWT_SECRET, 'base64'),
     audience: process.env.AUTH0_CLIENT_ID,
     requestProperty: 'auth',

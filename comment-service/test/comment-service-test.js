@@ -5,16 +5,11 @@
  */
 
 'use strict';
-//do promise
 global.Promise = require('bluebird');
-
-//During the test the env variable is set to test
-// process.env.NODE_ENV = 'test';
 
 const models = require('../models');
 const Comment = models.Comment;
 
-//Require the dev-dependencies
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let server = require('../server');
@@ -26,13 +21,7 @@ chai.use(chaiHttp);
 
 Comment.remove({});
 
-//Our parent block
 describe('Comment', function() {
-    // beforeEach((done) => {
-    //     Comment.remove({}, (err) => {
-    //         done();
-    //     });
-    // });
 
     describe('/GET Comments => /posts/:postId/comments', () => {
         beforeEach((done) => {

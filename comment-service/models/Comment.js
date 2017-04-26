@@ -6,7 +6,6 @@
 const _ = require('lodash');
 const mongoose = require('../datasource').getMongoose();
 const timestamps = require('mongoose-timestamp');
-//const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const CommentSchema = new mongoose.Schema({
     text: {
