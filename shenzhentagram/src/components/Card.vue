@@ -39,6 +39,7 @@
             </div>
           </form>
         </span>
+        <a class="footer-item icon is-medium" v-on:click="doComment"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a>
       </footer>
     </div>
   </div>

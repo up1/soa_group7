@@ -16,9 +16,9 @@
         </p>
       </div>
     </div>
-    <!-- <div class="media-right">
-      <button class="delete"></button>
-    </div> -->
+    <div class="media-right">
+      <button class="delete" v-on:click="removeSelf"></button>
+    </div>
   </article>
 </template>
 
@@ -27,6 +27,22 @@
     props: ['comment'],
     data () {
       return {}
+    },
+    methods: {
+      removeSelf () {
+        this.$http.delete('posts/' + this.comment.postId + '/comments/' + this.comment._id)
+        .then(
+          // Success
+          () => {
+            // hot-remove comment on sucesss
+            this.$parent.comments = this.$parent.comments.filter((comment) => {
+              return comment._id !== this.comment._id
+            })
+          },
+          // Error
+          () => {}
+        )
+      }
     }
   }
 </script>
