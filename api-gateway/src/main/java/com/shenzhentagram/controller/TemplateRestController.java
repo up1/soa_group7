@@ -26,7 +26,7 @@ import org.springframework.web.util.UriTemplateHandler;
  * service.[service-name].ip = [current-service-ip]
  *
  * @author Meranote
- * @version 2.0
+ * @version 2.1
  */
 public abstract class TemplateRestController {
 
@@ -105,7 +105,8 @@ public abstract class TemplateRestController {
         HttpEntity<Object> entity = new HttpEntity<>(body, new HttpHeaders());
 
         try {
-            return restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
+            ResponseEntity<T> responseEntity = restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
+            return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
         } catch(RestClientResponseException e) {
             String targetPath = uriTemplateHandler.expand(uri, uriVariables).getPath();
             log.error("Error calling " + method.toString() + " '" + targetPath + "' : " + e.getRawStatusCode() + " " + e.getStatusText());

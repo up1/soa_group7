@@ -42,7 +42,7 @@ public class CommentController extends TemplateRestController {
             comment.setUser(cachedUsers.get(comment.getUserId()));
         }
 
-        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
+        return responseEntity;
     }
 
     @PostMapping("/{post_id}/comments")
