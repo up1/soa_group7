@@ -34,7 +34,7 @@ public class CommentController extends TemplateRestController {
 
         // Embed user into comments
         HashMap<Integer, User> cachedUsers = new HashMap<>();
-        for(Comment comment : responseEntity.getBody()) {
+        for(Comment comment : responseEntity.getBody().getComments()) {
             if(!cachedUsers.containsKey(comment.getUserId())) {
                 cachedUsers.put(comment.getUserId(), userController.getUser(comment.getUserId()).getBody());
             }
@@ -42,7 +42,7 @@ public class CommentController extends TemplateRestController {
             comment.setUser(cachedUsers.get(comment.getUserId()));
         }
 
-        return responseEntity;
+        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
     }
 
     @PostMapping("/{post_id}/comments")
