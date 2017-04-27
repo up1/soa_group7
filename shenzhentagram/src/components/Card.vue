@@ -19,30 +19,63 @@
       </div>
 
       <div class="content">
-        {{this.post.caption}}
-        <br>
+        <p v-show="!editing">{{this.post.caption}}</p>
+        <div v-show="editing" class="field">
+          <p class="control">
+            <input class="input" type="text" placeholder="Add a caption..."
+                   :value="post.caption"
+                   @keyup.enter="doneEdit"
+                   @keyup.esc="cancelEdit"
+                   @blur="doneEdit">
+          </p>
+        </div>
         <small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small>
       </div>
+    </div>
 
-      <footer class="card-footer">
-        <a href="" class="footer-item icon is-medium"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
-        <span class="footer-item">
+    <footer class="card-footer">
+      <a href="" class="footer-item icon is-medium"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
+      <span class="footer-item">
           <div class="field">
             <p class="control">
-              <input class="input is-medium" type="text" placeholder="Add a comment...">
+              <input class="input is-medium is-borderless" type="text" placeholder="Add a comment...">
             </p>
           </div>
         </span>
-      </footer>
-    </div>
+      <a v-show="post.userId == this.$auth.user().id" v-on:click="active = true" class="footer-item icon"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a>
+    </footer>
+
+    <edit-modal v-on:hide="hideModal" v-on:edit="edit" v-bind:active="active"></edit-modal>
   </div>
 </template>
 
 <script type="text/babel">
+  import EditModal from './EditModal'
   export default {
     props: ['post'],
+    components: {
+      EditModal
+    },
     data () {
-      return {}
+      return {
+        editing: false,
+        active: false
+      }
+    },
+    methods: {
+      edit () {
+        this.editing = true
+      },
+      doneEdit (e) {
+        this.$store.dispatch('editCaption', {body: {caption: e.target.value}, id: this.post.id})
+        this.editing = false
+      },
+      cancelEdit () {
+        this.editing = false
+      },
+      hideModal () {
+        this.active = false
+      }
     }
   }
 </script>
@@ -51,16 +84,21 @@
   .card {
     margin: 50px 0;
   }
+  .card-footer {
+    padding: 0.25rem 0rem 0.25rem 2rem;
+  }
+  .card-footer .footer-item:last-child {
+    margin-left: auto;
+  }
   .footer-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    padding: 0.2rem 0.75rem;
   }
   .icon {
     padding-top: 0.75rem;
   }
-  .input {
+  .is-borderless {
     border: none;
     box-shadow: none;
   }
