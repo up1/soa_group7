@@ -145,6 +145,46 @@ public class UserController {
         return user;
     }
 
+    @PatchMapping("/{id}/picture")
+    public User updateSelfProfilePicture(
+            @PathVariable("id") long id,
+            @RequestBody Map<String, Object> payload
+    ) throws Exception {
+        User user = this.userRepository.findById(id);
+
+        if(!payload.containsKey("profile_picture")) {
+            throw new Exception("no profile_picture field");
+        }
+
+        // Extract image (base64)
+        String imageBase64 = (String) payload.remove("profile_picture");
+        FileUtility.FileDetail fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+
+        try {
+            // upload image
+            // Set picture & upload to storage
+            user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
+
+            // Upload file
+            minio.putObject(
+                    bucket,
+                    user.getProfile_picture(),
+                    fileDetail.inputStream,
+                    fileDetail.size,
+                    fileDetail.type
+            );
+
+            // Save user
+            this.userRepository.update(user);
+            return user;
+        } catch (MinioException e) {
+            throw e;
+        } catch (DataAccessException e) {
+            minio.removeObject(bucket, user.getProfile_picture());
+            throw e;
+        }
+    }
+
     @PostMapping("/{id}/posts/count")
     public void increasePosts(
             @PathVariable("id") long id

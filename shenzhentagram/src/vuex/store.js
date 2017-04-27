@@ -3,7 +3,7 @@
  */
 import Vue from 'vue'
 import Vuex from 'vuex'
-import userProfile from './modules/userProfile'
+import users from './modules/users'
 import posts from './modules/posts'
 
 // Make vue aware of Vuex
@@ -39,7 +39,7 @@ export default new Vuex.Store({
   mutations,
   modules: {
     posts,
-    userProfile
+    users
   },
   strict: process.env.NODE_ENV !== 'production'
 })

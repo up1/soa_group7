@@ -6,7 +6,7 @@ import * as types from '../mutation-types'
 
 const state = {
   user: {},
-  posts: []
+  userPosts: []
 }
 
 const getters = {
@@ -46,6 +46,9 @@ const actions = {
 const mutations = {
   [types.FETCH_USER] (state, user) {
     state.user = user
+  },
+  [types.CLEAR_USER_POSTS] (state) {
+    state.userPosts = []
   },
   [types.FETCH_USER_POST] (state, posts) {
     state.userPosts = posts.reverse()
