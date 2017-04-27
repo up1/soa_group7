@@ -18,10 +18,6 @@ public class FollowController {
     MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoTemplate");
 
     @Autowired
-    private FollowByRepository followByRepository;
-    @Autowired
-    private FollowingRepository followingRepository;
-    @Autowired
     private FollowsRepository followsRepository;
     
     @GetMapping("/{id}/follows")
@@ -44,7 +40,7 @@ public class FollowController {
         follows = followsRepository.findById(Integer.toString((Integer)payload.get("userId")));
         try {
             follower = follows.getFollowing();
-            Set<Integer> mySet = new HashSet<Integer>(following);
+            Set<Integer> mySet = new HashSet<>(following);
             mySet.add(Integer.parseInt(id));
             useradd.addAll(mySet);
             follows.setFollowing(useradd);
@@ -62,7 +58,7 @@ public class FollowController {
         useradd = new ArrayList<>();
         try {
             follower = follows2.getFollower();
-            Set<Integer> mySet = new HashSet<Integer>(follower);
+            Set<Integer> mySet = new HashSet<>(follower);
             mySet.add((int)payload.get("userId"));
             useradd.addAll(mySet);
             follows2.setFollower(useradd);
@@ -81,8 +77,8 @@ public class FollowController {
 
     @DeleteMapping("/{id}/follows")
     public Follows deleteFollows   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
-        ArrayList<Integer> follower = new ArrayList<>();
-        ArrayList<Integer> following = new ArrayList<>();
+        ArrayList<Integer> follower;
+        ArrayList<Integer> following;
 
         ArrayList<Integer> useradd = new ArrayList<>();
 
@@ -90,24 +86,21 @@ public class FollowController {
         follows = followsRepository.findById(Integer.toString((Integer)payload.get("userId")));
         try {
             following = follows.getFollowing();
-            Set<Integer> mySet = new HashSet<Integer>(following);
+            Set<Integer> mySet = new HashSet<>(following);
             mySet.remove(Integer.parseInt(id));
             useradd.addAll(mySet);
             follows.setFollowing(useradd);
             followsRepository.save(follows);
-            System.out.println("AAAAA");
         }catch (Exception e){
         }
 
-        follower = new ArrayList<>();
-        following = new ArrayList<>();
         useradd = new ArrayList<>();
         Follows follows2;
         follows2 = followsRepository.findById(id);
         try {
             follower = follows2.getFollower();
-            Set<Integer> mySet = new HashSet<Integer>(follower);
-            mySet.remove((int)payload.get("userId"));
+            Set<Integer> mySet = new HashSet<>(follower);
+            mySet.remove(payload.get("userId"));
             useradd.addAll(mySet);
             follows2.setFollower(useradd);
             followsRepository.save(follows2);
