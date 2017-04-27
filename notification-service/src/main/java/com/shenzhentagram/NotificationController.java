@@ -38,6 +38,15 @@ public class NotificationController {
         response.setStatus(SC);
     }
 
+    @PostMapping("/create")
+    public void createNotification(
+            @RequestBody Notification notification,
+            HttpServletResponse response
+    ) {
+        int SC = this.notificationRepository.createNotification(notification);
+        response.setStatus(SC);
+    }
+
     @PatchMapping(path = "/status/checked")
     public ResponseEntity<Void> checkedNotifications(
             @RequestBody Map<String, Object> body
@@ -68,7 +77,16 @@ public class NotificationController {
         return this.notificationRepository.findByUserId(id, limit, page);
     }
 
-    @PutMapping("/notifications")
+    @PostMapping()
+    public void createNotifications(
+            @RequestBody List<Notification> notifications,
+            HttpServletResponse response
+    ) {
+        int SC = this.notificationRepository.createNotifications(notifications);
+        response.setStatus(SC);
+    }
+
+    @PutMapping()
     public void updateNotifications(
             @RequestBody List<Notification> notifications,
             HttpServletResponse response

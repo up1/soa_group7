@@ -17,24 +17,20 @@ module.exports = {
 };
 
 function* createSingle(req, res) {
-    //console.log(req.auth.id, req.params.postId);
-    // req.body.userId = req.auth.id;
     req.body.userId = req.query.userId;
     req.body.postId = req.params.postId;
     const comment = yield CommentService.create(req.body);
     if(comment.error)res.json({"msg": "not create"}, 304);
-    else{ res.status(201).json({"msg": "create success"});}
+    else{ res.status(201).json(comment);}
 }
 
 function* updateSingle(req, res) {
-    // const userId = req.auth.id;
     const comment = yield CommentService.update(req.params.commentId, req.body);
     if (comment.error) res.json({"msg": "not found"}, 404);
-    else res.status(200).json({msg: "update success"});
+    else res.status(200).json(comment);
 }
 
 function* deleteSingle(req, res) {
-    // const userId = req.auth.id;
     const comment = yield CommentService.deleteSingle(req.params.commentId);
     if (comment.error) res.json({"msg": "not found"}, 404);
     else res.status(200).json({"msg": "delete success"});
@@ -43,7 +39,6 @@ function* deleteSingle(req, res) {
 function* getSingle(req, res) {
     const comment = yield CommentService.getSingle(req.params.commentId);
     if (comment.error) res.json({"msg": "not found"}, 404);
-    // else res.json(comment, 200);
     else res.status(200).json(comment);
 }
 

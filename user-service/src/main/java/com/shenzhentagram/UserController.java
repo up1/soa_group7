@@ -74,7 +74,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createUser(
+    public ResponseEntity<User> createUser(
             @RequestBody Map<String, Object> payload
     ) throws Exception {
         // Extract the password
@@ -110,7 +110,7 @@ public class UserController {
 
             // Save user
             this.userRepository.save(user, password);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (MinioException e) {
             log.error("postConstruction() : minio client error => " + e);
         } catch (DataAccessException e) {
@@ -118,7 +118,7 @@ public class UserController {
             log.trace(e);
         }
 
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PatchMapping("/{id}")

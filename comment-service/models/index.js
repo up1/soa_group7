@@ -5,7 +5,6 @@
 
 const db = require('../datasource').getDB();
 
-// Comment model
 const CommentSchema = require('./Comment').CommentSchema;
 const Comment = db.model('Comment', CommentSchema);
 
