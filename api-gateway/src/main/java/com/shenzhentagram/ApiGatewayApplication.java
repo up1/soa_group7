@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -16,8 +17,9 @@ import static com.google.common.base.Predicates.or;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 @SpringBootApplication
+@EnableScheduling
 @EnableSwagger2
-@ComponentScan({"com.shenzhentagram.controller", "com.shenzhentagram.config"})
+@ComponentScan({"com.shenzhentagram.controller", "com.shenzhentagram.config", "com.shenzhentagram.scheduler"})
 public class ApiGatewayApplication {
 
 	public static void main(String[] args) {
