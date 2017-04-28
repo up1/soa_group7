@@ -36,5 +36,12 @@ module.exports = {
             method: 'deleteSingle',
             // middleware: [auth()],
         }
+    },
+    '/posts/:postId/comments/count': {
+        get: {
+            controller: 'CommentController',
+            method: 'countCommentByPostId',
+        },
+
     }
 };
