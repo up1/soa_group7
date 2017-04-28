@@ -16,4 +16,5 @@ export const EDIT_CAPTION = 'EDIT_CAPTION'
 
 export const FETCH_COMMENT = 'FETCH_COMMENT'
 export const ADD_COMMENT = 'ADD_COMMENT'
+export const EDIT_COMMENT = 'EDIT_COMMENT'
 export const DELETE_COMMENT = 'DELETE_COMMENT'

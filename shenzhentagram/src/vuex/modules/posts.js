@@ -39,6 +39,14 @@ const actions = {
         comment: response.body
       }))
   },
+  editComment ({commit}, {postId, commentId, text}) {
+    return Vue.http.put('posts/' + postId + '/comments/' + commentId, { text })
+      .then((response) => commit(types.EDIT_COMMENT, {
+        postId,
+        commentId,
+        text
+      }))
+  },
   deleteComment ({commit}, {postId, commentId}) {
     return Vue.http.delete('posts/' + postId + '/comments/' + commentId)
       .then((response) => commit(types.DELETE_COMMENT, {
@@ -75,10 +83,21 @@ const mutations = {
   [types.ADD_COMMENT] (state, {postId, comment}) {
     state.posts.map((p, i) => {
       if (p.id === postId) {
-        if (state.posts[i].comments === undefined) {
+        if (state.posts[i].comments === 0) {
           state.posts[i].comments = []
         }
         state.posts[i].comments.push(comment)
+      }
+    })
+  },
+  [types.EDIT_COMMENT] (state, {postId, commentId, text}) {
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        state.posts[i].comments.map((c, j) => {
+          if (c.id === commentId) {
+            state.posts[i].comments[j].text = text
+          }
+        })
       }
     })
   },
