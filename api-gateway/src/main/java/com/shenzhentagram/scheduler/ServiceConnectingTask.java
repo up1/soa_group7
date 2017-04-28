@@ -26,7 +26,7 @@ public class ServiceConnectingTask {
     /**
      * Logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(SampleScheduler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServiceConnectingTask.class);
 
     /**
      * Default timeout
@@ -135,8 +135,6 @@ public class ServiceConnectingTask {
             if (!serviceConnectStateMapping.containsKey(serviceName)) {
                 throw new UnknownServiceException(serviceName);
             }
-
-            logger.info("State to " + serviceName + " : " + serviceConnectStateMapping.get(serviceName));
             return serviceConnectStateMapping.get(serviceName);
         } catch (UnknownServiceException e) {
             logger.error("Unknown service", e);
@@ -153,7 +151,6 @@ public class ServiceConnectingTask {
             if (!serviceConnectStateMapping.containsKey(serviceName)) {
                 throw new UnknownServiceException(serviceName);
             }
-
             serviceConnectStateMapping.put(serviceName, newState);
         } catch (UnknownServiceException e) {
             logger.error("Unknown service", e);
