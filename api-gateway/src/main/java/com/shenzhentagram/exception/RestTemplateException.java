@@ -2,6 +2,7 @@ package com.shenzhentagram.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.io.IOException;
@@ -31,6 +32,14 @@ public class RestTemplateException extends RuntimeException {
             this.message = "Cannot extract error body: " + ex.getResponseBodyAsString();
         }
 
+        this.path = path;
+        this.service = service;
+    }
+
+    public RestTemplateException(ResourceAccessException ex, String path, String service) {
+        this.timestamps = new Date().getTime();
+        this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.message = ex.getMessage();
         this.path = path;
         this.service = service;
     }
