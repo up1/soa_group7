@@ -14,8 +14,16 @@ const getters = {
 
 const actions = {
   fetchPosts ({commit}) {
+    commit(types.CLEAR_POSTS)
     Vue.http.get('posts')
       .then((response) => commit(types.FETCH_POSTS, response.body.content))
+  },
+  fetchSinglePost ({commit}, postId) {
+    return Vue.http.get('posts/' + postId)
+      .then((response) => {
+        commit(types.FETCH_SINGLE_POST, response.body)
+        return response.body
+      })
   },
   fetchUserPosts ({commit}, userId) {
     Vue.http.get('users/' + userId + '/posts')
@@ -59,6 +67,19 @@ const actions = {
 const mutations = {
   [types.CLEAR_POSTS] (state) {
     state.posts = []
+  },
+  [types.FETCH_SINGLE_POST] (state, post) {
+    let flag = false
+    state.posts.map((p, i) => {
+      if (post.id === p.id) {
+        state.posts[i] = post
+        flag = true
+      }
+    })
+
+    if (!flag) {
+      state.posts.push(post)
+    }
   },
   [types.FETCH_POSTS] (state, posts) {
     state.posts = posts.reverse()

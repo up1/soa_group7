@@ -2,7 +2,7 @@
   <div class="container home">
     <div class="columns">
       <div class="column is-half is-offset-one-quarter">
-        <card v-if="post" :post="post"></card>
+        <card v-if="post" :key="post.id" :post="post"></card>
       </div>
     </div>
   </div>
@@ -22,11 +22,11 @@
       }
     },
     created () {
-      this.$http.get('posts/' + this.postId)
+      this.$store.dispatch('fetchSinglePost', this.postId)
       .then(
         // Success
-        (response) => {
-          this.post = response.body
+        (post) => {
+          this.post = post
         },
         // Error
         () => {
