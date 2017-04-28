@@ -132,10 +132,9 @@ public class PostController extends TemplateRestController {
     public ResponseEntity<Void> deletePost(
             @PathVariable("id") long id
     ) {
-        // FIXME check authenticated user before delete or send auth user id to post service and let it handle itself
-
-        // Delete post
-        ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
+        PostDelete detail = new PostDelete();
+        detail.setUser_id(getAuthenticatedUser().getId());
+        ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{id}", detail, Void.class, id);
 
         // Decrease user post count
         // FIXME catch the exception (by now just ignored)

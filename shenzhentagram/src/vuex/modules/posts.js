@@ -24,6 +24,10 @@ const actions = {
   editCaption ({commit}, {id, value}) {
     Vue.http.patch('posts/' + id, value)
       .then((response) => commit(types.EDIT_CAPTION, response.body))
+  },
+  deletePost ({commit}, post) {
+    Vue.http.delete('posts/' + post.id)
+      .then((response) => commit(types.DELETE_POST), post)
   }
 }
 
@@ -43,6 +47,9 @@ const mutations = {
         state.posts[i].caption = body.caption
       }
     })
+  },
+  [types.DELETE_POST] (state, post) {
+    state.posts.splice(state.posts.indexOf(post), 1)
   }
 }
 
