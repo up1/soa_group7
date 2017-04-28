@@ -17,7 +17,7 @@ function constructPostPanigation(post, limit, offset) {
     json.size = limit;
     json.number = offset;
     json.numberOfElements = post.comments.length;
-    json.totalPages = Math.ceil(totalComments / limit);
+    json.totalPages = limit != 0 ? Math.ceil(totalComments / limit) : 1;
     json.totalElements = totalComments;
     json.first = offset == 0;
     json.last = offset == json.totalPages - 1;
@@ -95,18 +95,24 @@ class CommentRepository {
      * Get all comments in post
      */
     *getAllByPostId(postId, limit, offset) {
-        if(limit == null) {
-            limit = 10;
+        if(limit != null || offset != null) {
+            // Default parameters value (if either limit or offset is set)
+            if(limit == null) {
+                limit = 10;
+            }
+            if(offset === null) {
+                offset = 0;
+            }
+
+            let startOffset = limit * offset;
+            let post = yield Comment.findOne({ postId }, {comments : {$slice : [startOffset, limit]}});
+
+            return constructPostPanigation(post, limit, offset);
+        } else {
+            // Nothing is set, full return
+            let post = yield Comment.findOne({ postId });
+            return constructPostPanigation(post, 0, 0);
         }
-
-        if(offset === null) {
-            offset = 0;
-        }
-
-        let startOffset = limit * offset;
-        let post = yield Comment.findOne({ postId }, {comments : {$slice : [startOffset, limit]}});
-
-        return constructPostPanigation(post, limit, offset);
     }
 
     /**
