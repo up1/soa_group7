@@ -24,7 +24,7 @@
           <p class="control">
             <input class="input" type="text" placeholder="Add a caption..."
                    :value="post.caption"
-                   @keyup.enter="doneEdit"
+                   v-focus="editing"
                    @keyup.esc="cancelEdit"
                    @blur="doneEdit">
           </p>
@@ -58,11 +58,13 @@
 <script type="text/babel">
   import EditModal from './EditModal'
   import CardComment from './CardComment'
+  import { focus } from 'vue-focus'
   export default {
     props: ['post'],
     components: {
       CardComment, EditModal
     },
+    directives: { focus: focus },
     data () {
       return {
         editing: false,
@@ -91,7 +93,13 @@
         this.editing = true
       },
       doneEdit (e) {
-        this.$store.dispatch('editCaption', {body: {caption: e.target.value}, id: this.post.id})
+        const value = e.target.value.trim()
+        console.log(value)
+
+        this.$store.dispatch('editCaption', {
+          value: {caption: value},
+          id: this.post.id
+        })
         this.editing = false
       },
       cancelEdit () {

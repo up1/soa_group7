@@ -21,8 +21,8 @@ const actions = {
     Vue.http.get('users/' + userId + '/posts')
       .then((response) => commit(types.FETCH_USER_POST, response.body.content))
   },
-  editCaption ({commit}, {body, id}) {
-    Vue.http.patch('posts/' + id, body)
+  editCaption ({commit}, {id, value}) {
+    Vue.http.patch('posts/' + id, value)
       .then((response) => commit(types.EDIT_CAPTION, response.body))
   }
 }
@@ -37,12 +37,12 @@ const mutations = {
   [types.FETCH_USER_POST] (state, posts) {
     state.posts = posts
   },
-  [types.EDIT_CAPTION] (state, post) {
-    for (let p of state.posts) {
-      if (p.id === post.id) {
-        p = post
+  [types.EDIT_CAPTION] (state, body) {
+    state.posts.map((p, i) => {
+      if (body.id === p.id) {
+        state.posts[i].caption = body.caption
       }
-    }
+    })
   }
 }
 
