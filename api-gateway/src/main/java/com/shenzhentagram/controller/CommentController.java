@@ -32,6 +32,22 @@ public class CommentController extends TemplateRestController {
         super(environment, restTemplateBuilder, "comment");
     }
 
+    @GetMapping("/{post_id}/comments/{comment_id}")
+    public ResponseEntity<Comment> getComment(
+            @PathVariable("post_id") int post_id,
+            @PathVariable("comment_id") String comment_id
+    ) {
+        // TODO Test this api
+
+        ResponseEntity<Comment> responseEntity = request(HttpMethod.GET, "/posts/{post_id}/comments/{comment_id}", Comment.class, post_id, comment_id);
+
+        // Embed user into comments
+        Comment comment = responseEntity.getBody();
+        comment.setUser(userController.getUser(comment.getUserId()).getBody());
+
+        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
+    }
+
     @GetMapping("/{post_id}/comments")
     public ResponseEntity<CommentList> getCommentOfPostId(
             @PathVariable("post_id") int post_id
