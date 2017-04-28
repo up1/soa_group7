@@ -30,18 +30,7 @@
     },
     methods: {
       removeSelf () {
-        this.$http.delete('posts/' + this.comment.postId + '/comments/' + this.comment.id)
-        .then(
-          // Success
-          () => {
-            // hot-remove comment on sucesss
-            this.$parent.comments = this.$parent.comments.filter((comment) => {
-              return comment._id !== this.comment._id
-            })
-          },
-          // Error
-          () => {}
-        )
+        this.$store.dispatch('deleteComment', {postId: this.$parent.post.id, commentId: this.comment.id})
       }
     }
   }

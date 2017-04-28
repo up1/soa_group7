@@ -38,6 +38,13 @@ const actions = {
         postId: postId,
         comment: response.body
       }))
+  },
+  deleteComment ({commit}, {postId, commentId}) {
+    return Vue.http.delete('posts/' + postId + '/comments/' + commentId)
+      .then((response) => commit(types.DELETE_COMMENT, {
+        postId,
+        commentId
+      }))
   }
 }
 
@@ -72,6 +79,15 @@ const mutations = {
           state.posts[i].comments = []
         }
         state.posts[i].comments.push(comment)
+      }
+    })
+  },
+  [types.DELETE_COMMENT] (state, {postId, commentId}) {
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        state.posts[i].comments = state.posts[i].comments.filter((comment) => {
+          return comment.id !== commentId
+        })
       }
     })
   }
