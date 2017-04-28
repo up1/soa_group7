@@ -21,7 +21,7 @@ module.exports = {
             method: 'deleteCommentsByPostId'
         }
     },
-    '/posts/comments/:commentId': {
+    '/posts/star/comments/:commentId': {
         get: {
             controller: 'CommentController',
             method: 'getSingle'
