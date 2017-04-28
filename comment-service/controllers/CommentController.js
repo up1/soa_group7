@@ -14,8 +14,7 @@ module.exports = {
     getSingle,
     deleteSingle,
     getCommentsByPostId,
-    deleteCommentsByPostId,
-    countCommentByPostId
+    deleteCommentsByPostId
 };
 
 function* createSingle(req, res) {
@@ -51,15 +50,13 @@ function* getSingle(req, res) {
 }
 
 function* getCommentsByPostId(req, res) {
-    let comment = yield CommentRepository.getAllByPostId(req.params.postId);
+    let limit = req.query.limit ? parseInt(req.query.limit) : null;
+    let offset = req.query.offset ? parseInt(req.query.offset) : null;
+    let comment = yield CommentRepository.getAllByPostId(req.params.postId, limit, offset);
     res.status(200).json(comment);
 }
 
 function* deleteCommentsByPostId(req, res) {
     yield CommentRepository.deleteAllByPostId(req.params.postId);
     res.status(200).end();
-}
-
-function* countCommentByPostId(req, res) {
-
 }

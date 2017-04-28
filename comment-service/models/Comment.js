@@ -34,7 +34,8 @@ function sanitizeComment(doc, ret) {
 
 const PostCommentsSchema = new mongoose.Schema({
     postId: { type: Number, require: true },
-    comments: [CommentSchema]
+    comments: [CommentSchema],
+    comment_count: { type: Number, require: true }
 }, {
     toJSON: {
       transform: sanitizeComment

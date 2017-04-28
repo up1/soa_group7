@@ -33,12 +33,5 @@ module.exports = {
             controller: 'CommentController',
             method: 'deleteSingle',
         }
-    },
-    '/posts/:postId/comments/count': {
-        get: {
-            controller: 'CommentController',
-            method: 'countCommentByPostId',
-        },
-
     }
 };

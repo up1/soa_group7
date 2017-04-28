@@ -8,7 +8,25 @@ const Comment = require('../models').Comment;
 const _ = require('lodash');
 
 /**
- * Comment repository
+ * Comment Repository private function (helper)
+ */
+function constructPostPanigation(post, limit, offset) {
+    let totalComments = post.comment_count;
+
+    let json = _.omit(post.toJSON(), "comment_count");
+    json.size = limit;
+    json.number = offset;
+    json.numberOfElements = post.comments.length;
+    json.totalPages = Math.ceil(totalComments / limit);
+    json.totalElements = totalComments;
+    json.first = offset == 0;
+    json.last = offset == json.totalPages - 1;
+
+    return json;
+}
+
+/**
+ * Comment Repository
  * Create base on Jiravat codes with modified schema (sub-docs)
  */
 class CommentRepository {
@@ -21,7 +39,7 @@ class CommentRepository {
         let post = yield Comment.findOne({ postId });
         if (!post) {
             // If post not exist create a new one
-            post = yield Comment.create({ postId });
+            post = yield Comment.create({ postId, comment_count: 0 });
         }
 
         // Add comment to post
@@ -29,6 +47,8 @@ class CommentRepository {
         let comment = post.comments.create(entity);
         post.comments.push(comment);
 
+        // Increase comment count
+        post.comment_count++;
         // Save post to save the comment
         yield post.save()
 
@@ -74,8 +94,19 @@ class CommentRepository {
     /**
      * Get all comments in post
      */
-    *getAllByPostId(postId) {
-        return yield Comment.findOne({ postId });
+    *getAllByPostId(postId, limit, offset) {
+        if(limit == null) {
+            limit = 10;
+        }
+
+        if(offset === null) {
+            offset = 0;
+        }
+
+        let startOffset = limit * offset;
+        let post = yield Comment.findOne({ postId }, {comments : {$slice : [startOffset, limit]}});
+
+        return constructPostPanigation(post, limit, offset);
     }
 
     /**
@@ -134,6 +165,8 @@ class CommentRepository {
         // Remove comment from post
         comment.remove();
 
+        // Decrease comment count
+        post.comment_count--;
         // Save post to delete the comment
         yield post.save();
 
