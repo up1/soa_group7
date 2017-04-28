@@ -20,7 +20,7 @@ public class Post implements Serializable {
     private String type;
 
     @Column(nullable = false, columnDefinition = "INT DEFAULT '0'")
-    private int comments;
+    private int comment_count;
 
     private String caption;
 
@@ -43,9 +43,9 @@ public class Post implements Serializable {
     @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date updated_at;
 
-    public Post(String type, int comments, String caption, int reactions, String media, long userId, Date created_at, Date updated_at) {
+    public Post(String type, int comment_count, String caption, int reactions, String media, long userId, Date created_at, Date updated_at) {
         this.type = type;
-        this.comments = comments;
+        this.comment_count = comment_count;
         this.caption = caption;
         this.reactions = reactions;
         this.media = media;
@@ -73,12 +73,12 @@ public class Post implements Serializable {
         this.type = type;
     }
 
-    public int getComments() {
-        return comments;
+    public int getComment_count() {
+        return comment_count;
     }
 
-    public void setComments(int comments) {
-        this.comments = comments;
+    public void setComment_count(int comment_count) {
+        this.comment_count = comment_count;
     }
 
     public String getCaption() {

@@ -13,7 +13,8 @@ module.exports = {
     getSingle,
     deleteSingle,
     getCommentsByPostId,
-    deleteCommentsByPostId
+    deleteCommentsByPostId,
+    countCommentByPostId
 };
 
 function* createSingle(req, res) {
@@ -80,6 +81,26 @@ function* deleteCommentsByPostId(req, res) {
                 res.status(404).json({"msg": "error"});
             }
         });
+    }
+    catch(e){
+        return res.status(404).json({"msg": "error"});
+    }
+
+}
+
+function* countCommentByPostId(req, res) {
+    const postId = req.params.postId;
+    try{
+        Comment.find({'postId': postId})
+            .exec(function(err, comments) {
+
+                if (!err) {
+                    res.status(200).json({"count": comments.length});
+                }
+                else {
+                    res.status(404).json({"msg": "error"});
+                }
+            });
     }
     catch(e){
         return res.status(404).json({"msg": "error"});
