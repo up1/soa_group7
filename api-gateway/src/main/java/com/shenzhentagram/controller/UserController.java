@@ -65,6 +65,8 @@ public class UserController extends TemplateRestController {
     public ResponseEntity<Void> createUser(
             @ApiParam("Register detail") @RequestBody UserRegister detail
     ) {
+        // TODO return created user
+
         return request(HttpMethod.POST, "/users", detail, Void.class);
     }
 
@@ -103,6 +105,26 @@ public class UserController extends TemplateRestController {
             @ApiParam("Update detail") @RequestBody UserUpdate detail
     ) {
         return request(HttpMethod.PATCH, "/users/{id}", detail, User.class, getAuthenticatedUser().getId());
+    }
+
+    @PatchMapping(path = "/self/picture")
+    @ApiOperation(
+            tags = "User-API",
+            value = "updateProfilePicture",
+            nickname = "updateProfilePicture",
+            notes = "Update profile picture to current authenticated user"
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Auth token", required = true, dataType = "string", paramType = "header", defaultValue = "Bearer ")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Updated user profile picture"),
+            @ApiResponse(code = 401, message = "Not authenticated (no token)")
+    })
+    public ResponseEntity<User> updateSelfPicture(
+            @ApiParam("Update detail") @RequestBody UserUpdatePicture detail
+    ) {
+        return request(HttpMethod.PATCH, "/users/{id}/picture", detail, User.class, getAuthenticatedUser().getId());
     }
 
     /**

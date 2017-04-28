@@ -7,9 +7,9 @@ public class NotificationPost extends NotificationAbstract {
 
     long post_id;
 
-    long comment_id;
+    String comment_id;
 
-    public NotificationPost(long id, long post_id, long comment_id) {
+    public NotificationPost(long id, long post_id, String comment_id) {
         this.id = id;
         this.post_id = post_id;
         this.comment_id = comment_id;
@@ -26,11 +26,11 @@ public class NotificationPost extends NotificationAbstract {
         this.post_id = post_id;
     }
 
-    public long getComment_id() {
+    public String getComment_id() {
         return comment_id;
     }
 
-    public void setComment_id(long comment_id) {
+    public void setComment_id(String comment_id) {
         this.comment_id = comment_id;
     }
 }

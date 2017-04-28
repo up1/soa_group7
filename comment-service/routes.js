@@ -16,8 +16,12 @@ module.exports = {
             method: 'createSingle',
             // middleware: [auth()],
         },
+        delete:{
+            controller: 'CommentController',
+            method: 'deleteCommentsByPostId'
+        }
     },
-    '/posts/:postId/comments/:commentId': {
+    '/posts/star/comments/:commentId': {
         get: {
             controller: 'CommentController',
             method: 'getSingle'
@@ -32,5 +36,12 @@ module.exports = {
             method: 'deleteSingle',
             // middleware: [auth()],
         }
+    },
+    '/posts/:postId/comments/count': {
+        get: {
+            controller: 'CommentController',
+            method: 'countCommentByPostId',
+        },
+
     }
 };

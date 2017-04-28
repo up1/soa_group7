@@ -14,7 +14,7 @@
         </div>
         <div class="media-content">
           <p class="title is-4">{{this.post.user.display_name}}</p>
-          <p class="subtitle is-6">@{{this.post.user.username}}</p>
+          <p class="subtitle is-6"><router-link :to="{name: 'users', params: { userId: this.post.user.id }}">@{{this.post.user.username}}</router-link></p>
         </div>
       </div>
 
@@ -31,16 +31,22 @@
         </div>
         <small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small>
       </div>
+
+      <div v-if="comments.length > 0" class="content">
+        <card-comment v-for="comment in comments" :key="comment.id" :comment="comment"></card-comment>
+      </div>
     </div>
 
-    <footer class="card-footer">
-      <a href="" class="footer-item icon is-medium"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
-      <span class="footer-item">
-          <div class="field">
-            <p class="control">
-              <input class="input is-medium is-borderless" type="text" placeholder="Add a comment...">
-            </p>
-          </div>
+      <footer class="card-footer">
+        <a href="" class="footer-item icon is-medium"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
+        <span class="footer-item">
+          <form v-on:submit.prevent="doComment">
+            <div class="field">
+              <p class="control">
+                <input class="input is-medium is-borderless" type="text" v-model="form.comment" placeholder="Add a comment...">
+              </p>
+            </div>
+          </form>
         </span>
       <a v-show="post.userId == this.$auth.user().id" v-on:click="active = true" class="footer-item icon"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a>
     </footer>
@@ -51,16 +57,34 @@
 
 <script type="text/babel">
   import EditModal from './EditModal'
+  import CardComment from './CardComment'
   export default {
     props: ['post'],
     components: {
-      EditModal
+      CardComment, EditModal
     },
     data () {
       return {
         editing: false,
-        active: false
+        active: false,
+        comments: [],
+        form: {
+          comment: ''
+        }
       }
+    },
+    created () {
+      this.$http.get('posts/' + this.post.id + '/comments')
+      .then(
+        // Success
+        (response) => {
+          this.comments = response.body
+        },
+        // Error
+        () => {
+          console.error('Something wrong in Card.vue -> created -> fetchComments();')
+        }
+      )
     },
     methods: {
       edit () {
@@ -75,12 +99,42 @@
       },
       hideModal () {
         this.active = false
+      },
+      doComment () {
+        // Trim the comment
+        this.form.comment = this.form.comment.replace(/^\s+|\s+$/g, '')
+
+        if (this.form.comment === '') {
+          console.error('Empty comment')
+          return
+        }
+
+        this.$http.post('posts/' + this.post.id + '/comments', { text: this.form.comment })
+        .then(
+          // Success
+          () => {
+            console.log('Comment complete')
+            // FIXME POST /posts/{id}/comments need to return the new created comment
+            this.comments.push({
+              text: this.form.comment,
+              createdAt: new Date(),
+              user: this.$auth.user()
+            })
+            this.form.comment = ''
+          },
+          // Error
+          () => {
+            console.error('Something wrong in Card.vue -> doComment();')
+            this.error = 'Something wrong'
+            this.showModal()
+          }
+        )
       }
     }
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .card {
     margin: 50px 0;
   }

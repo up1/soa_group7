@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/Login'
+import AuthPage from '@/components/AuthPage'
 import Home from '@/components/Home'
+import PostSingle from '@/components/PostSingle'
 import PostForm from '@/components/PostForm'
 import Profile from '@/components/profile/Profile'
 import ProfileEdit from '@/components/profile/ProfileEdit'
 import VueResource from 'vue-resource'
 import VueAuth from '@websanova/vue-auth'
 import custom1 from '@/driver/custom1'
+import { DefaultErrorHandler } from './interceptors'
 
 const router = new Router({
   hashbang: false,
@@ -17,12 +19,25 @@ const router = new Router({
     {
       path: '/login',
       name: 'login',
-      component: Login,
+      component: AuthPage,
+      props: {mode: 'LoginForm'},
+      meta: {auth: false}
+    }, {
+      path: '/register',
+      name: 'register',
+      component: AuthPage,
+      props: {mode: 'RegisterForm'},
       meta: {auth: false}
     }, {
       path: '/',
       name: 'home',
       component: Home,
+      meta: {auth: true}
+    }, {
+      path: '/post/:postId',
+      name: 'post-single',
+      component: PostSingle,
+      props: true,
       meta: {auth: true}
     }, {
       path: '/post/new',
@@ -32,6 +47,7 @@ const router = new Router({
     }, {
       path: '/users/:userId',
       name: 'users',
+      props: true,
       component: Profile
     }, {
       path: '/account/edit/',
@@ -47,6 +63,9 @@ Vue.use(Router)
 Vue.use(VueResource)
 Vue.http.options.root = 'http://35.185.168.160'
 Vue.http.options.xhr = {withCredentials: true}
+
+// Default error handler
+Vue.http.interceptors.push(DefaultErrorHandler)
 
 Vue.use(VueAuth, {
   auth: custom1,

@@ -6,8 +6,7 @@
       </div>
       <div class="column box auth-form">
         <h1 class="title">Shenzhentagram</h1>
-        <register-form v-if="!showLogin"></register-form>
-        <login-form v-else></login-form>
+        <component v-bind:is="mode"></component>
       </div>
     </div>
   </div>
@@ -16,18 +15,13 @@
 <script type="text/babel">
   import LoginForm from './LoginForm'
   import RegisterForm from './RegisterForm'
-  import { mapGetters } from 'vuex'
+
   export default {
-    name: 'login',
+    name: 'authPage',
+    props: ['mode'],
     components: {
       LoginForm, RegisterForm
-    },
-    data () {
-      return {}
-    },
-    computed: mapGetters({
-      showLogin: 'showLogin'
-    })
+    }
   }
 </script>
 

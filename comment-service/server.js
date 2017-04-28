@@ -6,19 +6,20 @@
 //Do Promise
 global.Promise = require('bluebird');
 
-const config = require('config');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
-const helper = require('./common/helper');
-const errorMiddleware = require('./common/ErrorMiddleware');
 const winston = require('winston');
 
 const app = express();
+const config = require('config').load(app.settings.env);
 const http = require('http').Server(app);
 
-app.set('port', config.PORT);
+const helper = require('./common/helper');
+const errorMiddleware = require('./common/ErrorMiddleware');
+
+app.set('port', process.env.PORT || 9006);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false})); //If Encode Can't test with postman
@@ -52,6 +53,7 @@ app.use(errorMiddleware());
 
 http.listen(app.get('port'), () => {
     winston.info(`Comment Service listening on port ${app.get('port')}`);
+    winston.info(`environment ${app.settings.env}`)
 });
 
 module.exports = app;

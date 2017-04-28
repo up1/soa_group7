@@ -30,3 +30,18 @@ scrape_configs:
     metrics_path: '/prometheus' 
     static_configs:
       - targets: ['api-gateway:80']
+  - job_name: 'user-service'
+    scrape_interval: 5s
+    metrics_path: '/prometheus' 
+    static_configs:
+      - targets: ['user:9001']
+  - job_name: 'post-service'
+    scrape_interval: 5s
+    metrics_path: '/prometheus' 
+    static_configs:
+      - targets: ['post:9002']
+  - job_name: 'authentication-service'
+    scrape_interval: 5s
+    metrics_path: '/prometheus' 
+    static_configs:
+      - targets: ['authentication:9005']

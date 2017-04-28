@@ -9,16 +9,29 @@
   import ProfileHeader from './ProfileHeader'
   import ProfileMedia from './ProfileMedia'
   export default {
+    props: ['userId'],
     components: {
       ProfileHeader,
       ProfileMedia
     },
     created () {
-      this.$store.dispatch('fetchUser', this.$route.params.userId)
-      this.$store.dispatch('fetchUserPosts', this.$route.params.userId)
+      this.loadProfile(this.userId)
+    },
+    beforeRouteUpdate (to, from, next) {
+      this.loadProfile(to.params.userId)
+      next()
     },
     data () {
-      return {}
+      return {
+        currentUserId: 0
+      }
+    },
+    methods: {
+      loadProfile (id) {
+        this.currentUserId = id
+        this.$store.dispatch('fetchUser', id)
+        this.$store.dispatch('fetchUserPosts', id)
+      }
     }
   }
 </script>

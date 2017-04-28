@@ -18,7 +18,7 @@ public class UserRepository {
     public User findById(Long id) {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by, post_count " +
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
                         "FROM users " +
                         "WHERE id = ?",
                     new Object[] {
@@ -35,7 +35,7 @@ public class UserRepository {
     public List<User> findByName(String name) {
         try {
             return this.jdbcTemplate.query(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by, post_count " +
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
                             "FROM users " +
                             "WHERE full_name = ?",
                     new Object[] {
@@ -58,7 +58,7 @@ public class UserRepository {
         }
 
         return this.jdbcTemplate.query(
-                "SELECT id, username, full_name, bio, profile_picture, display_name, follows, followed_by, post_count " +
+                "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
                     "FROM users " +
                     "LIMIT ?, ?",
                 new Object[] {
@@ -72,7 +72,7 @@ public class UserRepository {
     public void save(User user, String password) {
         String sql = "INSERT INTO " +
                 "users(username, password, full_name, bio, profile_picture, display_name, follows, followed_by, post_count, role) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try{
             this.jdbcTemplate.update(
                     sql,
@@ -96,7 +96,7 @@ public class UserRepository {
     @Transactional
     public void update(User user) {
         String sql = "UPDATE users " +
-                "SET full_name = ?, bio = ?, display_name = ?, follows = ?, followed_by = ?, post_count = ? " +
+                "SET full_name = ?, bio = ?, display_name = ?, profile_picture = ?, follows = ?, followed_by = ?, post_count = ? " +
                 "WHERE id = ?";
         try{
             this.jdbcTemplate.update(
@@ -104,6 +104,7 @@ public class UserRepository {
                     user.getFull_name(),
                     user.getBio(),
                     user.getDisplay_name(),
+                    user.getProfile_picture(),
                     user.getFollows(),
                     user.getFollowed_by(),
                     user.getPost_count(),
@@ -112,7 +113,6 @@ public class UserRepository {
         } catch (Exception e){
             throw e;
         }
-
     }
 
     @Transactional

@@ -16,9 +16,11 @@
     components: {
       Card
     },
-    computed: mapGetters({
-      posts: 'getPosts'
-    }),
+    computed: {
+      ...mapGetters({
+        posts: 'getPosts'
+      })
+    },
     created () {
       this.$store.dispatch('fetchPosts')
     },

@@ -74,7 +74,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createUser(
+    public ResponseEntity<User> createUser(
             @RequestBody Map<String, Object> payload
     ) throws Exception {
         // Extract the password
@@ -110,7 +110,7 @@ public class UserController {
 
             // Save user
             this.userRepository.save(user, password);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (MinioException e) {
             log.error("postConstruction() : minio client error => " + e);
         } catch (DataAccessException e) {
@@ -118,7 +118,7 @@ public class UserController {
             log.trace(e);
         }
 
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PatchMapping("/{id}")
@@ -145,6 +145,46 @@ public class UserController {
         return user;
     }
 
+    @PatchMapping("/{id}/picture")
+    public User updateSelfProfilePicture(
+            @PathVariable("id") long id,
+            @RequestBody Map<String, Object> payload
+    ) throws Exception {
+        User user = this.userRepository.findById(id);
+
+        if(!payload.containsKey("profile_picture")) {
+            throw new Exception("no profile_picture field");
+        }
+
+        // Extract image (base64)
+        String imageBase64 = (String) payload.remove("profile_picture");
+        FileUtility.FileDetail fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+
+        try {
+            // upload image
+            // Set picture & upload to storage
+            user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
+
+            // Upload file
+            minio.putObject(
+                    bucket,
+                    user.getProfile_picture(),
+                    fileDetail.inputStream,
+                    fileDetail.size,
+                    fileDetail.type
+            );
+
+            // Save user
+            this.userRepository.update(user);
+            return user;
+        } catch (MinioException e) {
+            throw e;
+        } catch (DataAccessException e) {
+            minio.removeObject(bucket, user.getProfile_picture());
+            throw e;
+        }
+    }
+
     @PostMapping("/{id}/posts/count")
     public void increasePosts(
             @PathVariable("id") long id
@@ -160,6 +200,42 @@ public class UserController {
     ) {
         User user = this.userRepository.findById(id);
         user.setPost_count(user.getPost_count() - 1);
+        this.userRepository.update(user);
+    }
+
+    @PostMapping("/{id}/follows")
+    public void increaseFollows(
+            @PathVariable("id") long id
+    ) {
+        User user = this.userRepository.findById(id);
+        user.setFollows(user.getFollows() + 1);
+        this.userRepository.update(user);
+    }
+
+    @PutMapping("/{id}/follows")
+    public void decreaseFollows(
+            @PathVariable("id") long id
+    ) {
+        User user = this.userRepository.findById(id);
+        user.setFollows(user.getFollows() - 1);
+        this.userRepository.update(user);
+    }
+
+    @PostMapping("/{id}/followed_by")
+    public void increaseFollowed_by(
+            @PathVariable("id") long id
+    ) {
+        User user = this.userRepository.findById(id);
+        user.setFollowed_by(user.getFollowed_by() + 1);
+        this.userRepository.update(user);
+    }
+
+    @PutMapping("/{id}/followed_by")
+    public void decreaseFollowed_by(
+            @PathVariable("id") long id
+    ) {
+        User user = this.userRepository.findById(id);
+        user.setFollowed_by(user.getFollowed_by() - 1);
         this.userRepository.update(user);
     }
 

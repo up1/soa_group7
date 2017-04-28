@@ -93,3 +93,13 @@ comment-service/node_modules/
 .venv
 venv/
 ENV/
+
+*.log
+
+notification-service/src/main/resources/application\.properties
+
+comment-service/\.scannerwork/
+
+api-gateway/src/main/resources/application\.properties
+
+notification-service/src/main/resources/application-default\.properties

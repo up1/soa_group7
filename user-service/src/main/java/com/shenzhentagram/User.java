@@ -8,6 +8,7 @@ public class User {
     private String bio;
     private String profile_picture;
     private String display_name;
+    private String role;
     private int follows;
     private int followed_by;
     private int post_count;
@@ -72,6 +73,14 @@ public class User {
 
     public void setDisplay_name(String display_name) {
         this.display_name = display_name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public int getFollows() {

@@ -12,7 +12,7 @@
       Media
     },
     computed: mapGetters({
-      posts: 'getPosts'
+      posts: 'getUserPosts'
     }),
     data () {
       return {}
