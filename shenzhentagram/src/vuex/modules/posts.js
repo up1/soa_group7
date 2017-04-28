@@ -28,8 +28,15 @@ const actions = {
   fetchComment ({commit}, id) {
     Vue.http.get('posts/' + id + '/comments')
       .then((response) => commit(types.FETCH_COMMENT, {
-        body: response.body,
-        id: id
+        id: id,
+        comments: response.body.comments
+      }))
+  },
+  addComment ({commit}, {postId, text}) {
+    return Vue.http.post('posts/' + postId + '/comments', { text })
+      .then((response) => commit(types.ADD_COMMENT, {
+        postId: postId,
+        comment: response.body
       }))
   }
 }
@@ -51,10 +58,20 @@ const mutations = {
       }
     })
   },
-  [types.FETCH_COMMENT] (state, {body, id}) {
+  [types.FETCH_COMMENT] (state, {id, comments}) {
     state.posts.map((p, i) => {
       if (p.id === id) {
-        state.posts[i].comments = body
+        state.posts[i].comments = comments
+      }
+    })
+  },
+  [types.ADD_COMMENT] (state, {postId, comment}) {
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        if (state.posts[i].comments === undefined) {
+          state.posts[i].comments = []
+        }
+        state.posts[i].comments.push(comment)
       }
     })
   }

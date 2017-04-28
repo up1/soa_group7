@@ -30,7 +30,7 @@
     },
     methods: {
       removeSelf () {
-        this.$http.delete('posts/' + this.comment.postId + '/comments/' + this.comment._id)
+        this.$http.delete('posts/' + this.comment.postId + '/comments/' + this.comment.id)
         .then(
           // Success
           () => {

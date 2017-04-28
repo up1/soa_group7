@@ -75,7 +75,9 @@
       }
     },
     created () {
-      this.$store.dispatch('fetchComment', this.post.id)
+      if (this.post.comments > 0) {
+        this.$store.dispatch('fetchComment', this.post.id)
+      }
     },
     methods: {
       edit () {
@@ -106,17 +108,11 @@
           return
         }
 
-        this.$http.post('posts/' + this.post.id + '/comments', { text: this.form.comment })
+        this.$store.dispatch('addComment', {postId: this.post.id, text: this.form.comment})
         .then(
           // Success
           () => {
             console.log('Comment complete')
-            // FIXME POST /posts/{id}/comments need to return the new created comment
-            this.comments.push({
-              text: this.form.comment,
-              createdAt: new Date(),
-              user: this.$auth.user()
-            })
             this.form.comment = ''
           },
           // Error
