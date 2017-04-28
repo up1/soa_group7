@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -32,48 +34,71 @@ public class CommentController extends TemplateRestController {
         super(environment, restTemplateBuilder, "comment");
     }
 
+    @GetMapping("/{post_id}/comments")
+    public ResponseEntity<CommentList> getCommentOfPostId(
+            @RequestParam(value = "page", required = false) String page,
+            @RequestParam(value = "size", required = false) String size,
+            @PathVariable("post_id") int post_id
+    ) {
+        String url = "/posts/{post_id}/comments";
+        if(page != null || size != null) {
+            url += "?";
+            url += page != null ? "offset=" + page : "";
+            url += page != null && size != null ? "&" : "";
+            url += size != null ? "limit=" + size : "";
+        }
+
+        ResponseEntity<CommentList> responseEntity = request(HttpMethod.GET, url, CommentList.class, post_id);
+
+        // Embed user into comments
+        try {
+            HashMap<Integer, User> cachedUsers = new HashMap<>();
+            for(Comment comment : responseEntity.getBody().getComments()) {
+                if(!cachedUsers.containsKey(comment.getUserId())) {
+                    cachedUsers.put(comment.getUserId(), userController.getUser(comment.getUserId()).getBody());
+                }
+
+                comment.setUser(cachedUsers.get(comment.getUserId()));
+            }
+        } catch(Exception ignored) {
+            log.warn("Failed to map user into comment of post => " + post_id, ignored);
+        }
+
+        return responseEntity;
+    }
+
     @GetMapping("/{post_id}/comments/{comment_id}")
     public ResponseEntity<Comment> getComment(
             @PathVariable("post_id") int post_id,
             @PathVariable("comment_id") String comment_id
     ) {
-        // TODO Test this api
-
         ResponseEntity<Comment> responseEntity = request(HttpMethod.GET, "/posts/{post_id}/comments/{comment_id}", Comment.class, post_id, comment_id);
 
         // Embed user into comments
-        Comment comment = responseEntity.getBody();
-        comment.setUser(userController.getUser(comment.getUserId()).getBody());
-
-        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
-    }
-
-    @GetMapping("/{post_id}/comments")
-    public ResponseEntity<CommentList> getCommentOfPostId(
-            @PathVariable("post_id") int post_id
-    ) {
-        ResponseEntity<CommentList> responseEntity = request(HttpMethod.GET, "/posts/{post_id}/comments", CommentList.class, post_id);
-
-        // Embed user into comments
-        HashMap<Integer, User> cachedUsers = new HashMap<>();
-        for(Comment comment : responseEntity.getBody().getComments()) {
-            if(!cachedUsers.containsKey(comment.getUserId())) {
-                cachedUsers.put(comment.getUserId(), userController.getUser(comment.getUserId()).getBody());
-            }
-
-            comment.setUser(cachedUsers.get(comment.getUserId()));
+        try {
+            Comment comment = responseEntity.getBody();
+            comment.setUser(userController.getUser(comment.getUserId()).getBody());
+        } catch(Exception ignored) {
+            log.warn("Failed to map user into comment => " + comment_id, ignored);
         }
 
-        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
+        return responseEntity;
     }
 
     @PostMapping("/{post_id}/comments")
-    public ResponseEntity<Void> createComment(
+    public ResponseEntity<Comment> createComment(
             @PathVariable("post_id") int post_id,
-            @RequestBody CommentCreate comment
+            @RequestBody CommentCreate commentCreate
     ) {
-        // FIXME Response created comment
-        ResponseEntity<HashMap> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id);
+        ResponseEntity<Comment> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), commentCreate, Comment.class, post_id);
+
+        // Embed user into comments
+        Comment comment = responseEntity.getBody();
+        try {
+            comment.setUser(userController.getUser(comment.getUserId()).getBody());
+        } catch(Exception ignored) {
+            log.warn("Failed to map user into comment => " + comment.getId(), ignored);
+        }
 
         // Increase post comment count
         try {
@@ -89,25 +114,34 @@ public class CommentController extends TemplateRestController {
             log.warn("Create notification failed", ignored);
         }
 
-        return new ResponseEntity<>(responseEntity.getStatusCode());
+        return responseEntity;
     }
 
     @PutMapping("/{post_id}/comments/{comment_id}")
-    public ResponseEntity<Void> updateComment(
+    public ResponseEntity<Comment> updateComment(
             @PathVariable("post_id") int post_id,
             @PathVariable("comment_id") String comment_id,
-            @RequestBody CommentUpdate comment
+            @RequestBody CommentUpdate commentUpdate
     ) {
-        ResponseEntity<HashMap> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id, comment_id);
-        return new ResponseEntity<>(responseEntity.getStatusCode());
+        ResponseEntity<Comment> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), commentUpdate, Comment.class, post_id, comment_id);
+
+        // Embed user into comments
+        try {
+            Comment comment = responseEntity.getBody();
+            comment.setUser(userController.getUser(comment.getUserId()).getBody());
+        } catch(Exception ignored) {
+            log.warn("Failed to map user into comment => " + comment_id, ignored);
+        }
+
+        return responseEntity;
     }
 
     @DeleteMapping("/{post_id}/comments/{comment_id}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable("post_id") int post_id,
             @PathVariable("comment_id") String comment_id
-    ) {
-        ResponseEntity<HashMap> responseEntity = request(HttpMethod.DELETE, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), HashMap.class, post_id, comment_id);
+    ) throws IOException {
+        ResponseEntity<Comment> responseEntity = request(HttpMethod.DELETE, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), Comment.class, post_id, comment_id);
 
         // Decrease post comment count
         try {
@@ -117,6 +151,15 @@ public class CommentController extends TemplateRestController {
         }
 
         return new ResponseEntity<>(responseEntity.getStatusCode());
+    }
+
+    /**
+     * Internal Only
+     */
+    public ResponseEntity<Void> deleteCommentsOfPostId(
+            int post_id
+    ) {
+        return request(HttpMethod.DELETE, "/posts/{post_id}/comments" + getAuthenticatedUser().getId(), Void.class, post_id);
     }
 
 }

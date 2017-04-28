@@ -7,27 +7,18 @@ import java.util.Date;
  */
 public class Comment extends CommentBase {
 
-    private String _id;
-    private int postId;
+    private String id;
     private int userId;
     private User user;
     private Date createdAt;
     private Date updatedAt;
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
-    }
-
-    public int getPostId() {
-        return postId;
-    }
-
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public int getUserId() {
