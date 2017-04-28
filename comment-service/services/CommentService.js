@@ -18,7 +18,7 @@ module.exports = {
 
 function* create(entity) {
     const created = yield Comment.create(entity);
-    return created.toObject();
+    return created;
 }
 
 function* update(id, entity){
@@ -26,7 +26,7 @@ function* update(id, entity){
         const comment = yield Comment.findOne({_id: id});
         _.extend(comment, entity);
         yield comment.save();
-        return comment.toObject();
+        return comment;
     }
     catch(e){
         return {
@@ -38,7 +38,7 @@ function* update(id, entity){
 function* getSingle(id) {
     try {
         const comment = yield Comment.findOne({_id: id});
-        return comment.toObject();
+        return comment;
     } catch (e) {
         return {
             error: true,

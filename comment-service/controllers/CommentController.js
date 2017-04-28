@@ -34,7 +34,7 @@ function* updateSingle(req, res) {
 function* deleteSingle(req, res) {
     const comment = yield CommentService.deleteSingle(req.params.commentId);
     if (comment.error) res.json({"msg": "not found"}, 404);
-    else res.status(200).json({"msg": "delete success"});
+    else res.status(200).json({"msg": "delete success", comment});
 }
 
 function* getSingle(req, res) {
