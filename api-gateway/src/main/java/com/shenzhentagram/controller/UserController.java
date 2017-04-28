@@ -153,6 +153,10 @@ public class UserController extends TemplateRestController {
         return postCount.get();
     }
 
+    /**
+     * [Internal only] Embedded user into multiple post
+     * @param posts
+     */
     public void embeddedMultiplePost(List<Post> posts) {
         guardRequester(() -> {
             HashMap<Integer, User> cachedUsers = new HashMap<>();
@@ -166,6 +170,14 @@ public class UserController extends TemplateRestController {
         });
     }
 
+    /**
+     * [Internal only] Embedded user into single post<br>
+     * <b>
+     *     Don't use this method if you want to embed multiple post<br>
+     *     See {@link UserController#embeddedMultiplePost(List)} instead
+     * </b>
+     * @param post
+     */
     public void embeddedSinglePost(Post post) {
         guardRequester(() -> {
             post.setUser(getUser(post.getUserId()).getBody());
