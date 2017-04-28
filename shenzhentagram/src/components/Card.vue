@@ -32,8 +32,8 @@
         <small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small>
       </div>
 
-      <div v-if="comments.length > 0" class="content">
-        <card-comment v-for="comment in comments" :key="comment.id" :comment="comment"></card-comment>
+      <div v-if="this.post.comments.length > 0" class="content">
+        <card-comment v-for="comment in this.post.comments" :key="comment.id" :comment="comment"></card-comment>
       </div>
     </div>
 
@@ -69,24 +69,13 @@
       return {
         editing: false,
         active: false,
-        comments: [],
         form: {
           comment: ''
         }
       }
     },
     created () {
-      this.$http.get('posts/' + this.post.id + '/comments')
-      .then(
-        // Success
-        (response) => {
-          this.comments = response.body
-        },
-        // Error
-        () => {
-          console.error('Something wrong in Card.vue -> created -> fetchComments();')
-        }
-      )
+      this.$store.dispatch('fetchComment', this.post.id)
     },
     methods: {
       edit () {

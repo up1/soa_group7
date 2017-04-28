@@ -24,6 +24,13 @@ const actions = {
   editCaption ({commit}, {id, value}) {
     Vue.http.patch('posts/' + id, value)
       .then((response) => commit(types.EDIT_CAPTION, response.body))
+  },
+  fetchComment ({commit}, id) {
+    Vue.http.get('posts/' + id + '/comments')
+      .then((response) => commit(types.FETCH_COMMENT, {
+        body: response.body,
+        id: id
+      }))
   }
 }
 
@@ -41,6 +48,13 @@ const mutations = {
     state.posts.map((p, i) => {
       if (body.id === p.id) {
         state.posts[i].caption = body.caption
+      }
+    })
+  },
+  [types.FETCH_COMMENT] (state, {body, id}) {
+    state.posts.map((p, i) => {
+      if (p.id === id) {
+        state.posts[i].comments = body
       }
     })
   }
