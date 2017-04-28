@@ -14,14 +14,13 @@ module.exports = {
         post: {
             controller: 'CommentController',
             method: 'createSingle',
-            // middleware: [auth()],
         },
         delete:{
             controller: 'CommentController',
             method: 'deleteCommentsByPostId'
         }
     },
-    '/posts/star/comments/:commentId': {
+    '/posts/:postId/comments/:commentId': {
         get: {
             controller: 'CommentController',
             method: 'getSingle'
@@ -29,12 +28,10 @@ module.exports = {
         put: {
             controller: 'CommentController',
             method: 'updateSingle',
-            // middleware: [auth()],
         },
         delete: {
             controller: 'CommentController',
             method: 'deleteSingle',
-            // middleware: [auth()],
         }
     },
     '/posts/:postId/comments/count': {

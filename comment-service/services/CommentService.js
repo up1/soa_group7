@@ -1,62 +1,149 @@
 /**
  * Created by Jiravat on 3/31/2017.
+ * Modified by Chaniwat (chaniwat.meranote@gmail.com) on 4/28/2017.
  */
 
-
-const models = require('../models');
-
-const Comment = models.Comment;
-
+const Exception = require('../error/Exception');
+const Comment = require('../models').Comment;
 const _ = require('lodash');
 
-module.exports = {
-    create,
-    update,
-    getSingle,
-    deleteSingle
-};
+/**
+ * Comment repository
+ * Create base on Jiravat codes with modified schema (sub-docs)
+ */
+class CommentRepository {
 
-function* create(entity) {
-    const created = yield Comment.create(entity);
-    return created;
-}
+    /**
+     * Create new comment to post
+     */
+    *createOne(postId, userId, entity) {
+        // Find post first
+        let post = yield Comment.findOne({ postId });
+        if (!post) {
+            // If post not exist create a new one
+            post = yield Comment.create({ postId });
+        }
 
-function* update(id, entity){
-    try{
-        const comment = yield Comment.findOne({_id: id});
+        // Add comment to post
+        entity.userId = userId;
+        let comment = post.comments.create(entity);
+        post.comments.push(comment);
+
+        // Save post to save the comment
+        yield post.save()
+
+        // Return the created comment
+        return post.comments.id(comment.id);
+    }
+
+    /**
+     * Update the comment
+     * Bypass checking userId by pass null at 3rd argument
+     */
+    *updateOne(postId, commentId, userId, entity) {
+        // Find post
+        let post = yield Comment.findOne({ postId });
+        if (!post) {
+            // No comment in post (because its not create any single comment)
+            throw new Exception("No comment in post", 404);
+        }
+
+        // Find targeted comment
+        let comment = post.comments.id(commentId);
+        if(!comment) {
+            // No comment found, throwing
+            throw new Exception("No comment found", 404);
+        }
+
+        // Check owner of comment
+        if(userId != null && comment.userId != userId) {
+            // comment's user id not match
+            throw new Exception("Not authroized to update", 401);
+        }
+
+        // Update proerty
         _.extend(comment, entity);
-        yield comment.save();
+
+        // Save post to update the comment
+        yield post.save()
+
+        // Return the updated comment
+        return post.comments.id(commentId);
+    }
+
+    /**
+     * Get all comments in post
+     */
+    *getAllByPostId(postId) {
+        return yield Comment.findOne({ postId });
+    }
+
+    /**
+     * Get comment in post
+     */
+    *getOne(postId, commentId) {
+        // Find post
+        let post = yield Comment.findOne({ postId });
+        if (!post) {
+            // No comment in post (because its not create any single comment)
+            return null;
+        }
+
+        // Return comment
+        return post.comments.id(commentId);
+    }
+
+    /**
+     * Delete the comments in post (Delete post)
+     */
+    *deleteAllByPostId(postId) {
+        // Find post
+        let post = yield Comment.findOne({ postId });
+
+        // Remove post if exist
+        if (post) {
+            yield post.remove();
+        }
+    }
+
+    /**
+     * Delete comment in post
+     * Bypass checking userId by pass null at 3rd argument
+     */
+    *deleteOne(postId, commentId, userId) {
+        // Find post first
+        let post = yield Comment.findOne({ postId });
+        if (!post) {
+            // No comment in post (because its not create any single comment)
+            throw new Exception("No comment found", 404);
+        }
+
+        // Find targeted comment
+        let comment = post.comments.id(commentId);
+        if(!comment) {
+            // No comment found, throwing
+            throw new Exception("No comment found", 404);
+        }
+
+        // Check owner of comment
+        if(userId != null && comment.userId != userId) {
+            // comment's user id not match
+            throw new Exception("Not authroized to delete", 401);
+        }
+
+        // Remove comment from post
+        comment.remove();
+
+        // Save post to delete the comment
+        yield post.save();
+
+        // Return deleted comment
         return comment;
     }
-    catch(e){
-        return {
-            error: true,
-        };
-    }
-}
-
-function* getSingle(id) {
-    try {
-        const comment = yield Comment.findOne({_id: id});
-        return comment;
-    } catch (e) {
-        return {
-            error: true,
-        };
-    }
 
 }
 
+// Singleton the object
+var service = new CommentRepository();
 
-function* deleteSingle(id) {
-    try{
-        const comment = yield Comment.findOne({_id: id});
-        yield comment.remove();
-        return comment;
-    }
-    catch(e){
-        return {
-            error: true,
-        };
-    }
-}
+module.exports = service;
