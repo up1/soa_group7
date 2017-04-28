@@ -80,18 +80,10 @@ public class CommentController extends TemplateRestController {
         userController.embeddedSingleComment(responseEntity.getBody());
 
         // Increase post comment count
-        try {
-            postController.increaseComments(post_id);
-        } catch(Exception ignored) {
-            log.warn("Increase post '" + post_id + "' comment count", ignored);
-        }
+        postController.increaseComments(post_id);
 
         // Create comment notification
-        try {
-            notificationController.createCommentNotification(Math.toIntExact(getAuthenticatedUser().getId()), post_id, "abc");
-        } catch(Exception ignored) {
-            log.warn("Create notification failed", ignored);
-        }
+        notificationController.createCommentNotification(Math.toIntExact(getAuthenticatedUser().getId()), post_id, responseEntity.getBody().getId());
 
         return responseEntity;
     }
@@ -105,12 +97,7 @@ public class CommentController extends TemplateRestController {
         ResponseEntity<Comment> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), commentUpdate, Comment.class, post_id, comment_id);
 
         // Embed user into comments
-        try {
-            Comment comment = responseEntity.getBody();
-            comment.setUser(userController.getUser(comment.getUserId()).getBody());
-        } catch(Exception ignored) {
-            log.warn("Failed to map user into comment => " + comment_id, ignored);
-        }
+        userController.embeddedSingleComment(responseEntity.getBody());
 
         return responseEntity;
     }
@@ -135,10 +122,12 @@ public class CommentController extends TemplateRestController {
     /**
      * Internal Only
      */
-    public ResponseEntity<Void> deleteCommentsOfPostId(
+    public void deleteCommentsOfPostId(
             int post_id
     ) {
-        return request(HttpMethod.DELETE, "/posts/{post_id}/comments" + getAuthenticatedUser().getId(), Void.class, post_id);
+        guardRequester(() -> {
+            request(HttpMethod.DELETE, "/posts/{post_id}/comments" + getAuthenticatedUser().getId(), Void.class, post_id);
+        });
     }
 
 }

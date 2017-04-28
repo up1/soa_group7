@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @CrossOrigin
 @RestController
@@ -22,6 +23,9 @@ public class PostController extends TemplateRestController {
 
     @Autowired
     private UserController userController;
+
+    @Autowired
+    private CommentController commentController;
 
     public PostController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "post");
@@ -40,14 +44,7 @@ public class PostController extends TemplateRestController {
         ResponseEntity<PostPage> responseEntity = request(HttpMethod.GET, "/posts", pageable, PostPage.class);
 
         // Embed user into posts
-        HashMap<Integer, User> cachedUsers = new HashMap<>();
-        for(Post post : responseEntity.getBody().getContent()) {
-            if(!cachedUsers.containsKey(post.getUserId())) {
-                cachedUsers.put(post.getUserId(), userController.getUser(post.getUserId()).getBody());
-            }
-
-            post.setUser(cachedUsers.get(post.getUserId()));
-        }
+        userController.embeddedMultiplePost(responseEntity.getBody().getContent());
 
         return responseEntity;
     }
@@ -68,7 +65,7 @@ public class PostController extends TemplateRestController {
         ResponseEntity<Post> responseEntity = request(HttpMethod.GET, "/posts/{id}", Post.class, id);
 
         // Embed user into post
-        responseEntity.getBody().setUser(userController.getUser(responseEntity.getBody().getUserId()).getBody());
+        userController.embeddedSinglePost(responseEntity.getBody());
 
         return responseEntity;
     }
@@ -86,18 +83,15 @@ public class PostController extends TemplateRestController {
         detail.setUser_id(getAuthenticatedUser().getId());
 
         // Create post
-        ResponseEntity<Post> response = request(HttpMethod.POST, "/posts", detail, Post.class);
+        ResponseEntity<Post> responseEntity = request(HttpMethod.POST, "/posts", detail, Post.class);
 
         // Increase user post count
-        // FIXME catch the exception (by now just ignored)
-        try {
-            userController.increasePosts((int) getAuthenticatedUser().getId());
-        } catch(Exception ignored) {}
+        userController.increasePosts((int) getAuthenticatedUser().getId());
 
         // Embed user into post
-        response.getBody().setUser(userController.getUser(response.getBody().getUserId()).getBody());
+        userController.embeddedSinglePost(responseEntity.getBody());
 
-        return response;
+        return responseEntity;
     }
 
     @PatchMapping("/{id}")
@@ -115,7 +109,6 @@ public class PostController extends TemplateRestController {
             @RequestBody PostUpdate detail
     ) {
         detail.setUser_id(getAuthenticatedUser().getId());
-
         return request(HttpMethod.PATCH, "/posts/{id}", detail, Post.class, id);
     }
 
@@ -132,46 +125,60 @@ public class PostController extends TemplateRestController {
     public ResponseEntity<Void> deletePost(
             @PathVariable("id") long id
     ) {
-        // FIXME check authenticated user before delete or send auth user id to post service and let it handle itself
-
         // Delete post
-        ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
+        ResponseEntity<Void> responseEntity = request(HttpMethod.DELETE, "/posts/{id}", Void.class, id);
 
         // Decrease user post count
-        // FIXME catch the exception (by now just ignored)
-        try {
-            userController.decreasePosts((int) getAuthenticatedUser().getId());
-        } catch(Exception ignored) {}
+        userController.decreasePosts((int) getAuthenticatedUser().getId());
 
-        return response;
+        // Remove all post's comments
+        commentController.deleteCommentsOfPostId(Math.toIntExact(id));
+
+        return responseEntity;
     }
 
     /**
      * [Internal only] Increase post comment count by one
      */
     public int increaseComments(long id) {
-        return request(HttpMethod.POST, "/posts/{id}/comments/count", Post.class, id).getBody().getComments();
+        AtomicInteger commentCount = new AtomicInteger(-1);
+        guardRequester(() -> {
+            commentCount.set(request(HttpMethod.POST, "/posts/{id}/comments/count", Post.class, id).getBody().getComments());
+        });
+        return commentCount.get();
     }
 
     /**
      * [Internal only] Increase post reaction count by one
      */
     public int increaseReactions(long id) {
-        return request(HttpMethod.POST, "/posts/{id}/reactions/count", Post.class, id).getBody().getReactions();
+        AtomicInteger reactionCount = new AtomicInteger(-1);
+        guardRequester(() -> {
+            reactionCount.set(request(HttpMethod.POST, "/posts/{id}/reactions/count", Post.class, id).getBody().getReactions());
+        });
+        return reactionCount.get();
     }
 
     /**
      * [Internal only] Decrease post comment count by one
      */
     public int decreaseComments(long id) {
-        return request(HttpMethod.PUT, "/posts/{id}/comments/count", Post.class, id).getBody().getComments();
+        AtomicInteger commentCount = new AtomicInteger(-1);
+        guardRequester(() -> {
+            commentCount.set(request(HttpMethod.PUT, "/posts/{id}/comments/count", Post.class, id).getBody().getComments());
+        });
+        return commentCount.get();
     }
 
     /**
      * [Internal only] Decrease post reaction count by one
      */
     public int decreaseReactions(long id) {
-        return request(HttpMethod.PUT, "/posts/{id}/reactions/count", Post.class, id).getBody().getReactions();
+        AtomicInteger reactionCount = new AtomicInteger(-1);
+        guardRequester(() -> {
+            reactionCount.set(request(HttpMethod.PUT, "/posts/{id}/reactions/count", Post.class, id).getBody().getReactions());
+        });
+        return reactionCount.get();
     }
 
 }

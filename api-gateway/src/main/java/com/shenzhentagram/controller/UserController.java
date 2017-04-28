@@ -19,12 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping(path = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class UserController extends TemplateRestController {
 
-    /**
-     * Service connection task
-     */
-    @Autowired
-    private ServiceConnectingTask serviceConnectingTask;
-
     public UserController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "user");
     }
@@ -157,6 +151,25 @@ public class UserController extends TemplateRestController {
             postCount.set((int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count"));
         });
         return postCount.get();
+    }
+
+    public void embeddedMultiplePost(List<Post> posts) {
+        guardRequester(() -> {
+            HashMap<Integer, User> cachedUsers = new HashMap<>();
+            for(Post post : posts) {
+                if(!cachedUsers.containsKey(post.getUserId())) {
+                    cachedUsers.put(post.getUserId(), getUser(post.getUserId()).getBody());
+                }
+
+                post.setUser(cachedUsers.get(post.getUserId()));
+            }
+        });
+    }
+
+    public void embeddedSinglePost(Post post) {
+        guardRequester(() -> {
+            post.setUser(getUser(post.getUserId()).getBody());
+        });
     }
 
     /**
