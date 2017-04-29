@@ -7,3 +7,5 @@ minio.url=
 minio.bucket=
 minio.accessKey=
 minio.secretKey=
+
+spring.jpa.show-sql=true

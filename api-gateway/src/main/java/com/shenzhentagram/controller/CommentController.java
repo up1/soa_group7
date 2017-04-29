@@ -1,6 +1,7 @@
 package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.*;
+import com.shenzhentagram.scheduler.ServiceConnectingTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -9,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -51,18 +51,7 @@ public class CommentController extends TemplateRestController {
         ResponseEntity<CommentList> responseEntity = request(HttpMethod.GET, url, CommentList.class, post_id);
 
         // Embed user into comments
-        try {
-            HashMap<Integer, User> cachedUsers = new HashMap<>();
-            for(Comment comment : responseEntity.getBody().getComments()) {
-                if(!cachedUsers.containsKey(comment.getUserId())) {
-                    cachedUsers.put(comment.getUserId(), userController.getUser(comment.getUserId()).getBody());
-                }
-
-                comment.setUser(cachedUsers.get(comment.getUserId()));
-            }
-        } catch(Exception ignored) {
-            log.warn("Failed to map user into comment of post => " + post_id, ignored);
-        }
+        userController.embeddedMultipleComment(responseEntity.getBody().getComments());
 
         return responseEntity;
     }
@@ -75,12 +64,7 @@ public class CommentController extends TemplateRestController {
         ResponseEntity<Comment> responseEntity = request(HttpMethod.GET, "/posts/{post_id}/comments/{comment_id}", Comment.class, post_id, comment_id);
 
         // Embed user into comments
-        try {
-            Comment comment = responseEntity.getBody();
-            comment.setUser(userController.getUser(comment.getUserId()).getBody());
-        } catch(Exception ignored) {
-            log.warn("Failed to map user into comment => " + comment_id, ignored);
-        }
+        userController.embeddedSingleComment(responseEntity.getBody());
 
         return responseEntity;
     }
@@ -93,26 +77,13 @@ public class CommentController extends TemplateRestController {
         ResponseEntity<Comment> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), commentCreate, Comment.class, post_id);
 
         // Embed user into comments
-        Comment comment = responseEntity.getBody();
-        try {
-            comment.setUser(userController.getUser(comment.getUserId()).getBody());
-        } catch(Exception ignored) {
-            log.warn("Failed to map user into comment => " + comment.getId(), ignored);
-        }
+        userController.embeddedSingleComment(responseEntity.getBody());
 
         // Increase post comment count
-        try {
-            postController.increaseComments(post_id);
-        } catch(Exception ignored) {
-            log.warn("Increase post '" + post_id + "' comment count", ignored);
-        }
+        postController.increaseComments(post_id);
 
         // Create comment notification
-        try {
-            notificationController.createCommentNotification(Math.toIntExact(getAuthenticatedUser().getId()), post_id, "abc");
-        } catch(Exception ignored) {
-            log.warn("Create notification failed", ignored);
-        }
+        notificationController.createCommentNotification(Math.toIntExact(getAuthenticatedUser().getId()), post_id, responseEntity.getBody().getId());
 
         return responseEntity;
     }
@@ -126,12 +97,7 @@ public class CommentController extends TemplateRestController {
         ResponseEntity<Comment> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), commentUpdate, Comment.class, post_id, comment_id);
 
         // Embed user into comments
-        try {
-            Comment comment = responseEntity.getBody();
-            comment.setUser(userController.getUser(comment.getUserId()).getBody());
-        } catch(Exception ignored) {
-            log.warn("Failed to map user into comment => " + comment_id, ignored);
-        }
+        userController.embeddedSingleComment(responseEntity.getBody());
 
         return responseEntity;
     }
@@ -156,10 +122,12 @@ public class CommentController extends TemplateRestController {
     /**
      * Internal Only
      */
-    public ResponseEntity<Void> deleteCommentsOfPostId(
+    public void deleteCommentsOfPostId(
             int post_id
     ) {
-        return request(HttpMethod.DELETE, "/posts/{post_id}/comments" + getAuthenticatedUser().getId(), Void.class, post_id);
+        guardRequester(() -> {
+            request(HttpMethod.DELETE, "/posts/{post_id}/comments" + getAuthenticatedUser().getId(), Void.class, post_id);
+        });
     }
 
 }
