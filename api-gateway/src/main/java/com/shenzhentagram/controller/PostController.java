@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @CrossOrigin
@@ -135,7 +134,7 @@ public class PostController extends TemplateRestController {
         // Remove all post's comments
         commentController.deleteCommentsOfPostId(Math.toIntExact(id));
 
-        return responseEntity;
+        return response;
     }
 
     /**
