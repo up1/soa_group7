@@ -85,8 +85,10 @@ public class PostController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Post> deletePost(
                                        @PathVariable("id") long id,
-                                       @RequestParam(value = "user_id") long user_id) {
+                                       @RequestBody Map<String, Object> payload) {
         Post post = postService.findPostOrFail(id);
+
+        long user_id = ((Integer) payload.get("user_id")).longValue();
 
         if (user_id != post.getUserId()) {
             throw new UserIdNotMatchException(String.format("User ID %d not match with post's user ID", user_id));
