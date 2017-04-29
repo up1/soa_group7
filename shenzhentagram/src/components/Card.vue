@@ -51,7 +51,7 @@
       <a v-show="post.userId == this.$auth.user().id" v-on:click="active = true" class="footer-item icon"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a>
     </footer>
 
-    <edit-modal v-on:hide="hideModal" v-on:edit="edit" v-bind:active="active"></edit-modal>
+    <edit-modal v-on:hide="hideModal" v-on:edit="edit" v-on:deletePost="deletePost" v-bind:active="active"></edit-modal>
   </div>
 </template>
 
@@ -91,6 +91,9 @@
     methods: {
       edit () {
         this.editing = true
+      },
+      deletePost () {
+        this.$store.dispatch('deletePost', this.post)
       },
       doneEdit (e) {
         const value = e.target.value.trim()
