@@ -3,6 +3,7 @@
  */
 
 export const CLEAR_POSTS = 'CLEAR_POSTS'
+export const CLEAR_SINGLE_POST = 'CLEAR_SINGLE_POST'
 export const CLEAR_USER_POSTS = 'CLEAR_USER_POSTS'
 
 export const FETCH_USER = 'FETCH_USER'

@@ -10,29 +10,20 @@
 
 <script type="text/babel">
   import Card from './Card'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'post-single',
     props: ['postId'],
     components: {
       Card
     },
-    data () {
-      return {
-        post: null
-      }
+    computed: {
+      ...mapGetters({
+        post: 'getSinglePost'
+      })
     },
     created () {
       this.$store.dispatch('fetchSinglePost', this.postId)
-      .then(
-        // Success
-        (post) => {
-          this.post = post
-        },
-        // Error
-        () => {
-          console.error('Something wrong in PostSingle.vue -> created -> fetchPost();')
-        }
-      )
     }
   }
 </script>

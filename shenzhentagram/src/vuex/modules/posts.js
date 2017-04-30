@@ -5,38 +5,63 @@ import Vue from 'vue'
 import * as types from '../mutation-types'
 
 const state = {
-  posts: []
+  posts: [],
+  singlePost: null
 }
 
 const getters = {
-  getPosts: state => state.posts
+  getPosts: state => state.posts,
+  getSinglePost: state => state.singlePost
 }
 
 const actions = {
+
+  /*
+    Post Actions
+   */
+
+  // Mutliple post (Feed)
+
   fetchPosts ({commit}) {
-    commit(types.CLEAR_POSTS)
     Vue.http.get('posts')
       .then((response) => commit(types.FETCH_POSTS, response.body.content))
   },
-  fetchSinglePost ({commit}, postId) {
-    return Vue.http.get('posts/' + postId)
-      .then((response) => {
-        commit(types.FETCH_SINGLE_POST, response.body)
-        return response.body
-      })
-  },
-  fetchUserPosts ({commit}, userId) {
-    Vue.http.get('users/' + userId + '/posts')
-      .then((response) => commit(types.FETCH_USER_POST, response.body.content))
-  },
   editCaption ({commit}, {id, value}) {
-    Vue.http.patch('posts/' + id, value)
+    return Vue.http.patch('posts/' + id, value)
       .then((response) => commit(types.EDIT_CAPTION, response.body))
   },
   deletePost ({commit}, post) {
     Vue.http.delete('posts/' + post.id)
       .then((response) => commit(types.DELETE_POST, post))
   },
+
+  // Single post
+
+  fetchSinglePost ({commit}, postId) {
+    // Clear old post
+    commit(types.CLEAR_SINGLE_POST)
+
+    // Fetch single post
+    Vue.http.get('posts/' + postId)
+      .then((response) => {
+        let post = response.body
+        let comments = []
+
+        // Fetch single post comments
+        Vue.http.get('posts/' + postId + '/comments')
+          .then((response) => {
+            comments = response.body.comments
+            commit(types.FETCH_SINGLE_POST, {post, comments})
+          })
+
+        commit(types.FETCH_SINGLE_POST, {post, comments})
+      })
+  },
+
+  /*
+    Comment Actions
+   */
+
   fetchComment ({commit}, id) {
     Vue.http.get('posts/' + id + '/comments')
       .then((response) => commit(types.FETCH_COMMENT, {
@@ -66,30 +91,27 @@ const actions = {
         commentId
       }))
   }
+
 }
 
 const mutations = {
+
+  /*
+    Post Actions
+   */
+
   [types.CLEAR_POSTS] (state) {
     state.posts = []
-  },
-  [types.FETCH_SINGLE_POST] (state, post) {
-    let flag = false
-    state.posts.map((p, i) => {
-      if (post.id === p.id) {
-        state.posts[i] = post
-        flag = true
-      }
-    })
-
-    if (!flag) {
-      state.posts.push(post)
-    }
   },
   [types.FETCH_POSTS] (state, posts) {
     state.posts = posts.reverse()
   },
-  [types.FETCH_USER_POST] (state, posts) {
-    state.posts = posts
+  [types.CLEAR_SINGLE_POST] (state) {
+    state.singlePost = null
+  },
+  [types.FETCH_SINGLE_POST] (state, {post, comments}) {
+    post.comments = comments
+    state.singlePost = post
   },
   [types.EDIT_CAPTION] (state, body) {
     state.posts.map((p, i) => {
@@ -101,6 +123,11 @@ const mutations = {
   [types.DELETE_POST] (state, post) {
     state.posts.splice(state.posts.indexOf(post), 1)
   },
+
+  /*
+    Comment Actions
+   */
+
   [types.FETCH_COMMENT] (state, {id, comments}) {
     state.posts.map((p, i) => {
       if (p.id === id) {
