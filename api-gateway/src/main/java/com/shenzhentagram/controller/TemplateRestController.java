@@ -20,6 +20,8 @@ import org.springframework.web.util.UriTemplateHandler;
 
 import java.util.Date;
 
+import static com.shenzhentagram.prometheus.RequestCounter.countRequestRequest;
+
 /**
  * Template Rest Controller<br>
  * Use for creating a REST request controller to other service<br>
@@ -116,6 +118,10 @@ public abstract class TemplateRestController {
             HttpEntity<Object> entity = new HttpEntity<>(body, new HttpHeaders());
             try {
                 ResponseEntity<T> responseEntity = restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
+
+                //prometheus count
+                countRequestRequest(responseEntity.getStatusCodeValue());
+
                 return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
             } catch (RestClientResponseException e) {
                 log.error("Error calling " + method.toString() + " '" + targetPath + "' : " + e.getRawStatusCode() + " " + e.getStatusText());
