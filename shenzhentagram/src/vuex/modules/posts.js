@@ -138,10 +138,11 @@ const mutations = {
   [types.ADD_COMMENT] (state, {postId, comment}) {
     state.posts.map((p, i) => {
       if (p.id === postId) {
-        if (state.posts[i].comments === 0) {
+        if (state.posts[i].comments == null) {
           state.posts[i].comments = []
         }
         state.posts[i].comments.push(comment)
+        state.posts[i].comment_count++
       }
     })
   },
@@ -158,6 +159,7 @@ const mutations = {
   },
   [types.DELETE_COMMENT] (state, {postId, commentId}) {
     state.posts.map((p, i) => {
+      state.posts[i].comment_count--
       if (p.id === postId) {
         state.posts[i].comments = state.posts[i].comments.filter((comment) => {
           return comment.id !== commentId

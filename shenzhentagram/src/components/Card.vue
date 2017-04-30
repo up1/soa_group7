@@ -35,7 +35,7 @@
         <small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small>
       </div>
 
-      <div v-if="this.post.comments.length > 0" class="content">
+      <div v-if="this.post.comment_count > 0" class="content">
         <card-comment v-for="comment in this.post.comments" :key="comment.id" :comment="comment" v-bind:editingComment="comment.id === targetCommentId && editingComment"></card-comment>
       </div>
     </div>
@@ -167,8 +167,8 @@
             this.form.comment = ''
           },
           // Error
-          () => {
-            console.error('Something wrong in Card.vue -> doComment();')
+          (e) => {
+            console.error(e)
           }
         )
       },

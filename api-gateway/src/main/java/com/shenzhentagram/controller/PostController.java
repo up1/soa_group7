@@ -143,7 +143,7 @@ public class PostController extends TemplateRestController {
     public int increaseComments(long id) {
         AtomicInteger commentCount = new AtomicInteger(-1);
         guardRequester(() -> {
-            commentCount.set(request(HttpMethod.POST, "/posts/{id}/comments/count", Post.class, id).getBody().getComments());
+            commentCount.set(request(HttpMethod.POST, "/posts/{id}/comments/count", Post.class, id).getBody().getComment_count());
         });
         return commentCount.get();
     }
@@ -165,7 +165,7 @@ public class PostController extends TemplateRestController {
     public int decreaseComments(long id) {
         AtomicInteger commentCount = new AtomicInteger(-1);
         guardRequester(() -> {
-            commentCount.set(request(HttpMethod.PUT, "/posts/{id}/comments/count", Post.class, id).getBody().getComments());
+            commentCount.set(request(HttpMethod.PUT, "/posts/{id}/comments/count", Post.class, id).getBody().getComment_count());
         });
         return commentCount.get();
     }
