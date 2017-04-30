@@ -124,9 +124,7 @@ public class PostController extends TemplateRestController {
     public ResponseEntity<Void> deletePost(
             @PathVariable("id") long id
     ) {
-        PostDelete detail = new PostDelete();
-        detail.setUser_id(getAuthenticatedUser().getId());
-        ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{id}", detail, Void.class, id);
+        ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{id}?user_id=" + getAuthenticatedUser().getId(), Void.class, id);
 
         // Decrease user post count
         userController.decreasePosts((int) getAuthenticatedUser().getId());
