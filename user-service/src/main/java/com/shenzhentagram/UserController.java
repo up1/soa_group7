@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class UserController {
 
-    private static Log log = LogFactory.getLog(FileUtility.class);
+    private static Log log = LogFactory.getLog(UserController.class);
 
     @Value("${minio.url}")
     private String url;
@@ -110,15 +110,17 @@ public class UserController {
 
             // Save user
             this.userRepository.save(user, password);
-            return new ResponseEntity<>(user, HttpStatus.CREATED);
-        } catch (MinioException e) {
-            log.error("postConstruction() : minio client error => " + e);
-        } catch (DataAccessException e) {
-            minio.removeObject(bucket, user.getProfile_picture());
-            log.trace(e);
-        }
 
-        return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
+            // Return created user
+            user = this.userRepository.findByUsername(user.getUsername());
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            if (fileDetail != null) {
+                minio.removeObject(bucket, user.getProfile_picture());
+            }
+
+            throw e;
+        }
     }
 
     @PatchMapping("/{id}")
