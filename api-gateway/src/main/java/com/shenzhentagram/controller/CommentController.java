@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import java.io.IOException;
 
 /**
  * Created by Meranote on 4/17/2017.
@@ -20,7 +20,13 @@ import java.util.HashMap;
 public class CommentController extends TemplateRestController {
 
     @Autowired
+    private PostController postController;
+
+    @Autowired
     private UserController userController;
+
+    @Autowired
+    private NotificationController notificationController;
 
     public CommentController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "comment");
@@ -28,55 +34,98 @@ public class CommentController extends TemplateRestController {
 
     @GetMapping("/{post_id}/comments")
     public ResponseEntity<CommentList> getCommentOfPostId(
+            @RequestParam(value = "page", required = false) String page,
+            @RequestParam(value = "size", required = false) String size,
             @PathVariable("post_id") int post_id
     ) {
-        ResponseEntity<CommentList> responseEntity = request(HttpMethod.GET, "/posts/{post_id}/comments", CommentList.class, post_id);
-
-        // Embed user into comments
-        HashMap<Integer, User> cachedUsers = new HashMap<>();
-        for(Comment comment : responseEntity.getBody()) {
-            if(!cachedUsers.containsKey(comment.getUserId())) {
-                cachedUsers.put(comment.getUserId(), userController.getUser(comment.getUserId()).getBody());
-            }
-
-            comment.setUser(cachedUsers.get(comment.getUserId()));
+        String url = "/posts/{post_id}/comments";
+        if(page != null || size != null) {
+            url += "?";
+            url += page != null ? "offset=" + page : "";
+            url += page != null && size != null ? "&" : "";
+            url += size != null ? "limit=" + size : "";
         }
 
-        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
+        ResponseEntity<CommentList> responseEntity = request(HttpMethod.GET, url, CommentList.class, post_id);
+
+        // Embed user into comments
+        userController.embeddedMultipleComment(responseEntity.getBody().getComments());
+
+        return responseEntity;
+    }
+
+    @GetMapping("/{post_id}/comments/{comment_id}")
+    public ResponseEntity<Comment> getComment(
+            @PathVariable("post_id") int post_id,
+            @PathVariable("comment_id") String comment_id
+    ) {
+        ResponseEntity<Comment> responseEntity = request(HttpMethod.GET, "/posts/{post_id}/comments/{comment_id}", Comment.class, post_id, comment_id);
+
+        // Embed user into comments
+        userController.embeddedSingleComment(responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @PostMapping("/{post_id}/comments")
-    public ResponseEntity<Void> createComment(
+    public ResponseEntity<Comment> createComment(
             @PathVariable("post_id") int post_id,
-            @RequestBody CommentCreate comment
+            @RequestBody CommentCreate commentCreate
     ) {
-        // FIXME Create notification
+        ResponseEntity<Comment> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), commentCreate, Comment.class, post_id);
 
-        ResponseEntity<HashMap> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id);
-        return new ResponseEntity<>(responseEntity.getStatusCode());
+        // Embed user into comments
+        userController.embeddedSingleComment(responseEntity.getBody());
+
+        // Increase post comment count
+        postController.increaseComments(post_id);
+
+        // Create comment notification
+        notificationController.createCommentNotification(Math.toIntExact(getAuthenticatedUser().getId()), post_id, responseEntity.getBody().getId());
+
+        return responseEntity;
     }
 
     @PutMapping("/{post_id}/comments/{comment_id}")
-    public ResponseEntity<Void> updateComment(
+    public ResponseEntity<Comment> updateComment(
             @PathVariable("post_id") int post_id,
             @PathVariable("comment_id") String comment_id,
-            @RequestBody CommentUpdate comment
+            @RequestBody CommentUpdate commentUpdate
     ) {
-        // FIXME check authenticated user before edit or send auth user id to comment service and let it handle itself
+        ResponseEntity<Comment> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), commentUpdate, Comment.class, post_id, comment_id);
 
-        ResponseEntity<HashMap> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), comment, HashMap.class, post_id, comment_id);
-        return new ResponseEntity<>(responseEntity.getStatusCode());
+        // Embed user into comments
+        userController.embeddedSingleComment(responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @DeleteMapping("/{post_id}/comments/{comment_id}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable("post_id") int post_id,
             @PathVariable("comment_id") String comment_id
-    ) {
-        // FIXME check authenticated user before delete or send auth user id to comment service and let it handle itself
+    ) throws IOException {
+        ResponseEntity<Comment> responseEntity = request(HttpMethod.DELETE, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), Comment.class, post_id, comment_id);
 
-        ResponseEntity<HashMap> responseEntity = request(HttpMethod.DELETE, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), HashMap.class, post_id, comment_id);
+        // Decrease post comment count
+        try {
+            postController.decreaseComments(post_id);
+        } catch(Exception ignored) {
+            log.warn("Decrease post '" + post_id + "' comment count", ignored);
+        }
+
         return new ResponseEntity<>(responseEntity.getStatusCode());
+    }
+
+    /**
+     * Internal Only
+     */
+    public void deleteCommentsOfPostId(
+            int post_id
+    ) {
+        guardRequester(() -> {
+            request(HttpMethod.DELETE, "/posts/{post_id}/comments" + getAuthenticatedUser().getId(), Void.class, post_id);
+        });
     }
 
 }

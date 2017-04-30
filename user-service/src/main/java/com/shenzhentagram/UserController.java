@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class UserController {
 
-    private static Log log = LogFactory.getLog(FileUtility.class);
+    private static Log log = LogFactory.getLog(UserController.class);
 
     @Value("${minio.url}")
     private String url;
@@ -74,7 +74,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createUser(
+    public ResponseEntity<User> createUser(
             @RequestBody Map<String, Object> payload
     ) throws Exception {
         // Extract the password
@@ -110,15 +110,17 @@ public class UserController {
 
             // Save user
             this.userRepository.save(user, password);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (MinioException e) {
-            log.error("postConstruction() : minio client error => " + e);
-        } catch (DataAccessException e) {
-            minio.removeObject(bucket, user.getProfile_picture());
-            log.trace(e);
-        }
 
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            // Return created user
+            user = this.userRepository.findByUsername(user.getUsername());
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            if (fileDetail != null) {
+                minio.removeObject(bucket, user.getProfile_picture());
+            }
+
+            throw e;
+        }
     }
 
     @PatchMapping("/{id}")
@@ -143,6 +145,46 @@ public class UserController {
         this.userRepository.update(user);
 
         return user;
+    }
+
+    @PatchMapping("/{id}/picture")
+    public User updateSelfProfilePicture(
+            @PathVariable("id") long id,
+            @RequestBody Map<String, Object> payload
+    ) throws Exception {
+        User user = this.userRepository.findById(id);
+
+        if(!payload.containsKey("profile_picture")) {
+            throw new Exception("no profile_picture field");
+        }
+
+        // Extract image (base64)
+        String imageBase64 = (String) payload.remove("profile_picture");
+        FileUtility.FileDetail fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+
+        try {
+            // upload image
+            // Set picture & upload to storage
+            user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
+
+            // Upload file
+            minio.putObject(
+                    bucket,
+                    user.getProfile_picture(),
+                    fileDetail.inputStream,
+                    fileDetail.size,
+                    fileDetail.type
+            );
+
+            // Save user
+            this.userRepository.update(user);
+            return user;
+        } catch (MinioException e) {
+            throw e;
+        } catch (DataAccessException e) {
+            minio.removeObject(bucket, user.getProfile_picture());
+            throw e;
+        }
     }
 
     @PostMapping("/{id}/posts/count")

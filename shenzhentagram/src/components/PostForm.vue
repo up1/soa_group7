@@ -22,7 +22,11 @@
                 <div class="field">
                   <label class="label">Select file</label>
                   <p class="control">
-                    <input type="file" v-on:change="selectFile">
+                    <input id="file" type="file" class="inputfile" v-on:change="selectFile">
+                    <label for="file">
+                      <i class="fa fa-upload" aria-hidden="true"></i>
+                      <span>Choose a file</span>
+                    </label>
                   </p>
                 </div>
               </div>
@@ -150,6 +154,43 @@
   .card {
     margin: 50px 0;
   }
+  .inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .inputfile + label {
+    max-width: 80%;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    padding: 0.625rem 1.25rem;
+    background-color: #00D1B2;
+    color: #fff;
+  }
+
+  .inputfile + label i {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    fill: currentColor;
+    margin-top: -0.25em;
+    margin-right: 0.25em;
+  }
+
+  .inputfile:focus + label,
+  .inputfile + label:hover {
+    background-color: #00A38B;
+  }
+
 
   a.card-footer-item {
     font-size: 1.5rem;

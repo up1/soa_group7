@@ -66,7 +66,6 @@ public class PostServiceImpl implements PostService {
             System.out.println("Success");
             return new ResponseEntity<>(post, HttpStatus.OK);
         } catch (MinioException e) {
-//        } catch (Exception e) {
             System.out.println("Error occurred: " + e);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

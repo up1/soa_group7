@@ -34,10 +34,6 @@ public class Notification {
     })
     private NotificationAbstract from;
 
-    public Notification(){
-
-    }
-
     public long getId() {
         return id;
     }
@@ -90,7 +86,7 @@ public class Notification {
         return from;
     }
 
-    public void setFrom(NotificationAbstract notification) {
+    public void setFrom(NotificationAbstract from) {
         this.from = from;
     }
 

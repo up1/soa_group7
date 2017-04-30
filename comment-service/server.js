@@ -19,7 +19,7 @@ const http = require('http').Server(app);
 const helper = require('./common/helper');
 const errorMiddleware = require('./common/ErrorMiddleware');
 
-app.set('port', process.env.PORT);
+app.set('port', process.env.PORT || 9006);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false})); //If Encode Can't test with postman

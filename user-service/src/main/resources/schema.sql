@@ -14,5 +14,6 @@ CREATE TABLE users (
   role VARCHAR(255) NOT NULL,
   enable TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (id),
+  FULLTEXT (username, full_name, display_name),
   CONSTRAINT contacts_unique UNIQUE (username)
 )

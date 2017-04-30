@@ -85,8 +85,10 @@ public class PostController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Post> deletePost(
                                        @PathVariable("id") long id,
-                                       @RequestParam(value = "user_id") long user_id) {
+                                       @RequestBody Map<String, Object> payload) {
         Post post = postService.findPostOrFail(id);
+
+        long user_id = ((Integer) payload.get("user_id")).longValue();
 
         if (user_id != post.getUserId()) {
             throw new UserIdNotMatchException(String.format("User ID %d not match with post's user ID", user_id));
@@ -98,9 +100,9 @@ public class PostController {
     }
 
     @PostMapping(value = "/{id}/comments/count")
-    public ResponseEntity<Post> increaseComments(@PathVariable("id") long id) {
+    public ResponseEntity<Post> increaseComment_count(@PathVariable("id") long id) {
         Post post = postService.findPostOrFail(id);
-        post.setComments(post.getComments()+1);
+        post.setComment_count(post.getComment_count()+1);
         postRepository.save(post);
 
         return new ResponseEntity<>(post, HttpStatus.OK);
@@ -117,9 +119,9 @@ public class PostController {
     }
 
     @PutMapping(value = "/{id}/comments/count")
-    public ResponseEntity<Post> decreaseComments(@PathVariable("id") long id) {
+    public ResponseEntity<Post> decreaseComment_count(@PathVariable("id") long id) {
         Post post = postService.findPostOrFail(id);
-        post.setComments(post.getComments()-1);
+        post.setComment_count(post.getComment_count()-1);
         postRepository.save(post);
 
         return new ResponseEntity<>(post, HttpStatus.OK);

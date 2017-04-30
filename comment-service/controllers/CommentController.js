@@ -1,64 +1,62 @@
 /**
  * Created by Jiravat on 3/31/2017.
+ * Modified by Chaniwat (chaniwat.meranote@gmail.com) on 4/28/2017.
  */
-const CommentService = require('../services/CommentService');
 
+const Exception = require('../error/Exception');
+
+const CommentRepository = require('../services/CommentService');
 const models = require('../models');
-const Comment = models.Comment;
-
 
 module.exports = {
     createSingle,
     updateSingle,
     getSingle,
     deleteSingle,
-    getCommentsByPostId
+    getCommentsByPostId,
+    deleteCommentsByPostId
 };
 
 function* createSingle(req, res) {
-    //console.log(req.auth.id, req.params.postId);
-    // req.body.userId = req.auth.id;
-    req.body.userId = req.query.userId;
-    req.body.postId = req.params.postId;
-    const comment = yield CommentService.create(req.body);
-    if(comment.error)res.json({"msg": "not create"}, 304);
-    else{ res.status(201).json({"msg": "create success"});}
+    let comment = yield CommentRepository.createOne(req.params.postId, req.query.userId, req.body);
+    return res.status(201).json(comment);
 }
 
 function* updateSingle(req, res) {
-    // const userId = req.auth.id;
-    const comment = yield CommentService.update(req.params.commentId, req.body);
-    if (comment.error) res.json({"msg": "not found"}, 404);
-    else res.status(200).json({msg: "update success"});
+    try {
+        let comment = yield CommentRepository.updateOne(req.params.postId, req.params.commentId, req.query.userId, req.body);
+        res.status(200).json(comment);
+    } catch(e) {
+        res.status(e.status).json(e);
+    }
 }
 
 function* deleteSingle(req, res) {
-    // const userId = req.auth.id;
-    const comment = yield CommentService.deleteSingle(req.params.commentId);
-    if (comment.error) res.json({"msg": "not found"}, 404);
-    else res.status(200).json({"msg": "delete success"});
+    try {
+        let comment = yield CommentRepository.deleteOne(req.params.postId, req.params.commentId, req.query.userId);
+        res.status(200).json(comment);
+    } catch(e) {
+        res.status(e.status).json(e);
+    }
 }
 
 function* getSingle(req, res) {
-    const comment = yield CommentService.getSingle(req.params.commentId);
-    if (comment.error) res.json({"msg": "not found"}, 404);
-    // else res.json(comment, 200);
-    else res.status(200).json(comment);
+    let comment = yield CommentRepository.getOne(req.params.postId, req.params.commentId);
+    if (!comment) {
+        res.status(404).json(new Exception("Comment not found", 404))
+    } else {
+        res.status(200).json(comment);
+    }
 }
 
 function* getCommentsByPostId(req, res) {
-    const postId = req.params.postId;
-    const limit = req.query.limit || 10;
-    try{
-        Comment.find({'postId': postId}).exec(function(err,comments){
-            if(err)
-                return res.json({"msg": "error"}, 404);
-            // res.json(comments, 200);
-            res.status(200).json(comments);
-        });
-    }
-    catch(e){
-        return res.json({"msg": "error"}, 404);
-    }
+    let limit = req.query.limit ? parseInt(req.query.limit) : null;
+    let offset = req.query.offset ? parseInt(req.query.offset) : null;
+    let comment = yield CommentRepository.getAllByPostId(req.params.postId, limit, offset);
+    res.status(200).json(comment);
+}
 
+function* deleteCommentsByPostId(req, res) {
+    yield CommentRepository.deleteAllByPostId(req.params.postId);
+    res.status(200).end();
 }

@@ -1,5 +1,7 @@
 package com.shenzhentagram.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shenzhentagram.model.*;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -22,14 +24,14 @@ public class NotificationController extends TemplateRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Notification> getNotification(
+    public ResponseEntity<Object> getNotification(
             @PathVariable("id") long id
     ) {
-        return request(HttpMethod.GET, "/notifications/{id}", Notification.class, id);
+        return request(HttpMethod.GET, "/notifications/{id}", Object.class, id);
     }
 
     @GetMapping()
-    public ResponseEntity<NotificationList> getSelfNotifications(
+    public ResponseEntity<ArrayList> getSelfNotifications(
             @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page
     ) throws Exception {
@@ -39,7 +41,7 @@ public class NotificationController extends TemplateRestController {
                 getAuthenticatedUser().getId()
         );
 
-        return request(HttpMethod.GET, uri, NotificationList.class);
+        return request(HttpMethod.GET, uri, ArrayList.class);
     }
 
     @PatchMapping("/status/checked")
@@ -59,99 +61,111 @@ public class NotificationController extends TemplateRestController {
     /**
      * [Internal only] create new follower notification
      */
-    public ResponseEntity<Void> createFollowerNotification(
+    public void createFollowerNotification(
             int targetUserId, int targetFollowerId
     ) {
-        // Create empty base notification
-        Notification notification = new Notification();
-        notification.setUserId(targetUserId);
-        notification.setType("followed_by");
-        notification.setText("New follower: %follower.display_name%");
-        notification.setThumbnail("%follower.profile_picture%");
+        guardRequester(() -> {
+            // Create empty base notification
+            Notification notification = new Notification();
+            notification.setUserId(targetUserId);
+            notification.setType("followed_by");
+            notification.setText("New follower: %follower.display_name%");
+            notification.setThumbnail("%follower.profile_picture%");
 
-        // NOTE: %follower.property% will map to follower's property
-        // Ex. %follower.display_name% will map to follower's display_name property
-        // (Hardcoded Templating)
+            // NOTE: %follower.property% will map to follower's property
+            // Ex. %follower.display_name% will map to follower's display_name property
+            // (Hardcoded Templating)
 
-        // Create empty sub-type notification
-        NotificationUser subNotification = new NotificationUser();
-        subNotification.setUserId(targetFollowerId);
+            // Create empty sub-type notification
+            NotificationUser subNotification = new NotificationUser();
+            subNotification.setUserId(targetFollowerId);
 
-        // Set sub-type to base
-        notification.setFrom(subNotification);
+            // Set sub-type to base
+            notification.setFrom(subNotification);
 
-        // AND WHY THE FUCK I NEED TO SENT IT AS ARRAY JUST TO CREATE ONLY ONE NOTIFICATION -_-
-        List<Notification> notifications = new ArrayList<>();
-        notifications.add(notification);
+            // AND WHY THE FUCK I NEED TO SENT IT AS ARRAY JUST TO CREATE ONLY ONE NOTIFICATION -_-
+            List<Notification> notifications = new ArrayList<>();
+            notifications.add(notification);
 
-        // Send to notification-service
-        return request(HttpMethod.POST, "/notifications/follow", notifications, Void.class);
+            // Send to notification-service
+            request(HttpMethod.POST, "/notifications/follow", notifications, Void.class);
+        });
     }
 
     /**
      * [Internal only] create new comment notification
      */
-    public ResponseEntity<Void> createCommentNotification(
-            int targetUserId, int targetPostId, int targetCommentId
+    public void createCommentNotification(
+            int targetUserId, int targetPostId, String targetCommentId
     ) {
-        // Create empty base notification
-        Notification notification = new Notification();
-        notification.setUserId(targetUserId);
-        notification.setType("comment");
-        notification.setText("New comment on your post");
-        notification.setThumbnail("%post.media%");
+        guardRequester(() -> {
+            // Create empty base notification
+            Notification notification = new Notification();
+            notification.setUserId(targetUserId);
+            notification.setType("comment");
+            notification.setText("New comment on your post");
+            notification.setThumbnail("%post.media%");
 
-        // NOTE: %post.property% will map to post's property
-        // Ex. %post.media% will map to post's media property
-        // (Hardcoded Templating)
+            // NOTE: %post.property% will map to post's property
+            // Ex. %post.media% will map to post's media property
+            // (Hardcoded Templating)
 
-        // Create empty sub-type notification
-        NotificationPost subNotification = new NotificationPost();
-        subNotification.setPost_id(targetPostId);
-        subNotification.setComment_id(targetCommentId);
+            // Create empty sub-type notification
+            NotificationPost subNotification = new NotificationPost();
+            subNotification.setPost_id(targetPostId);
+            subNotification.setComment_id(targetCommentId);
 
-        // Set sub-type to base
-        notification.setFrom(subNotification);
+            // Set sub-type to base
+            notification.setFrom(subNotification);
 
-        // AND WHY THE FUCK I NEED TO SENT IT AS ARRAY JUST TO CREATE ONLY ONE NOTIFICATION -_-
-        List<Notification> notifications = new ArrayList<>();
-        notifications.add(notification);
+            // AND WHY THE FUCK I NEED TO SENT IT AS ARRAY JUST TO CREATE ONLY ONE NOTIFICATION -_-
+            List<Notification> notifications = new ArrayList<>();
+            notifications.add(notification);
 
-        // Send to notification-service
-        return request(HttpMethod.POST, "/notifications/comment", notifications, Void.class);
+            try {
+                log.info(new ObjectMapper().writeValueAsString(notifications));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+
+            // Send to notification-service
+            request(HttpMethod.POST, "/notifications/comment", notifications, Void.class);
+        });
     }
 
     /**
      * [Internal only] create new reaction notification
      */
-    public ResponseEntity<Void> createReactionNotification(
+    public void createReactionNotification(
             int targetUserId, int targetPostId, int targetReactionId
     ) {
-        // Create empty base notification
-        Notification notification = new Notification();
-        notification.setUserId(targetUserId);
-        notification.setType("reaction");
-        notification.setText("New reaction on your post");
-        notification.setThumbnail("%post.media%");
+        guardRequester(() -> {
+            // Create empty base notification
+            Notification notification = new Notification();
+            notification.setUserId(targetUserId);
+            notification.setType("reaction");
+            notification.setText("New reaction on your post");
+            notification.setThumbnail("%post.media%");
 
-        // NOTE: %post.property% will map to post's property
-        // Ex. %post.media% will map to post's media property
-        // (Hardcoded Templating)
+            // NOTE: %post.property% will map to post's property
+            // Ex. %post.media% will map to post's media property
+            // (Hardcoded Templating)
 
-        // Create empty sub-type notification
-        NotificationReaction subNotification = new NotificationReaction();
-        subNotification.setPost_id(targetPostId);
-        subNotification.setReaction_id(targetReactionId);
+            // Create empty sub-type notification
+            NotificationReaction subNotification = new NotificationReaction();
+            subNotification.setPost_id(targetPostId);
+            subNotification.setReaction_id(targetReactionId);
 
-        // Set sub-type to base
-        notification.setFrom(subNotification);
+            // Set sub-type to base
+            notification.setFrom(subNotification);
 
-        // AND WHY THE FUCK I NEED TO SENT IT AS ARRAY JUST TO CREATE ONLY ONE NOTIFICATION -_-
-        List<Notification> notifications = new ArrayList<>();
-        notifications.add(notification);
+            // AND WHY THE FUCK I NEED TO SENT IT AS ARRAY JUST TO CREATE ONLY ONE NOTIFICATION -_-
+            List<Notification> notifications = new ArrayList<>();
+            notifications.add(notification);
 
-        // Send to notification-service
-        return request(HttpMethod.POST, "/notifications/reaction", notifications, Void.class);
+            // Send to notification-service
+            request(HttpMethod.POST, "/notifications/reaction", notifications, Void.class);
+        });
     }
 
 }

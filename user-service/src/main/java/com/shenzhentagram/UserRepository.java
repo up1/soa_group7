@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -32,14 +31,33 @@ public class UserRepository {
     }
 
     @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        try {
+            return this.jdbcTemplate.queryForObject(
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
+                            "FROM users " +
+                            "WHERE username = ?",
+                    new Object[] {
+                            username
+                    },
+                    new UserRowMapper()
+            );
+        } catch (Exception exception) {
+            throw new UserNotFoundException(username);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public List<User> findByName(String name) {
         try {
             return this.jdbcTemplate.query(
                     "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
                             "FROM users " +
-                            "WHERE full_name = ?",
+                            "WHERE full_name LIKE '%?%' " +
+                            "OR display_name LIKE '%?%' " +
+                            "OR username LIKE '%?%'",
                     new Object[] {
-                            name
+                            name, name, name
                     },
                     new UserRowMapper()
             );
@@ -72,31 +90,27 @@ public class UserRepository {
     public void save(User user, String password) {
         String sql = "INSERT INTO " +
                 "users(username, password, full_name, bio, profile_picture, display_name, follows, followed_by, post_count, role) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try{
-            this.jdbcTemplate.update(
-                    sql,
-                    user.getUsername(),
-                    password,
-                    user.getFull_name(),
-                    user.getBio(),
-                    user.getProfile_picture(),
-                    user.getDisplay_name(),
-                    0,
-                    0,
-                    0,
-                    "USER"
-            );
-        } catch (Exception e){
-            throw e;
-        }
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+        this.jdbcTemplate.update(
+                sql,
+                user.getUsername(),
+                password,
+                user.getFull_name(),
+                user.getBio(),
+                user.getProfile_picture(),
+                user.getDisplay_name(),
+                0,
+                0,
+                0,
+                "USER"
+        );
     }
 
     @Transactional
     public void update(User user) {
         String sql = "UPDATE users " +
-                "SET full_name = ?, bio = ?, display_name = ?, follows = ?, followed_by = ?, post_count = ? " +
+                "SET full_name = ?, bio = ?, display_name = ?, profile_picture = ?, follows = ?, followed_by = ?, post_count = ? " +
                 "WHERE id = ?";
         try{
             this.jdbcTemplate.update(
@@ -104,6 +118,7 @@ public class UserRepository {
                     user.getFull_name(),
                     user.getBio(),
                     user.getDisplay_name(),
+                    user.getProfile_picture(),
                     user.getFollows(),
                     user.getFollowed_by(),
                     user.getPost_count(),
@@ -112,7 +127,6 @@ public class UserRepository {
         } catch (Exception e){
             throw e;
         }
-
     }
 
     @Transactional
