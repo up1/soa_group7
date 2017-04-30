@@ -9,7 +9,6 @@ import ProfileEdit from '@/components/profile/ProfileEdit'
 import VueResource from 'vue-resource'
 import VueAuth from '@websanova/vue-auth'
 import custom1 from '@/driver/custom1'
-import { DefaultErrorHandler } from './interceptors'
 
 const router = new Router({
   hashbang: false,
@@ -63,9 +62,6 @@ Vue.use(Router)
 Vue.use(VueResource)
 Vue.http.options.root = 'http://35.185.168.160'
 Vue.http.options.xhr = {withCredentials: true}
-
-// Default error handler
-Vue.http.interceptors.push(DefaultErrorHandler)
 
 Vue.use(VueAuth, {
   auth: custom1,
