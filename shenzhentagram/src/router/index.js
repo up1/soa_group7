@@ -60,7 +60,7 @@ const router = new Router({
 Vue.router = router
 Vue.use(Router)
 Vue.use(VueResource)
-Vue.http.options.root = 'http://35.185.168.160'
+Vue.http.options.root = 'https://35.185.168.160'
 Vue.http.options.xhr = {withCredentials: true}
 
 Vue.use(VueAuth, {
