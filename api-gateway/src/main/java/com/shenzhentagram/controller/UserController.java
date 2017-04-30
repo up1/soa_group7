@@ -39,13 +39,7 @@ public class UserController extends TemplateRestController {
     public ResponseEntity<User> getUser(
             @PathVariable("id") long id
     ) {
-        ResponseEntity<User> rq =  request(HttpMethod.GET, "/users/{id}", User.class, id);
-        if(rq.getStatusCodeValue() == 200) {
-            userSuccessCounter.inc();
-        }else{
-            userFailedCounter.inc();
-        }
-        return rq;
+        return request(HttpMethod.GET, "/users/{id}", User.class, id);
     }
 
     @GetMapping("/search")
@@ -61,13 +55,7 @@ public class UserController extends TemplateRestController {
     public ResponseEntity<UserList> searchUser(
             @RequestParam("name") String name
     ) {
-        ResponseEntity<UserList> rq = request(HttpMethod.GET, "/users/search?name=" + name, UserList.class);
-        if(rq.getStatusCodeValue() == 200) {
-            userSuccessCounter.inc();
-        }else{
-            userFailedCounter.inc();
-        }
-        return rq;
+        return request(HttpMethod.GET, "/users/search?name=" + name, UserList.class);
     }
 
     @PostMapping()
@@ -103,13 +91,7 @@ public class UserController extends TemplateRestController {
             @ApiResponse(code = 401, message = "Not authenticated (no token)")
     })
     public ResponseEntity<User> getSelf() {
-        ResponseEntity<User> rq = getUser(getAuthenticatedUser().getId());
-        if(rq.getStatusCodeValue() == 200) {
-            userSuccessCounter.inc();
-        }else{
-            userFailedCounter.inc();
-        }
-        return rq;
+        return getUser(getAuthenticatedUser().getId());
     }
 
     @PatchMapping(path = "/self")
@@ -129,13 +111,7 @@ public class UserController extends TemplateRestController {
     public ResponseEntity<User> updateSelf(
             @ApiParam("Update detail") @RequestBody UserUpdate detail
     ) {
-        ResponseEntity<User> rq = request(HttpMethod.PATCH, "/users/{id}", detail, User.class, getAuthenticatedUser().getId());
-        if(rq.getStatusCodeValue() == 200) {
-            userSuccessCounter.inc();
-        }else{
-            userFailedCounter.inc();
-        }
-        return rq;
+        return request(HttpMethod.PATCH, "/users/{id}", detail, User.class, getAuthenticatedUser().getId());
     }
 
     @PatchMapping(path = "/self/picture")
