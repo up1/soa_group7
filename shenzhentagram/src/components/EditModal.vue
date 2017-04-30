@@ -17,14 +17,14 @@
     },
     methods: {
       hideModal () {
-        this.$emit('hide')
+        this.$emit('hide', 'edit')
       },
       edit () {
-        this.$emit('hide')
+        this.$emit('hide', 'edit')
         this.$emit('edit')
       },
       deletePost () {
-        this.$emit('hide')
+        this.$emit('hide', 'edit')
         this.$emit('deletePost')
       }
     }

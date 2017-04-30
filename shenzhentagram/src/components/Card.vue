@@ -41,7 +41,7 @@
     </div>
 
     <footer class="card-footer">
-      <a class="footer-item icon is-medium left"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
+      <a class="footer-item icon is-medium left" v-on:click="activeReactionModal = true"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
       <span class="footer-item center">
         <form v-on:submit.prevent="doComment">
           <div class="field">
@@ -55,6 +55,7 @@
     </footer>
 
     <edit-modal v-on:hide="hideModal" v-on:edit="edit" v-on:deletePost="deletePost" v-bind:active="active"></edit-modal>
+    <reaction-modal v-on:hide="hideModal" v-bind:active="activeReactionModal" v-on:react="react"></reaction-modal>
     <edit-comment-modal v-on:hide="hideCommentModal" v-on:edit="editComment" v-on:delete="deleteComment" v-bind:active="activeCommentModal"></edit-comment-modal>
   </div>
 </template>
@@ -63,11 +64,12 @@
   import EditModal from './EditModal'
   import EditCommentModal from './EditCommentModal'
   import CardComment from './CardComment'
+  import ReactionModal from './ReactionModal'
   import { focus } from 'vue-focus'
   export default {
     props: ['post'],
     components: {
-      CardComment, EditModal, EditCommentModal
+      CardComment, EditModal, EditCommentModal, ReactionModal
     },
     directives: { focus: focus },
     data () {
@@ -76,6 +78,7 @@
         editing: false,
         active: false,
         activeCommentModal: false,
+        activeReactionModal: false,
         targetCommentId: '',
         editingComment: false,
         form: {
@@ -86,7 +89,7 @@
     created () {
       this.caption = this.post.caption
 
-      if (this.post.comments > 0) {
+      if (this.post.comment_count > 0) {
         this.$store.dispatch('fetchComment', this.post.id)
       }
     },
@@ -115,8 +118,12 @@
       cancelEdit () {
         this.editing = false
       },
-      hideModal () {
-        this.active = false
+      hideModal (type) {
+        if (type === 'edit') {
+          this.active = false
+        } else {
+          this.activeReactionModal = false
+        }
       },
 
       showCommentModal (targetCommentId) {
@@ -164,6 +171,9 @@
             console.error('Something wrong in Card.vue -> doComment();')
           }
         )
+      },
+      react (type) {
+        console.log(type)
       }
     }
   }
@@ -197,9 +207,5 @@
   }
   .icon {
     padding-top: 0.75rem;
-  }
-  .is-borderless {
-    border: none;
-    box-shadow: none;
   }
 </style>
