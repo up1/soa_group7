@@ -6,10 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class FollowApplication {
 
-	private FollowApplication(){
-		
-	}
-
 	public static void main(String[] args) {
 		SpringApplication.run(FollowApplication.class, args);
 	}

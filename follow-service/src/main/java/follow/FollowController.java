@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.web.bind.annotation.*;
+import java.util.logging.Logger;
 
 
 import java.util.*;
@@ -50,7 +51,7 @@ public class FollowController {
             follows.setFollowing(useradd);
             followsRepository.save(follows);
         }catch (Exception e){
-            LOGGER.info(e.getMessage());
+            Logger.getLogger(e.getMessage());
             following.add(Integer.parseInt(id));
             follows = new Follows(Integer.toString((Integer) payload.get(USERID)), follower ,following);
             followsRepository.save(follows);
