@@ -10,15 +10,24 @@ const _ = require('lodash');
 /**
  * Comment Repository private function (helper)
  */
-function constructPostPanigation(post, limit, offset) {
-    let totalComments = post.comment_count;
+function constructPostPanigation(postId, post, limit, offset) {
+    var json;
+    if(!post) {
+        json = {
+            postId,
+            comments: [],
+            totalElements: 0,
+            numberOfElements: 0
+        }
+    } else {
+        json = _.omit(post.toJSON(), "comment_count");
+        json.numberOfElements = post.comments.length;
+        json.totalElements = post.comment_count;
+    }
 
-    let json = _.omit(post.toJSON(), "comment_count");
     json.size = limit;
     json.number = offset;
-    json.numberOfElements = post.comments.length;
-    json.totalPages = limit != 0 ? Math.ceil(totalComments / limit) : 1;
-    json.totalElements = totalComments;
+    json.totalPages = limit != 0 ? Math.ceil(json.totalElements / limit) : 1;
     json.first = offset == 0;
     json.last = offset == json.totalPages - 1;
 
@@ -107,11 +116,11 @@ class CommentRepository {
             let startOffset = limit * offset;
             let post = yield Comment.findOne({ postId }, {comments : {$slice : [startOffset, limit]}});
 
-            return constructPostPanigation(post, limit, offset);
+            return constructPostPanigation(postId, post, limit, offset);
         } else {
             // Nothing is set, full return
             let post = yield Comment.findOne({ postId });
-            return constructPostPanigation(post, 0, 0);
+            return constructPostPanigation(postId, post, 0, 0);
         }
     }
 

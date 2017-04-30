@@ -1,7 +1,9 @@
 package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.*;
+import com.shenzhentagram.scheduler.ServiceConnectingTask;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @CrossOrigin
 @RestController
@@ -131,14 +135,84 @@ public class UserController extends TemplateRestController {
      * [Internal only] Increase user posts count by one
      */
     public int increasePosts(long id) {
-        return (int) request(HttpMethod.POST, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count");
+        AtomicInteger postCount = new AtomicInteger(-1);
+        guardRequester(() -> {
+            postCount.set((int) request(HttpMethod.POST, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count"));
+        });
+        return postCount.get();
     }
 
     /**
      * [Internal only] Decrease user posts count by one
      */
     public int decreasePosts(long id) {
-        return (int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count");
+        AtomicInteger postCount = new AtomicInteger(-1);
+        guardRequester(() -> {
+            postCount.set((int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count"));
+        });
+        return postCount.get();
+    }
+
+    /**
+     * [Internal only] Embedded user into multiple post
+     * @param posts
+     */
+    public void embeddedMultiplePost(List<Post> posts) {
+        guardRequester(() -> {
+            HashMap<Integer, User> cachedUsers = new HashMap<>();
+            for(Post post : posts) {
+                if(!cachedUsers.containsKey(post.getUserId())) {
+                    cachedUsers.put(post.getUserId(), getUser(post.getUserId()).getBody());
+                }
+
+                post.setUser(cachedUsers.get(post.getUserId()));
+            }
+        });
+    }
+
+    /**
+     * [Internal only] Embedded user into single post<br>
+     * <b>
+     *     Don't use this method if you want to embed multiple post<br>
+     *     See {@link UserController#embeddedMultiplePost(List)} instead
+     * </b>
+     * @param post
+     */
+    public void embeddedSinglePost(Post post) {
+        guardRequester(() -> {
+            post.setUser(getUser(post.getUserId()).getBody());
+        });
+    }
+
+    /**
+     * [Internal only] Embedded user into multiple comment
+     * @param comments
+     */
+    public void embeddedMultipleComment(List<Comment> comments) {
+        guardRequester(() -> {
+            HashMap<Integer, User> cachedUsers = new HashMap<>();
+            for(Comment comment : comments) {
+                if(!cachedUsers.containsKey(comment.getUserId())) {
+                    cachedUsers.put(comment.getUserId(), getUser(comment.getUserId()).getBody());
+                }
+
+                comment.setUser(cachedUsers.get(comment.getUserId()));
+            }
+        });
+    }
+
+    /**
+     * [Internal only] Embedded user into single comment<br>
+     * <b>
+     *     Don't use this method if you want to embed multiple comment<br>
+     *     See {@link UserController#embeddedMultipleComment(List)} instead
+     * </b>
+     * @param comment
+     */
+    public void embeddedSingleComment(Comment comment) {
+        guardRequester(() -> {
+            comment.setUser(getUser(comment.getUserId()).getBody());
+        });
     }
 
 }
