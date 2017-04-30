@@ -5,7 +5,7 @@ import java.util.Date;
 public class Post extends PostBase {
 
     private long id;
-    private int comments;
+    private int comment_count;
     private int reactions;
     private Date created_at;
     private Date updated_at;
@@ -18,14 +18,6 @@ public class Post extends PostBase {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public int getComments() {
-        return comments;
-    }
-
-    public void setComments(int comments) {
-        this.comments = comments;
     }
 
     public int getReactions() {
@@ -66,5 +58,13 @@ public class Post extends PostBase {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public int getComment_count() {
+        return comment_count;
+    }
+
+    public void setComment_count(int comment_count) {
+        this.comment_count = comment_count;
     }
 }
