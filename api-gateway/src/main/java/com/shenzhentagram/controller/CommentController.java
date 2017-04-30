@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static com.shenzhentagram.prometheus.RequestCounter.commentFailedCounter;
+import static com.shenzhentagram.prometheus.RequestCounter.commentSuccessCounter;
+
 /**
  * Created by Meranote on 4/17/2017.
  */
@@ -114,6 +117,12 @@ public class CommentController extends TemplateRestController {
             postController.decreaseComments(post_id);
         } catch(Exception ignored) {
             log.warn("Decrease post '" + post_id + "' comment count", ignored);
+        }
+
+        if(responseEntity.getStatusCodeValue() == 200){
+            commentSuccessCounter.inc();
+        }else{
+            commentFailedCounter.inc();
         }
 
         return new ResponseEntity<>(responseEntity.getStatusCode());

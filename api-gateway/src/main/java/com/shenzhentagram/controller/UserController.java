@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.shenzhentagram.prometheus.RequestCounter.userFailedCounter;
+import static com.shenzhentagram.prometheus.RequestCounter.userSuccessCounter;
+
 @CrossOrigin
 @RestController
 @RequestMapping(path = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -36,7 +39,13 @@ public class UserController extends TemplateRestController {
     public ResponseEntity<User> getUser(
             @PathVariable("id") long id
     ) {
-        return request(HttpMethod.GET, "/users/{id}", User.class, id);
+        ResponseEntity<User> rq =  request(HttpMethod.GET, "/users/{id}", User.class, id);
+        if(rq.getStatusCodeValue() == 200) {
+            userSuccessCounter.inc();
+        }else{
+            userFailedCounter.inc();
+        }
+        return rq;
     }
 
     @GetMapping("/search")
@@ -52,7 +61,13 @@ public class UserController extends TemplateRestController {
     public ResponseEntity<UserList> searchUser(
             @RequestParam("name") String name
     ) {
-        return request(HttpMethod.GET, "/users/search?name" + name, UserList.class);
+        ResponseEntity<UserList> rq = request(HttpMethod.GET, "/users/search?name=" + name, UserList.class);
+        if(rq.getStatusCodeValue() == 200) {
+            userSuccessCounter.inc();
+        }else{
+            userFailedCounter.inc();
+        }
+        return rq;
     }
 
     @PostMapping()
@@ -88,7 +103,13 @@ public class UserController extends TemplateRestController {
             @ApiResponse(code = 401, message = "Not authenticated (no token)")
     })
     public ResponseEntity<User> getSelf() {
-        return getUser(getAuthenticatedUser().getId());
+        ResponseEntity<User> rq = getUser(getAuthenticatedUser().getId());
+        if(rq.getStatusCodeValue() == 200) {
+            userSuccessCounter.inc();
+        }else{
+            userFailedCounter.inc();
+        }
+        return rq;
     }
 
     @PatchMapping(path = "/self")
@@ -108,7 +129,13 @@ public class UserController extends TemplateRestController {
     public ResponseEntity<User> updateSelf(
             @ApiParam("Update detail") @RequestBody UserUpdate detail
     ) {
-        return request(HttpMethod.PATCH, "/users/{id}", detail, User.class, getAuthenticatedUser().getId());
+        ResponseEntity<User> rq = request(HttpMethod.PATCH, "/users/{id}", detail, User.class, getAuthenticatedUser().getId());
+        if(rq.getStatusCodeValue() == 200) {
+            userSuccessCounter.inc();
+        }else{
+            userFailedCounter.inc();
+        }
+        return rq;
     }
 
     @PatchMapping(path = "/self/picture")

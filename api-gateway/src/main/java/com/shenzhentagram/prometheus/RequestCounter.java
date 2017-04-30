@@ -28,10 +28,16 @@ public class RequestCounter {
     public static final Counter userSuccessCounter = Counter.build()
             .name("API_Gateway_Request_User_Success")
             .help("Request User Success Counter /users.").register();
+    public static final Counter userFailedCounter = Counter.build()
+            .name("API_Gateway_Request_User_Failed")
+            .help("Request User Failed Counter /users.").register();
     //Comment
     public static final Counter commentSuccessCounter = Counter.build()
             .name("API_Gateway_Request_Comment_Success")
             .help("Request Comment Success Counter /comments.").register();
+    public static final Counter commentFailedCounter = Counter.build()
+            .name("API_Gateway_Request_Comment_Failed")
+            .help("Request Comment Failed Counter /comments.").register();
     //Post
     public static final Counter postSuccessCounter = Counter.build()
             .name("API_Gateway_Request_Post_Success")
@@ -40,4 +46,8 @@ public class RequestCounter {
     public static final Counter notificationSuccessCounter = Counter.build()
             .name("API_Gateway_Request_Notification_Success")
             .help("Request Notification Success Counter /notifications.").register();
+    //Follow
+    public static final Counter postFollowCounter = Counter.build()
+            .name("API_Gateway_Request_Follow_Success")
+            .help("Request Follow Success Counter /posts.").register();
 }
