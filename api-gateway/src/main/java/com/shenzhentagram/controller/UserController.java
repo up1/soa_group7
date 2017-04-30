@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.shenzhentagram.prometheus.RequestCounter.userFailedCounter;
-import static com.shenzhentagram.prometheus.RequestCounter.userSuccessCounter;
-
 @CrossOrigin
 @RestController
 @RequestMapping(path = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
