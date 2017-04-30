@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -54,9 +53,11 @@ public class UserRepository {
             return this.jdbcTemplate.query(
                     "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
                             "FROM users " +
-                            "WHERE full_name = ?",
+                            "WHERE full_name LIKE '%?%' " +
+                            "OR display_name LIKE '%?%' " +
+                            "OR username LIKE '%?%'",
                     new Object[] {
-                            name
+                            name, name, name
                     },
                     new UserRowMapper()
             );
