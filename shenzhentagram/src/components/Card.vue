@@ -22,7 +22,7 @@
       </div>
 
       <div class="content">
-        <p v-show="!editing">{{this.post.caption}}</p>
+        <p v-show="!editing">{{this.caption}}</p>
         <div v-show="editing" class="field">
           <p class="control">
             <input class="input" type="text" placeholder="Add a caption..."
@@ -72,6 +72,7 @@
     directives: { focus: focus },
     data () {
       return {
+        caption: '',
         editing: false,
         active: false,
         activeCommentModal: false,
@@ -83,6 +84,8 @@
       }
     },
     created () {
+      this.caption = this.post.caption
+
       if (this.post.comments > 0) {
         this.$store.dispatch('fetchComment', this.post.id)
       }
@@ -96,12 +99,17 @@
       },
       doneEdit (e) {
         const value = e.target.value.trim()
-        console.log(value)
 
-        this.$store.dispatch('editCaption', {
-          value: {caption: value},
-          id: this.post.id
-        })
+        this.caption = value
+        this.$store.dispatch('editCaption', { value: {caption: value}, id: this.post.id }).then(
+          // Success
+          () => {},
+          // Error
+          () => {
+            console.error('Something wrong in Card.vue -> doneEdit(); -> EditCommentCaption()')
+            this.caption = this.post.caption
+          }
+        )
         this.editing = false
       },
       cancelEdit () {
@@ -133,9 +141,7 @@
       },
       deleteComment () {
         this.$store.dispatch('deleteComment', {postId: this.post.id, commentId: this.targetCommentId})
-        .then((response) => {
-          this.hideCommentModal()
-        })
+        this.hideCommentModal()
       },
       doComment () {
         // Trim the comment

@@ -12,7 +12,7 @@
         <p>
           <strong>{{this.comment.user.display_name}}</strong> <small><router-link :to="{name: 'users', params: { userId: this.comment.user.id }}">@{{this.comment.user.username}}</router-link></small> <small>{{this.comment.createdAt | moment("MMM D, YYYY, h:mm A")}}</small>
           <br>
-          <span v-show="!editingComment">{{this.comment.text}}</span>
+          <span v-show="!editingComment">{{this.text}}</span>
           <div v-show="editingComment" class="field">
             <p class="control">
               <input class="input" type="text" placeholder="Add a caption..."
@@ -40,12 +40,14 @@
     directives: { focus: focus },
     data () {
       return {
+        text: '',
         form: {
           comment: ''
         }
       }
     },
     created () {
+      this.text = this.comment.text
       this.form.comment = this.comment.text
     },
     methods: {
@@ -77,9 +79,12 @@
           // Error
           () => {
             console.error('Something wrong in CardComment.vue -> doneEditComment(); (aka updateComment)')
+            this.text = this.comment.text
           }
         )
 
+        // hot-update comment
+        this.text = this.form.comment
         this.$parent.doneEditComment()
       },
       cancelEditComment () {
