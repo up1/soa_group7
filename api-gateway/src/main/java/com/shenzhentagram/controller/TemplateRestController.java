@@ -19,8 +19,9 @@ import org.springframework.web.util.DefaultUriTemplateHandler;
 import org.springframework.web.util.UriTemplateHandler;
 
 import java.util.Date;
+import java.util.regex.Matcher;
 
-import static com.shenzhentagram.prometheus.RequestCounter.countRequestRequest;
+import static com.shenzhentagram.prometheus.RequestCounter.*;
 
 /**
  * Template Rest Controller<br>
@@ -120,7 +121,25 @@ public abstract class TemplateRestController {
                 ResponseEntity<T> responseEntity = restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
 
                 //prometheus count
-                countRequestRequest(responseEntity.getStatusCodeValue());
+                int SC = responseEntity.getStatusCodeValue();
+                countRequestRequest(SC);
+
+                if(uri.matches("/auth")){
+                    countAuthenticationRequest(SC);
+                }
+                else if(uri.matches("/posts.*./comments.*")){
+                    countCommentRequest(SC);
+                }
+                else if(uri.matches("/notifications.*")){
+                    countNotificationRequest(SC);
+                }
+                else if(uri.matches("/posts.*")){
+                    countPostRequest(SC);
+                }
+                else if(uri.matches("/users.*")){
+                    countUserRequest(SC);
+                }
+
 
                 return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
             } catch (RestClientResponseException e) {

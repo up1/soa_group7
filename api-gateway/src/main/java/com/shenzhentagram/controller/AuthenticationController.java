@@ -30,12 +30,7 @@ public class AuthenticationController extends TemplateRestController {
     public ResponseEntity<AuthenticateDetail> auth(
             @RequestBody AuthenticateCredential credential
     ) {
-        ResponseEntity<AuthenticateDetail> auth = request(HttpMethod.POST, "/auth", credential, AuthenticateDetail.class);
-
-        // Prometheus count Authentication
-        RequestCounter.countAuthenticationRequest(auth.getStatusCodeValue());
-
-        return auth;
+        return request(HttpMethod.POST, "/auth", credential, AuthenticateDetail.class);
     }
 
 }
