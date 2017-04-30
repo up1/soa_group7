@@ -27,7 +27,7 @@ const actions = {
   },
   deletePost ({commit}, post) {
     Vue.http.delete('posts/' + post.id)
-      .then((response) => commit(types.DELETE_POST), post)
+      .then((response) => commit(types.DELETE_POST, post))
   }
 }
 
