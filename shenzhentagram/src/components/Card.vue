@@ -16,6 +16,9 @@
           <p class="title is-4">{{this.post.user.display_name}}</p>
           <p class="subtitle is-6"><router-link :to="{name: 'users', params: { userId: this.post.user.id }}">@{{this.post.user.username}}</router-link></p>
         </div>
+        <div v-show="post.userId == this.$auth.user().id" class="media-right">
+          <a v-on:click="active = true"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a>
+        </div>
       </div>
 
       <div class="content">
@@ -32,61 +35,57 @@
         <small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small>
       </div>
 
-      <div v-if="comments.length > 0" class="content">
-        <card-comment v-for="comment in comments" :key="comment.id" :comment="comment"></card-comment>
+      <div v-if="this.post.comments.length > 0" class="content">
+        <card-comment v-for="comment in this.post.comments" :key="comment.id" :comment="comment" v-bind:editingComment="comment.id === targetCommentId && editingComment"></card-comment>
       </div>
     </div>
 
-      <footer class="card-footer">
-        <a href="" class="footer-item icon is-medium"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
-        <span class="footer-item">
-          <form v-on:submit.prevent="doComment">
-            <div class="field">
-              <p class="control">
-                <input class="input is-medium is-borderless" type="text" v-model="form.comment" placeholder="Add a comment...">
-              </p>
-            </div>
-          </form>
-        </span>
-      <a v-show="post.userId == this.$auth.user().id" v-on:click="active = true" class="footer-item icon"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a>
+    <footer class="card-footer">
+      <a class="footer-item icon is-medium left"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
+      <span class="footer-item center">
+        <form v-on:submit.prevent="doComment">
+          <div class="field">
+            <p class="control">
+              <input class="input is-medium is-borderless" type="text" v-model="form.comment" placeholder="Add a comment...">
+            </p>
+          </div>
+        </form>
+      </span>
+      <a class="footer-item icon is-medium right" v-on:click="doComment"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a>
     </footer>
 
     <edit-modal v-on:hide="hideModal" v-on:edit="edit" v-on:deletePost="deletePost" v-bind:active="active"></edit-modal>
+    <edit-comment-modal v-on:hide="hideCommentModal" v-on:edit="editComment" v-on:delete="deleteComment" v-bind:active="activeCommentModal"></edit-comment-modal>
   </div>
 </template>
 
 <script type="text/babel">
   import EditModal from './EditModal'
+  import EditCommentModal from './EditCommentModal'
   import CardComment from './CardComment'
   import { focus } from 'vue-focus'
   export default {
     props: ['post'],
     components: {
-      CardComment, EditModal
+      CardComment, EditModal, EditCommentModal
     },
     directives: { focus: focus },
     data () {
       return {
         editing: false,
         active: false,
-        comments: [],
+        activeCommentModal: false,
+        targetCommentId: '',
+        editingComment: false,
         form: {
           comment: ''
         }
       }
     },
     created () {
-      this.$http.get('posts/' + this.post.id + '/comments')
-      .then(
-        // Success
-        (response) => {
-          this.comments = response.body
-        },
-        // Error
-        () => {
-          console.error('Something wrong in Card.vue -> created -> fetchComments();')
-        }
-      )
+      if (this.post.comments > 0) {
+        this.$store.dispatch('fetchComment', this.post.id)
+      }
     },
     methods: {
       edit () {
@@ -111,6 +110,33 @@
       hideModal () {
         this.active = false
       },
+
+      showCommentModal (targetCommentId) {
+        this.targetCommentId = targetCommentId
+        this.activeCommentModal = true
+      },
+      hideCommentModal () {
+        this.targetCommentId = ''
+        this.activeCommentModal = false
+      },
+      editComment () {
+        this.activeCommentModal = false
+        this.editingComment = true
+      },
+      doneEditComment () {
+        this.targetCommentId = ''
+        this.editingComment = false
+      },
+      cancelEditComment () {
+        this.targetCommentId = ''
+        this.editingComment = false
+      },
+      deleteComment () {
+        this.$store.dispatch('deleteComment', {postId: this.post.id, commentId: this.targetCommentId})
+        .then((response) => {
+          this.hideCommentModal()
+        })
+      },
       doComment () {
         // Trim the comment
         this.form.comment = this.form.comment.replace(/^\s+|\s+$/g, '')
@@ -120,24 +146,16 @@
           return
         }
 
-        this.$http.post('posts/' + this.post.id + '/comments', { text: this.form.comment })
+        this.$store.dispatch('addComment', {postId: this.post.id, text: this.form.comment})
         .then(
           // Success
           () => {
             console.log('Comment complete')
-            // FIXME POST /posts/{id}/comments need to return the new created comment
-            this.comments.push({
-              text: this.form.comment,
-              createdAt: new Date(),
-              user: this.$auth.user()
-            })
             this.form.comment = ''
           },
           // Error
           () => {
             console.error('Something wrong in Card.vue -> doComment();')
-            this.error = 'Something wrong'
-            this.showModal()
           }
         )
       }
@@ -150,15 +168,26 @@
     margin: 50px 0;
   }
   .card-footer {
-    padding: 0.25rem 0rem 0.25rem 2rem;
-  }
-  .card-footer .footer-item:last-child {
-    margin-left: auto;
+    padding: 0.25rem 1rem;
   }
   .footer-item {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    form {
+      width: 100%;
+    }
+
+    &.left, &.right {
+      width: 24px;
+      flex: 0 0 24px;
+    }
+
+    &.center {
+      width: auto;
+      flex: 1 1 auto;
+    }
   }
   .icon {
     padding-top: 0.75rem;
