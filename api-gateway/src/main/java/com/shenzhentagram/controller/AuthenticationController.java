@@ -31,7 +31,7 @@ public class AuthenticationController extends TemplateRestController {
             @RequestBody AuthenticateCredential credential
     ) {
         ResponseEntity<AuthenticateDetail> auth = request(HttpMethod.POST, "/auth", credential, AuthenticateDetail.class);
-        RequestCounter.countAuthenRequest(auth.getStatusCodeValue());
+        RequestCounter.countAuthenticationRequest(auth.getStatusCodeValue());
         return auth;
     }
 
