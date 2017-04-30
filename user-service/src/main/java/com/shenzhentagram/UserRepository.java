@@ -32,6 +32,23 @@ public class UserRepository {
     }
 
     @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        try {
+            return this.jdbcTemplate.queryForObject(
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
+                            "FROM users " +
+                            "WHERE username = ?",
+                    new Object[] {
+                            username
+                    },
+                    new UserRowMapper()
+            );
+        } catch (Exception exception) {
+            throw new UserNotFoundException(username);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public List<User> findByName(String name) {
         try {
             return this.jdbcTemplate.query(
@@ -72,25 +89,21 @@ public class UserRepository {
     public void save(User user, String password) {
         String sql = "INSERT INTO " +
                 "users(username, password, full_name, bio, profile_picture, display_name, follows, followed_by, post_count, role) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try{
-            this.jdbcTemplate.update(
-                    sql,
-                    user.getUsername(),
-                    password,
-                    user.getFull_name(),
-                    user.getBio(),
-                    user.getProfile_picture(),
-                    user.getDisplay_name(),
-                    0,
-                    0,
-                    0,
-                    "USER"
-            );
-        } catch (Exception e){
-            throw e;
-        }
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+        this.jdbcTemplate.update(
+                sql,
+                user.getUsername(),
+                password,
+                user.getFull_name(),
+                user.getBio(),
+                user.getProfile_picture(),
+                user.getDisplay_name(),
+                0,
+                0,
+                0,
+                "USER"
+        );
     }
 
     @Transactional
