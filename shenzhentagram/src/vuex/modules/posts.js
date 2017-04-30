@@ -42,7 +42,7 @@ const actions = {
     commit(types.CLEAR_SINGLE_POST)
 
     // Fetch single post
-    Vue.http.get('posts/' + postId)
+    return Vue.http.get('posts/' + postId)
       .then((response) => {
         let post = response.body
         let comments = []

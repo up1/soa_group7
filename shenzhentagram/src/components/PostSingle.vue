@@ -9,8 +9,25 @@
 </template>
 
 <script type="text/babel">
+  import Vue from 'vue'
+  import store from '../vuex/store'
   import Card from './Card'
   import { mapGetters } from 'vuex'
+
+  function preFetchRoute (dispatcher, to, from, next) {
+    dispatcher('fetchSinglePost', to.params.postId)
+    .then(
+      // Success (Post found)
+      (response) => {
+        next()
+      },
+      // Error (Post not found)
+      () => {
+        Vue.router.push({url: '/'})
+      }
+    )
+  }
+
   export default {
     name: 'post-single',
     props: ['postId'],
@@ -22,8 +39,11 @@
         post: 'getSinglePost'
       })
     },
-    created () {
-      this.$store.dispatch('fetchSinglePost', this.postId)
+    beforeRouteEnter (to, from, next) {
+      preFetchRoute(store.dispatch, to, from, next)
+    },
+    beforeRouteUpdate (to, from, next) {
+      preFetchRoute(this.$store.dispatch, to, from, next)
     }
   }
 </script>
