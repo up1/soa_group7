@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+import static com.shenzhentagram.prometheus.RequestCounter.countCommentRequest;
+
 /**
  * Created by Meranote on 4/17/2017.
  */
@@ -51,6 +53,9 @@ public class CommentController extends TemplateRestController {
         // Embed user into comments
         userController.embeddedMultipleComment(responseEntity.getBody().getComments());
 
+        // Count Comment Request
+        countCommentRequest(responseEntity.getStatusCodeValue());
+
         return responseEntity;
     }
 
@@ -63,6 +68,9 @@ public class CommentController extends TemplateRestController {
 
         // Embed user into comments
         userController.embeddedSingleComment(responseEntity.getBody());
+
+        // Count Comment Request
+        countCommentRequest(responseEntity.getStatusCodeValue());
 
         return responseEntity;
     }
@@ -83,6 +91,9 @@ public class CommentController extends TemplateRestController {
         // Create comment notification
         notificationController.createCommentNotification(Math.toIntExact(getAuthenticatedUser().getId()), post_id, responseEntity.getBody().getId());
 
+        // Count Comment Request
+        countCommentRequest(responseEntity.getStatusCodeValue());
+
         return responseEntity;
     }
 
@@ -96,6 +107,9 @@ public class CommentController extends TemplateRestController {
 
         // Embed user into comments
         userController.embeddedSingleComment(responseEntity.getBody());
+
+        // Count Comment Request
+        countCommentRequest(responseEntity.getStatusCodeValue());
 
         return responseEntity;
     }
@@ -113,6 +127,9 @@ public class CommentController extends TemplateRestController {
         } catch(Exception ignored) {
             log.warn("Decrease post '" + post_id + "' comment count", ignored);
         }
+
+        // Count Comment Request
+        countCommentRequest(responseEntity.getStatusCodeValue());
 
         return new ResponseEntity<>(responseEntity.getStatusCode());
     }
