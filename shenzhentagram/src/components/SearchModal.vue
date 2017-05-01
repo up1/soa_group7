@@ -38,7 +38,7 @@
     },
     methods: {
       clear () {
-        this.keyword = ''
+        this.$parent.keyword = ''
       },
       search () {
         this.$http.get('users/search?name=' + this.keyword)
