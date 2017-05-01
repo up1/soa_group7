@@ -52,6 +52,8 @@ public class NotificationRepository {
                     case "reaction":
                         notification.setFrom(findNotificationReactionById(notification.getNotificationId()));
                         break;
+                    default:
+                        break;
                 }
             });
             return notifications;
@@ -83,7 +85,6 @@ public class NotificationRepository {
                     notification.setFrom(findNotificationReactionById(notification.getNotificationId()));
                     break;
             }
-            ;
             return notification;
         } catch (Exception exception) {
             throw new NotificationNotFoundException(id);
@@ -150,8 +151,7 @@ public class NotificationRepository {
         }
     }
 
-    @Transactional()
-    int createNotifications(List<Notification> notifications) {
+    public int createNotifications(List<Notification> notifications) {
         try {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
