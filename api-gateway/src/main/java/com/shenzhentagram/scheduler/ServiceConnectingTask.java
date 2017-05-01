@@ -36,7 +36,7 @@ public class ServiceConnectingTask {
     /**
      * Default service names
      */
-    private static final String[] SERVICE_NAMES = {"authentication", "user", "post", "comment", "notification", "reaction"};
+    private static final String[] SERVICE_NAMES = {"authentication", "user", "post", "comment", "notification", "reaction", "follow"};
 
     /**
      * REST template connection mapping
@@ -103,6 +103,11 @@ public class ServiceConnectingTask {
     @Scheduled(fixedDelay = 30000)
     public void checkReactionService() {
         checkConnectionToService("reaction");
+    }
+
+    @Scheduled(fixedDelay = 30000)
+    public void checkFollowService() {
+        checkConnectionToService("follow");
     }
 
     /**

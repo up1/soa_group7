@@ -60,6 +60,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, REACTION_URL).authenticated()
                 // (DELETE) delete reaction
                 .antMatchers(HttpMethod.DELETE, REACTION_URL).authenticated()
+                // authorize "/users/{id}/follows" for
+                // (POST) follow to {id} user
+                .antMatchers(HttpMethod.POST, USER_URL + "/{id}/follows").authenticated()
+                // (DELETE) unfollow to {id} user
+                .antMatchers(HttpMethod.DELETE, USER_URL + "/{id}/follows").authenticated()
                 // authorize "/users/self" for
                 // (GET) get self information
                 .antMatchers(HttpMethod.GET, USER_URL + "/self").authenticated()

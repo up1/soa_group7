@@ -2,6 +2,7 @@ package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.*;
 import io.swagger.annotations.*;
+import io.swagger.models.auth.In;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -10,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -145,6 +147,48 @@ public class UserController extends TemplateRestController {
         AtomicInteger postCount = new AtomicInteger(-1);
         guardRequester(() -> postCount.set((int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count")));
         return postCount.get();
+    }
+
+    /**
+     * [Internal only] Convert follower user id lists to user detail lists
+     * @param userIds
+     * @return {@link Follower}
+     */
+    public Follower convertFollowerIds(List<Integer> userIds) {
+        return new Follower() {{
+            setFollower(convertFollowsIds(userIds));
+        }};
+    }
+
+    /**
+     * [Internal only] Convert following user id lists to user detail lists
+     * @param userIds
+     * @return {@link Following }
+     */
+    public Following convertFollowingIds(List<Integer> userIds) {
+        return new Following() {{
+            setFollowing(convertFollowsIds(userIds));
+        }};
+    }
+
+    /**
+     * Convert follower/following user id list to user detail lists
+     */
+    private List<User> convertFollowsIds(List<Integer> userIds) {
+        List<User> users = new ArrayList<>();
+
+        guardRequester(() -> {
+            HashMap<Integer, User> cachedUsers = new HashMap<>();
+            for(Integer id : userIds) {
+                if(!cachedUsers.containsKey(id)) {
+                    cachedUsers.put(id, getUser(id).getBody());
+                }
+
+                users.add(cachedUsers.get(id));
+            }
+        });
+
+        return users;
     }
 
     /**
