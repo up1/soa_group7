@@ -1,9 +1,16 @@
 package com.shenzhentagram.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 /**
  * Created by Meranote on 3/6/2017.
@@ -11,6 +18,24 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder;
+    }
+
+    BCryptPasswordEncoder bcryptEncoder;
+
+    UserDetailsService myDetailsService;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // userDetailsService should be changed to your user details service
+        // password encoder being the bean defined in grails-app/conf/spring/resources.groovy
+        auth.userDetailsService(myDetailsService)
+                .passwordEncoder(bcryptEncoder);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
