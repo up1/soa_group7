@@ -13,6 +13,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriTemplateHandler;
@@ -151,24 +152,24 @@ public abstract class TemplateRestController {
             }
         } else {
             //count error 500
-            countRequestRequest(500);
+            countRequestRequest(503);
             if(uri.matches("/auth")){
-                countAuthenticationRequest(500);
+                countAuthenticationRequest(503);
             }
             else if(uri.matches("/posts.*./comments.*")){
-                countCommentRequest(500);
+                countCommentRequest(503);
             }
             else if(uri.matches("/notifications.*")){
-                countNotificationRequest(500);
+                countNotificationRequest(503);
             }
             else if(uri.matches("/posts.*")){
-                countPostRequest(500);
+                countPostRequest(503);
             }
             else if(uri.matches("/users.*")){
-                countUserRequest(500);
+                countUserRequest(503);
             }
-
-            throw new RestTemplateException(new ResourceAccessException("Service is not connected"), targetPath, serviceName);
+            throw new HttpServerErrorException(HttpStatus.SERVICE_UNAVAILABLE, "Response:"+targetPath+", Service "+serviceName+" Unavailable");
+//            throw new RestTemplateException(new ResourceAccessException("Service is not connected"), targetPath, serviceName);
         }
     }
 
