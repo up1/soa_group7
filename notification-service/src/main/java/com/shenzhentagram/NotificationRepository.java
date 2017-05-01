@@ -1,6 +1,7 @@
 package com.shenzhentagram;
 
 import com.shenzhentagram.errors.NotificationNotFoundException;
+import com.shenzhentagram.errors.NotificationNotModifiedException;
 import com.shenzhentagram.errors.NotificationTypeNotFoundException;
 import com.shenzhentagram.mappers.NotificationPostRowMapper;
 import com.shenzhentagram.mappers.NotificationReactionRowMapper;
@@ -337,7 +338,7 @@ public class NotificationRepository {
                         }
                 );
                 if (notificationResponse == HttpServletResponse.SC_NOT_MODIFIED) {
-                    throw new Exception();
+                    throw new NotificationNotModifiedException();
                 }
             }
 
@@ -443,7 +444,7 @@ public class NotificationRepository {
                     }
             );
             if (notificationResponse == HttpServletResponse.SC_NOT_MODIFIED) {
-                throw new Exception();
+                throw new NotificationNotModifiedException();
             }
 
             return HttpServletResponse.SC_OK;
