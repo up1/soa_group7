@@ -25,19 +25,16 @@ public class AuthController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/auth", produces = { MediaType.APPLICATION_JSON_VALUE })
     public String getUsers() throws JsonProcessingException {
-        // TODO For test only
 
-        // Get authenticated user
         AuthenticatedUser auth = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
 
-        // Get user by username
         String username = auth.getName();
         User user = userService.getByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(user);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, path = "/auth", produces = { MediaType.APPLICATION_JSON_VALUE })
     public String authenticate(
             @RequestAttribute("access_token") String access_token,
