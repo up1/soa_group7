@@ -23,7 +23,7 @@ scrape_configs:
     metrics_path: '/prometheus' 
     scheme: https
     static_configs:
-      - targets: ['api-gateway:80']
+      - targets: ['api-gateway:443']
   - job_name: 'user-service'
     scrape_interval: 5s
     metrics_path: '/prometheus'
