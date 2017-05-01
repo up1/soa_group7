@@ -2,6 +2,8 @@ package com.shenzhentagram;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,9 @@ public class UserRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private NamedParameterJdbcTemplate npJdbcTemplate;
 
     @Transactional(readOnly = true)
     public User findById(Long id) {
@@ -50,21 +55,24 @@ public class UserRepository {
     @Transactional(readOnly = true)
     public List<User> findByName(String name) {
         try {
-            return this.jdbcTemplate.query(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
-                            "FROM users " +
-                            "WHERE full_name LIKE '%?%' " +
-                            "OR display_name LIKE '%?%' " +
-                            "OR username LIKE '%?%'",
-                    new Object[] {
-                            name, name, name
-                    },
+            String sql = "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
+                    "FROM users " +
+                    "WHERE full_name LIKE :name " +
+                    "OR display_name LIKE :name " +
+                    "OR username LIKE :name";
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("name", "%" + name + "%");
+
+            return this.npJdbcTemplate.query(
+                    sql,
+                    params,
                     new UserRowMapper()
             );
         } catch (Exception exception) {
             throw new UserNotFoundException(name);
         }
     }
+
 
     @Transactional(readOnly = true)
     public List<User> findAll(int page, int itemPerPage) {
