@@ -36,7 +36,7 @@ public class ServiceConnectingTask {
     /**
      * Default service names
      */
-    private static final String[] SERVICE_NAMES = {"authentication", "user", "post", "comment", "notification", "reaction"};
+    private static final String[] SERVICE_NAMES = {"authentication", "user", "post", "comment", "notification", "reaction", "follow"};
 
     /**
      * REST template connection mapping
@@ -56,9 +56,10 @@ public class ServiceConnectingTask {
         serviceConnectStateMapping = new HashMap<>();
 
         for(String serviceName : SERVICE_NAMES) {
-            String protocol = environment.getProperty("service." + serviceName + ".protocol");
-            String ip = environment.getProperty("service." + serviceName + ".ip");
-            String port = environment.getProperty("service." + serviceName + ".port");
+            String service = "service.";
+            String protocol = environment.getProperty(service + serviceName + ".protocol");
+            String ip = environment.getProperty(service + serviceName + ".ip");
+            String port = environment.getProperty(service + serviceName + ".port");
 
             RestTemplate restTemplate = restTemplateBuilder.rootUri(protocol + "://" + ip + ":" + port).build();
 
@@ -75,33 +76,38 @@ public class ServiceConnectingTask {
     }
 
     @Scheduled(fixedDelay = 30000)
-    public void CheckAuthenticationService() {
+    public void checkAuthenticationService() {
         checkConnectionToService("authentication");
     }
 
     @Scheduled(fixedDelay = 30000)
-    public void CheckUserService() {
+    public void checkUserService() {
         checkConnectionToService("user");
     }
 
     @Scheduled(fixedDelay = 30000)
-    public void CheckPostService() {
+    public void checkPostService() {
         checkConnectionToService("post");
     }
 
     @Scheduled(fixedDelay = 30000)
-    public void CheckCommentService() {
+    public void checkCommentService() {
         checkConnectionToService("comment");
     }
 
     @Scheduled(fixedDelay = 30000)
-    public void CheckNotificationService() {
+    public void checkNotificationService() {
         checkConnectionToService("notification");
     }
 
     @Scheduled(fixedDelay = 30000)
-    public void CheckReactionService() {
+    public void checkReactionService() {
         checkConnectionToService("reaction");
+    }
+
+    @Scheduled(fixedDelay = 30000)
+    public void checkFollowService() {
+        checkConnectionToService("follow");
     }
 
     /**
@@ -116,12 +122,14 @@ public class ServiceConnectingTask {
             // Fire signal
             restTemplate.exchange("/ping", HttpMethod.GET, entity, Void.class);
             serviceConnectStateMapping.put(serviceName, true);
-        } catch(ResourceAccessException ignored) {
+        } catch(ResourceAccessException e) {
             // Can't access to service (maybe its down)
             serviceConnectStateMapping.put(serviceName, false);
-        } catch(RestClientResponseException ignored) {
+            logger.debug("Can't access to service", e);
+        } catch(RestClientResponseException e) {
             // Response is invalid but can connected to service
             serviceConnectStateMapping.put(serviceName, true);
+            logger.debug("Invalid response but can connected to service", e);
         }
     }
 

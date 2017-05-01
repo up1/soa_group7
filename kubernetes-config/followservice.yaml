@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: follow
+spec:
+  selector:
+    app: follow
+    version: latest
+  ports:
+    - protocol: TCP
+      port: 9004
+      targetPort: 9004
+  type: ClusterIP

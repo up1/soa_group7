@@ -16,6 +16,10 @@ public class Follows {
     List<Integer> follower;
     List<Integer> following;
 
+    public Follows(){
+
+    }
+
     public Follows(String userId, List<Integer> follower, List<Integer> following) {
         this.id = userId;
         this.follower = follower;

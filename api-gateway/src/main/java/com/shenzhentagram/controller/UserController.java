@@ -1,21 +1,20 @@
 package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.*;
-import com.shenzhentagram.scheduler.ServiceConnectingTask;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.models.auth.In;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.shenzhentagram.prometheus.RequestCounter.userFailedCounter;
-import static com.shenzhentagram.prometheus.RequestCounter.userSuccessCounter;
 
 @CrossOrigin
 @RestController
@@ -69,12 +68,10 @@ public class UserController extends TemplateRestController {
     @ApiResponses({
             @ApiResponse(code = 201, message = "New user created")
     })
-    public ResponseEntity<Void> createUser(
+    public ResponseEntity<User> createUser(
             @ApiParam("Register detail") @RequestBody UserRegister detail
     ) {
-        // TODO return created user
-
-        return request(HttpMethod.POST, "/users", detail, Void.class);
+        return request(HttpMethod.POST, "/users", detail, User.class);
     }
 
     @GetMapping("/self")
@@ -134,32 +131,63 @@ public class UserController extends TemplateRestController {
         return request(HttpMethod.PATCH, "/users/{id}/picture", detail, User.class, getAuthenticatedUser().getId());
     }
 
-    /**
-     * [Internal only] Increase user posts count by one
-     */
     public int increasePosts(long id) {
         AtomicInteger postCount = new AtomicInteger(-1);
-        guardRequester(() -> {
-            postCount.set((int) request(HttpMethod.POST, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count"));
-        });
+        guardRequester(() -> postCount.set((int) request(HttpMethod.POST, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count")));
         return postCount.get();
     }
 
-    /**
-     * [Internal only] Decrease user posts count by one
-     */
     public int decreasePosts(long id) {
         AtomicInteger postCount = new AtomicInteger(-1);
-        guardRequester(() -> {
-            postCount.set((int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count"));
-        });
+        guardRequester(() -> postCount.set((int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count")));
         return postCount.get();
     }
 
-    /**
-     * [Internal only] Embedded user into multiple post
-     * @param posts
-     */
+    public void increaseFollowing(long id) {
+        guardRequester(() -> request(HttpMethod.POST, "/users/{id}/follows", Void.class, id));
+    }
+
+    public void decreaseFollowing(long id) {
+        guardRequester(() ->request(HttpMethod.PUT, "/users/{id}/follows", Void.class, id));
+    }
+
+    public void increaseFollower(long id) {
+        guardRequester(() -> request(HttpMethod.POST, "/users/{id}/followed_by", Void.class, id));
+    }
+
+    public void decreaseFollower(long id) {
+        guardRequester(() ->request(HttpMethod.PUT, "/users/{id}/followed_by", Void.class, id));
+    }
+
+    public Follower convertFollowerIds(List<Integer> userIds) {
+        return new Follower() {{
+            setFollower(convertFollowsIds(userIds));
+        }};
+    }
+
+    public Following convertFollowingIds(List<Integer> userIds) {
+        return new Following() {{
+            setFollowing(convertFollowsIds(userIds));
+        }};
+    }
+
+    private List<User> convertFollowsIds(List<Integer> userIds) {
+        List<User> users = new ArrayList<>();
+
+        guardRequester(() -> {
+            HashMap<Integer, User> cachedUsers = new HashMap<>();
+            for(Integer id : userIds) {
+                if(!cachedUsers.containsKey(id)) {
+                    cachedUsers.put(id, getUser(id).getBody());
+                }
+
+                users.add(cachedUsers.get(id));
+            }
+        });
+
+        return users;
+    }
+
     public void embeddedMultiplePost(List<Post> posts) {
         guardRequester(() -> {
             HashMap<Integer, User> cachedUsers = new HashMap<>();
@@ -173,24 +201,10 @@ public class UserController extends TemplateRestController {
         });
     }
 
-    /**
-     * [Internal only] Embedded user into single post<br>
-     * <b>
-     *     Don't use this method if you want to embed multiple post<br>
-     *     See {@link UserController#embeddedMultiplePost(List)} instead
-     * </b>
-     * @param post
-     */
     public void embeddedSinglePost(Post post) {
-        guardRequester(() -> {
-            post.setUser(getUser(post.getUserId()).getBody());
-        });
+        guardRequester(() -> post.setUser(getUser(post.getUserId()).getBody()));
     }
 
-    /**
-     * [Internal only] Embedded user into multiple comment
-     * @param comments
-     */
     public void embeddedMultipleComment(List<Comment> comments) {
         guardRequester(() -> {
             HashMap<Integer, User> cachedUsers = new HashMap<>();
@@ -204,18 +218,25 @@ public class UserController extends TemplateRestController {
         });
     }
 
-    /**
-     * [Internal only] Embedded user into single comment<br>
-     * <b>
-     *     Don't use this method if you want to embed multiple comment<br>
-     *     See {@link UserController#embeddedMultipleComment(List)} instead
-     * </b>
-     * @param comment
-     */
     public void embeddedSingleComment(Comment comment) {
+        guardRequester(() -> comment.setUser(getUser(comment.getUserId()).getBody()));
+    }
+
+    public void embeddedMultipleReaction(List<Reaction> reactions) {
         guardRequester(() -> {
-            comment.setUser(getUser(comment.getUserId()).getBody());
+            HashMap<Long, User> cachedUsers = new HashMap<>();
+            for(Reaction reaction : reactions) {
+                if(!cachedUsers.containsKey(reaction.getUserId())) {
+                    cachedUsers.put(reaction.getUserId(), getUser(reaction.getUserId()).getBody());
+                }
+
+                reaction.setUser(cachedUsers.get(reaction.getUserId()));
+            }
         });
+    }
+
+    public void embeddedSingleReaction(Reaction reaction) {
+        guardRequester(() -> reaction.setUser(getUser(reaction.getUserId()).getBody()));
     }
 
 }

@@ -1,0 +1,20 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: follow
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: follow
+        version: latest
+    spec:
+      containers:
+      - name: follow
+        image: meranote/follow-service:latest
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production
+        ports:
+        - containerPort: 9004

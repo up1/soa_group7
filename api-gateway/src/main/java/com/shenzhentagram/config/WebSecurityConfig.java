@@ -14,53 +14,61 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String USER_URL = "/users";
+    private static final String POST_URL = "/posts";
+    private static final String COMMENT_URL = "/posts/{post_id}/comments";
+    private static final String REACTION_URL = "/posts/{post_id}/reactions";
+    private static final String NOTIFICATION_URL = "/notifications";
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Disable caching
+
         http.headers().cacheControl();
 
-        // Disable csrf
+
         http.csrf().disable();
 
-        // Authentication Config
-        http.authorizeRequests()
-                // authorize "/notifications" for
-                // (GET) get self notification
-                .antMatchers(HttpMethod.GET, "notifications").authenticated()
-                // (PATCH) update notification status
-                .antMatchers(HttpMethod.PATCH, "notifications/status/checked").authenticated()
-                .antMatchers(HttpMethod.PATCH, "notifications/status/unchecked").authenticated()
-                // authorize "/posts" for
-                // (GET) getting the timeline of self's followings
-                .antMatchers(HttpMethod.GET, "/posts").authenticated()
-                // (POST) creating a new post
-                .antMatchers(HttpMethod.POST, "/posts").authenticated()
-                // authorize "/posts/{id}" for
-                // (PUT) upload owns post
-                .antMatchers(HttpMethod.PUT, "/posts/{id}").authenticated()
-                // (DELETE) delete owns post
-                .antMatchers(HttpMethod.DELETE, "/posts/{id}").authenticated()
-                // authorize "/posts/{id}/comments for
-                // (POST) create comment
-                .antMatchers(HttpMethod.POST, "/posts/{id}/comments").authenticated()
-                // (PUT) edit comment
-                .antMatchers(HttpMethod.PUT, "/posts/{id}/comments").authenticated()
-                // (DELETE) delete comment
-                .antMatchers(HttpMethod.DELETE, "/posts/{id}/comments").authenticated()
-                // authorize "/users/self" for
-                // (GET) get self information
-                .antMatchers(HttpMethod.GET, "/users/self").authenticated()
-                // (PATCH) update self information
-                .antMatchers(HttpMethod.PATCH, "/users/self").authenticated()
-                // authorize "/users/self/posts" for
-                // (GET) Get self posts
-                .antMatchers(HttpMethod.GET, "/users/self/posts").authenticated()
 
-                // Otherwise, permitted
+        http.authorizeRequests()
+
+                .antMatchers(HttpMethod.GET, NOTIFICATION_URL).authenticated()
+
+                .antMatchers(HttpMethod.PATCH, NOTIFICATION_URL + "/checked").authenticated()
+                .antMatchers(HttpMethod.PATCH, NOTIFICATION_URL + "/unchecked").authenticated()
+
+                .antMatchers(HttpMethod.GET, POST_URL).authenticated()
+
+                .antMatchers(HttpMethod.POST, POST_URL).authenticated()
+
+                .antMatchers(HttpMethod.PUT, POST_URL + "/{post_id}").authenticated()
+
+                .antMatchers(HttpMethod.DELETE, POST_URL + "/{post_id}").authenticated()
+
+                .antMatchers(HttpMethod.POST, COMMENT_URL).authenticated()
+
+                .antMatchers(HttpMethod.PUT, COMMENT_URL + "/{comment_id}").authenticated()
+
+                .antMatchers(HttpMethod.DELETE, COMMENT_URL + "/{comment_id}").authenticated()
+
+                .antMatchers(HttpMethod.POST, REACTION_URL).authenticated()
+
+                .antMatchers(HttpMethod.PUT, REACTION_URL).authenticated()
+
+                .antMatchers(HttpMethod.DELETE, REACTION_URL).authenticated()
+
+                .antMatchers(HttpMethod.POST, USER_URL + "/{id}/follows").authenticated()
+
+                .antMatchers(HttpMethod.DELETE, USER_URL + "/{id}/follows").authenticated()
+
+                .antMatchers(HttpMethod.GET, USER_URL + "/self").authenticated()
+
+                .antMatchers(HttpMethod.PATCH, USER_URL + "/self").authenticated()
+
+                .antMatchers(HttpMethod.GET, USER_URL + "/self/posts").authenticated()
+
                 .anyRequest().permitAll();
 
-        // Filter Config
-        // Register JWTAuthenticateFilter for filter any request to check authenticate
+
         JWTAuthenticateFilter.registerFilter(http);
     }
 

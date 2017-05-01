@@ -1,9 +1,11 @@
 package com.shenzhentagram.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PostUpdate {
 
     private String caption;
-    private long user_id;
+    @JsonProperty("user_id") private long userId;
 
     public String getCaption() {
         return caption;
@@ -13,11 +15,11 @@ public class PostUpdate {
         this.caption = caption;
     }
 
-    public long getUser_id() {
-        return user_id;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

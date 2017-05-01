@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -40,6 +41,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private MinioClient minio;
 
@@ -78,7 +82,7 @@ public class UserController {
             @RequestBody Map<String, Object> payload
     ) throws Exception {
         // Extract the password
-        String password = (String) payload.remove("password");
+        String password = bCryptPasswordEncoder.encode((String) payload.remove("password"));
 
         // If have image, extract
         FileUtility.FileDetail fileDetail = null;
@@ -109,7 +113,7 @@ public class UserController {
             }
 
             // Save user
-            this.userRepository.save(user, password);
+            this.userRepository.save(user, bCryptPasswordEncoder.encode(password));
 
             // Return created user
             user = this.userRepository.findByUsername(user.getUsername());

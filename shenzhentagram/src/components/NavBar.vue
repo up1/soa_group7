@@ -11,11 +11,12 @@
       <div class="nav-center">
         <a class="nav-item">
           <p class="control has-icon">
-            <input class="input" type="text" placeholder="Search...">
+            <input v-model="keyword" class="input" type="text" placeholder="Search...">
             <span class="icon is-small">
               <i class="fa fa-search"></i>
             </span>
           </p>
+          <search-modal v-bind:keyword="keyword"></search-modal>
         </a>
       </div>
 
@@ -38,9 +39,15 @@
 </template>
 
 <script type="text/babel">
+  import SearchModal from './SearchModal'
   export default {
     data () {
-      return {}
+      return {
+        keyword: ''
+      }
+    },
+    components: {
+      SearchModal
     },
     methods: {
       logout () {

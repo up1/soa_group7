@@ -32,7 +32,7 @@
                    @blur="doneEdit">
           </p>
         </div>
-        <router-link :to="{name: 'post-single', params: {postId: this.post.id}}"><small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small></router-link>
+        <router-link :to="{name: 'post-single', params: {postId: this.post.id}}" class="is-primary"><small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small></router-link>
       </div>
 
       <div v-if="this.post.comment_count > 0" class="content">
@@ -41,7 +41,17 @@
     </div>
 
     <footer class="card-footer">
-      <a class="footer-item icon is-medium left" v-on:click="activeReactionModal = true"><i class="fa fa-gratipay fa-2x" aria-hidden="true"></i></a>
+      <a class="footer-item icon is-medium left" v-on:click="activeReactionModal = true">
+        <div v-if="!reacted()">
+          <i class="fa fa-gratipay fa-2x reaction" aria-hidden="true"></i>
+        </div>
+        <div v-else>
+          <h2 class="subtitle is-3 is-emoji"><emoji :emoji="reacted().reaction | to_emoji" set="emojione" :size="24"></emoji></h2>
+        </div>
+      </a>
+      <a class="footer-item left" v-on:click="activeReactionDataModal = true">
+        <span>{{this.post.reactions}}</span>
+      </a>
       <span class="footer-item center">
         <form v-on:submit.prevent="doComment">
           <div class="field">
@@ -51,9 +61,10 @@
           </div>
         </form>
       </span>
-      <a class="footer-item icon is-medium right" v-on:click="doComment"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a>
+      <a class="footer-item icon is-medium right" v-on:click="doComment"><i class="fa fa-commenting fa-2x" aria-hidden="true"></i></a>
     </footer>
 
+    <reaction-data-modal v-on:hide="hideModal" v-bind:active="activeReactionDataModal" v-bind:reactions_data="this.post.reactions_data"></reaction-data-modal>
     <edit-modal v-on:hide="hideModal" v-on:edit="edit" v-on:deletePost="deletePost" v-bind:active="active"></edit-modal>
     <reaction-modal v-on:hide="hideModal" v-bind:active="activeReactionModal" v-on:react="react"></reaction-modal>
     <edit-comment-modal v-on:hide="hideCommentModal" v-on:edit="editComment" v-on:delete="deleteComment" v-bind:active="activeCommentModal"></edit-comment-modal>
@@ -64,12 +75,14 @@
   import EditModal from './EditModal'
   import EditCommentModal from './EditCommentModal'
   import CardComment from './CardComment'
+  import ReactionDataModal from './ReactionDataModal'
   import ReactionModal from './ReactionModal'
   import { focus } from 'vue-focus'
+  import { Emoji } from 'emoji-mart-vue'
   export default {
     props: ['post'],
     components: {
-      CardComment, EditModal, EditCommentModal, ReactionModal
+      CardComment, EditModal, EditCommentModal, ReactionModal, ReactionDataModal, Emoji
     },
     directives: { focus: focus },
     data () {
@@ -78,6 +91,7 @@
         editing: false,
         active: false,
         activeCommentModal: false,
+        activeReactionDataModal: false,
         activeReactionModal: false,
         targetCommentId: '',
         editingComment: false,
@@ -86,11 +100,32 @@
         }
       }
     },
+    filters: {
+      to_emoji: function (v) {
+        switch (v) {
+          case 'like':
+            return 'thumbsup'
+          case 'love':
+            return 'heart'
+          case 'haha':
+            return 'laughing'
+          case 'wow':
+            return 'open_mouth'
+          case 'sad':
+            return 'sob'
+          case 'angry':
+            return 'rage'
+        }
+      }
+    },
     created () {
       this.caption = this.post.caption
 
       if (this.post.comment_count > 0) {
         this.$store.dispatch('fetchComment', this.post.id)
+      }
+      if (this.post.reactions > 0) {
+        this.$store.dispatch('fetchReaction', this.post.id)
       }
     },
     methods: {
@@ -121,6 +156,8 @@
       hideModal (type) {
         if (type === 'edit') {
           this.active = false
+        } else if (type === 'react_data') {
+          this.activeReactionDataModal = false
         } else {
           this.activeReactionModal = false
         }
@@ -173,7 +210,49 @@
         )
       },
       react (type) {
-        console.log(type)
+        console.log(this.reacted())
+        if (!this.reacted()) {
+          this.$store.dispatch('addReaction', {
+            postId: this.post.id,
+            reaction: type
+          })
+        } else {
+          if (!this.reactedSame(type)) {
+            this.$store.dispatch('editReaction', {
+              postId: this.post.id,
+              reaction: type
+            })
+          } else {
+            this.$store.dispatch('deleteReaction', {
+              postId: this.post.id,
+              userId: this.$auth.user().id
+            })
+          }
+        }
+      },
+      deleteReaction () {
+        this.$store.dispatch('deleteReaction', {
+          postId: this.post.id,
+          userId: this.$auth.user().id
+        })
+      },
+      reacted () {
+        let userId = this.$auth.user().id
+        for (let reaction of this.post.reactions_data) {
+          if (reaction.user_id === userId) {
+            return reaction
+          }
+        }
+        return false
+      },
+      reactedSame (type) {
+        let userId = this.$auth.user().id
+        for (let reaction of this.post.reactions_data) {
+          if (reaction.user_id === userId && reaction.reaction === type) {
+            return true
+          }
+        }
+        return false
       }
     }
   }
@@ -195,9 +274,13 @@
       width: 100%;
     }
 
+    .reaction {
+      margin-right: 10px
+    }
+
     &.left, &.right {
-      width: 24px;
-      flex: 0 0 24px;
+      width: 32px;
+      flex: 0 0 32px;
     }
 
     &.center {

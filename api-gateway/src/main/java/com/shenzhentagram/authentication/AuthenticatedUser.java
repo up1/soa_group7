@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * AuthenticatedUser for Authentication information
@@ -25,7 +26,7 @@ public class AuthenticatedUser implements Authentication {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return new LinkedList<>();
     }
 
     @Override
@@ -49,7 +50,7 @@ public class AuthenticatedUser implements Authentication {
     }
 
     @Override
-    public void setAuthenticated(boolean b) throws IllegalArgumentException {
+    public void setAuthenticated(boolean b) {
         this.authenticated = b;
     }
 

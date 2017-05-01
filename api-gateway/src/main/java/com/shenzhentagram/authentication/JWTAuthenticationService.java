@@ -14,16 +14,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class JWTAuthenticationService {
 
-    public static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 10; // in milliseconds, 10 days
-    public static final String SECRET = "bWVuaXRl"; // you know :3
+    public static final long EXPIRATION_TIME = 1000L * 60L * 60L * 24L * 10L;
+    public static final String SECRET = "bWVuaXRl";
     public static final String TOKEN_PREFIX = "Bearer";
     public static final String HEADER_STRING = "Authorization";
 
-    /**
-     * Parse token to authenticated user
-     * @param request
-     * @return
-     */
+
     public Authentication parseToken(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX + " ", "");
 
@@ -32,7 +28,6 @@ public class JWTAuthenticationService {
                     .setSigningKey(SECRET)
                     .parseClaimsJws(token);
 
-            // Parse token
             int id = (int) claims.getBody().get("id");
             String username = claims.getBody().getSubject();
 

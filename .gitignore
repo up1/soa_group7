@@ -103,3 +103,5 @@ comment-service/\.scannerwork/
 api-gateway/src/main/resources/application\.properties
 
 notification-service/src/main/resources/application-default\.properties
+
+kubernetes-config/**/.kube/
