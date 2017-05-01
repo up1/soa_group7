@@ -1,5 +1,7 @@
 package follow;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.logging.Logger;
@@ -13,6 +15,11 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 @RestController
 @RequestMapping("/users")
 public class FollowController {
+
+    /**
+     * Logging
+     */
+    protected Log logger = LogFactory.getLog(FollowController.class);
 
     @Autowired
     private FollowsRepository followsRepository;
@@ -44,7 +51,7 @@ public class FollowController {
             follows.setFollowing(useradd);
             followsRepository.save(follows);
         }catch (Exception e){
-            Logger.getLogger(e.getMessage());
+            logger.debug(e);
             following.add(Integer.parseInt(id));
             follows = new Follows(Integer.toString((Integer) payload.get(USERID)), follower ,following);
             followsRepository.save(follows);
@@ -64,7 +71,7 @@ public class FollowController {
             follows2.setFollower(useradd);
             followsRepository.save(follows2);
         }catch (Exception e){
-            LOGGER.info(e.getMessage());
+            logger.debug(e);
             follower.add((int)payload.get(USERID));
             follows2 = new Follows(id, follower ,following);
             followsRepository.save(follows2);
@@ -94,7 +101,7 @@ public class FollowController {
             follows.setFollowing(useradd);
             followsRepository.save(follows);
         }catch (Exception e){
-            LOGGER.info(e.getMessage());
+            logger.debug(e);
         }
 
         useradd = new ArrayList<>();
@@ -109,7 +116,7 @@ public class FollowController {
             followsRepository.save(follows2);
 
         }catch (Exception e){
-            LOGGER.info(e.getMessage());
+            logger.debug(e);
         }
 
         return follows;
