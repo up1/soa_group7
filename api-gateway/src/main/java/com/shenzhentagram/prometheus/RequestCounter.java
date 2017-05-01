@@ -7,11 +7,9 @@ import io.prometheus.client.Summary;
  * Created by Jiravat on 4/27/2017.
  */
 public class RequestCounter {
-    //Request
     public static final Summary requestLatency = Summary.build()
             .name("API_Gateway_Requests_Latency_Seconds")
             .help("Request latency in seconds. /*").register();
-    //Prometheus Count Request
     public static void countRequestRequest(int statusCode){
         switch (statusCode){
             case 200:
@@ -71,7 +69,6 @@ public class RequestCounter {
             .name("API_Gateway_Request_Request_ServiceUnavailable_503")
             .help("Request Request ServiceUnavailable 503 Counter").register();
 
-    //Prometheus Count Authentication
     public static void countAuthenticationRequest(int statusCode){
         switch (statusCode){
             case 200:
@@ -131,7 +128,6 @@ public class RequestCounter {
             .name("API_Gateway_Request_Authentication_ServiceUnavailable_503")
             .help("Request Authentication ServiceUnavailable 503 Counter").register();
 
-    //Prometheus Count Comment
     public static void countCommentRequest(int statusCode){
         switch (statusCode){
             case 200:
@@ -191,7 +187,6 @@ public class RequestCounter {
             .name("API_Gateway_Request_Comment_ServiceUnavailable_503")
             .help("Request Comment ServiceUnavailable 503 Counter").register();
 
-    //Prometheus Count Follow
     public static void countFollowRequest(int statusCode){
         switch (statusCode){
             case 200:
@@ -251,7 +246,6 @@ public class RequestCounter {
             .name("API_Gateway_Request_Follow_ServiceUnavailable_503")
             .help("Request Follow ServiceUnavailable 503 Counter").register();
 
-    //Prometheus Count Notification
     public static void countNotificationRequest(int statusCode){
         switch (statusCode){
             case 200:
@@ -311,7 +305,6 @@ public class RequestCounter {
             .name("API_Gateway_Request_Notification_ServiceUnavailable_503")
             .help("Request Notification ServiceUnavailable 503 Counter").register();
 
-    //Prometheus Count Post
     public static void countPostRequest(int statusCode){
         switch (statusCode){
             case 200:
@@ -371,7 +364,6 @@ public class RequestCounter {
             .name("API_Gateway_Request_Post_ServiceUnavailable_503")
             .help("Request Post ServiceUnavailable 503 Counter").register();
 
-    //Prometheus Count User
     public static void countUserRequest(int statusCode){
         switch (statusCode){
             case 200:
