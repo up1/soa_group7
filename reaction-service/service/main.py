@@ -48,9 +48,6 @@ def get_reacts(post_id):
 
 def create_react(post_id, user_id, reaction):
     try:
-        # status_code = increase_react(post_id)
-        # if status_code != 200:
-        #     return '', status_code
 
         cursor = mysql.get_db().cursor()
         sql = "INSERT INTO reactions(user_id, post_id, reaction) VALUES (%s, %s, %s)"
@@ -59,7 +56,6 @@ def create_react(post_id, user_id, reaction):
 
         return get_react(post_id, user_id)
     except Exception as e:
-        # decrease_react(post_id)
         return json.dumps({'error': str(e)})
 
 
@@ -77,9 +73,6 @@ def update_react(post_id, user_id, reaction):
 
 def delete_react(post_id, user_id):
     try:
-        # status_code = decrease_react(post_id)
-        # if status_code != 200:
-        #     return '', status_code
 
         cursor = mysql.get_db().cursor()
         sql = "DELETE FROM reactions WHERE post_id = %s AND user_id = %s"
@@ -88,7 +81,6 @@ def delete_react(post_id, user_id):
 
         return '', 200
     except Exception as e:
-        # increase_react(post_id)
         return json.dumps({'error': str(e)})
 
 
