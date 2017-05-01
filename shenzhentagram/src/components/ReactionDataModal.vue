@@ -16,8 +16,8 @@
                   <img class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
                 </figure>
                 <div class="name">
-                  <p class="name is-bold">username</p>
-                  <p class="name">displayname</p>
+                  <p class="name is-bold">{{reaction.user.username}}</p>
+                  <p class="name">{{reaction.user.display_name}}</p>
                 </div>
               </div>
               <h1 class="title is-5 is-emoji"><emoji :emoji="reaction.reaction | to_emoji" set="emojione" :skin="2"></emoji></h1>

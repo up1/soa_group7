@@ -17,9 +17,6 @@ import java.util.HashMap;
  */
 public class RestTemplateException extends RuntimeException {
 
-    /**
-     * Logger
-     */
     private static final Logger logger = LoggerFactory.getLogger(RestTemplateException.class);
 
     private final long timestamps;

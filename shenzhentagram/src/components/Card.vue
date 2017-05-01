@@ -210,9 +210,30 @@
         )
       },
       react (type) {
-        this.$store.dispatch('addReaction', {
+        console.log(this.reacted())
+        if (!this.reacted()) {
+          this.$store.dispatch('addReaction', {
+            postId: this.post.id,
+            reaction: type
+          })
+        } else {
+          if (!this.reactedSame(type)) {
+            this.$store.dispatch('editReaction', {
+              postId: this.post.id,
+              reaction: type
+            })
+          } else {
+            this.$store.dispatch('deleteReaction', {
+              postId: this.post.id,
+              userId: this.$auth.user().id
+            })
+          }
+        }
+      },
+      deleteReaction () {
+        this.$store.dispatch('deleteReaction', {
           postId: this.post.id,
-          reaction: type
+          userId: this.$auth.user().id
         })
       },
       reacted () {
@@ -220,6 +241,15 @@
         for (let reaction of this.post.reactions_data) {
           if (reaction.user_id === userId) {
             return reaction
+          }
+        }
+        return false
+      },
+      reactedSame (type) {
+        let userId = this.$auth.user().id
+        for (let reaction of this.post.reactions_data) {
+          if (reaction.user_id === userId && reaction.reaction === type) {
+            return true
           }
         }
         return false

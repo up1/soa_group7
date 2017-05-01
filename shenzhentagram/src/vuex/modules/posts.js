@@ -115,6 +115,17 @@ const actions = {
         postId: postId,
         reaction: response.body
       }))
+  },
+  editReaction ({commit}, {postId, reaction}) {
+    return Vue.http.put('posts/' + postId + '/reactions', { reaction })
+      .then((response) => commit(types.EDIT_REACTION, {
+        postId: postId,
+        reaction: response.body
+      }))
+  },
+  deleteReaction ({commit}, {postId, userId}) {
+    return Vue.http.delete('posts/' + postId + '/reactions')
+      .then((response) => commit(types.DELETE_REACTION, {postId, userId}))
   }
 
 }
@@ -216,6 +227,27 @@ const mutations = {
         }
         state.posts[i].reactions_data.push(reaction)
         state.posts[i].reactions++
+      }
+    })
+  },
+  [types.EDIT_REACTION] (state, {postId, reaction}) {
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        state.posts[i].reactions_data.map((c, j) => {
+          if (c.id === reaction.id) {
+            state.posts[i].reactions_data[j] = reaction
+          }
+        })
+      }
+    })
+  },
+  [types.DELETE_REACTION] (state, {postId, userId}) {
+    state.posts.map((p, i) => {
+      state.posts[i].reactions--
+      if (p.id === postId) {
+        state.posts[i].reactions_data = state.posts[i].reactions_data.filter((r) => {
+          return r.user_id !== userId
+        })
       }
     })
   }

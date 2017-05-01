@@ -42,7 +42,6 @@ public class PostController extends TemplateRestController {
     ) {
         ResponseEntity<PostPage> responseEntity = request(HttpMethod.GET, "/posts", pageable, PostPage.class);
 
-        // Embed user into posts
         userController.embeddedMultiplePost(responseEntity.getBody().getContent());
 
         return responseEntity;
@@ -63,7 +62,6 @@ public class PostController extends TemplateRestController {
     ) {
         ResponseEntity<Post> responseEntity = request(HttpMethod.GET, "/posts/{post_id}", Post.class, postId);
 
-        // Embed user into post
         userController.embeddedSinglePost(responseEntity.getBody());
 
         return responseEntity;
@@ -81,13 +79,10 @@ public class PostController extends TemplateRestController {
     ) {
         detail.setUserId(getAuthenticatedUser().getId());
 
-        // Create post
         ResponseEntity<Post> responseEntity = request(HttpMethod.POST, "/posts", detail, Post.class);
 
-        // Increase user post count
         userController.increasePosts((int) getAuthenticatedUser().getId());
 
-        // Embed user into post
         userController.embeddedSinglePost(responseEntity.getBody());
 
         return responseEntity;
@@ -128,45 +123,31 @@ public class PostController extends TemplateRestController {
         detail.setUserId(getAuthenticatedUser().getId());
         ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{post_id}", detail, Void.class, postId);
 
-        // Decrease user post count
         userController.decreasePosts((int) getAuthenticatedUser().getId());
 
-        // Remove all post's comments
         commentController.deleteCommentsOfPostId(Math.toIntExact(postId));
 
         return response;
     }
 
-    /**
-     * [Internal only] Increase post comment count by one
-     */
     public int increaseComments(long postId) {
         AtomicInteger commentCount = new AtomicInteger(-1);
         guardRequester(() -> commentCount.set(request(HttpMethod.POST, "/posts/{post_id}/comments/count", Post.class, postId).getBody().getCommentCount()));
         return commentCount.get();
     }
 
-    /**
-     * [Internal only] Increase post reaction count by one
-     */
     public int increaseReactions(long postId) {
         AtomicInteger reactionCount = new AtomicInteger(-1);
         guardRequester(() -> reactionCount.set(request(HttpMethod.POST, "/posts/{post_id}/reactions/count", Post.class, postId).getBody().getReactions()));
         return reactionCount.get();
     }
 
-    /**
-     * [Internal only] Decrease post comment count by one
-     */
     public int decreaseComments(long postId) {
         AtomicInteger commentCount = new AtomicInteger(-1);
         guardRequester(() -> commentCount.set(request(HttpMethod.PUT, "/posts/{post_id}/comments/count", Post.class, postId).getBody().getCommentCount()));
         return commentCount.get();
     }
 
-    /**
-     * [Internal only] Decrease post reaction count by one
-     */
     public int decreaseReactions(long postId) {
         AtomicInteger reactionCount = new AtomicInteger(-1);
         guardRequester(() -> reactionCount.set(request(HttpMethod.PUT, "/posts/{post_id}/reactions/count", Post.class, postId).getBody().getReactions()));
