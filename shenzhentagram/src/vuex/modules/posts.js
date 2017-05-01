@@ -23,7 +23,7 @@ const actions = {
   // Mutliple post (Feed)
 
   fetchPosts ({commit}) {
-    Vue.http.get('posts')
+    return Vue.http.get('posts')
       .then((response) => commit(types.FETCH_POSTS, response.body.content))
   },
   editCaption ({commit}, {id, value}) {
@@ -46,15 +46,23 @@ const actions = {
       .then((response) => {
         let post = response.body
         let comments = []
+        let reactions = []
 
         // Fetch single post comments
         Vue.http.get('posts/' + postId + '/comments')
           .then((response) => {
             comments = response.body.comments
-            commit(types.FETCH_SINGLE_POST, {post, comments})
+            commit(types.FETCH_SINGLE_POST, {post, comments, reactions})
           })
 
-        commit(types.FETCH_SINGLE_POST, {post, comments})
+        // Fetch single post reactions
+        Vue.http.get('posts/' + postId + '/reactions')
+          .then((response) => {
+            reactions = response.body
+            commit(types.FETCH_SINGLE_POST, {post, comments, reactions})
+          })
+
+        commit(types.FETCH_SINGLE_POST, {post, comments, reactions})
       })
   },
 
@@ -131,8 +139,9 @@ const mutations = {
   [types.CLEAR_SINGLE_POST] (state) {
     state.singlePost = null
   },
-  [types.FETCH_SINGLE_POST] (state, {post, comments}) {
+  [types.FETCH_SINGLE_POST] (state, {post, comments, reactions}) {
     post.comments = comments
+    post.reactions_data = reactions
     state.singlePost = post
   },
   [types.EDIT_CAPTION] (state, body) {
