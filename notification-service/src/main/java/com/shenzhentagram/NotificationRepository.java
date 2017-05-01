@@ -169,7 +169,7 @@ public class NotificationRepository {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
             for (Notification notification : notifications) {
-                long notificationId = 1;
+                long notificationId;
                 switch (notification.getType()) {
                     case "followed_by":
                         notificationId = createNotificationUser((NotificationUser) notification.getFrom());
@@ -180,6 +180,8 @@ public class NotificationRepository {
                     case "reaction":
                         notificationId = createNotificationReaction((NotificationReaction) notification.getFrom());
                         break;
+                    default:
+                        throw new NotificationTypeNotFoundException(notification.getType());
                 }
                 notification.setNotificationId(notificationId);
                 this.jdbcTemplate.update(insertSql,
@@ -303,7 +305,7 @@ public class NotificationRepository {
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
 
             for (Notification notification : notifications) {
-                int notificationResponse = 0;
+                int notificationResponse;
                 switch (notification.getType()) {
                     case "followed_by":
                         notificationResponse = updateNotificationUser((NotificationUser) notification.getFrom());
@@ -314,6 +316,8 @@ public class NotificationRepository {
                     case "reaction":
                         notificationResponse = updateNotificationReaction((NotificationReaction) notification.getFrom());
                         break;
+                    default:
+                        throw new NotificationTypeNotFoundException(notification.getType());
                 }
                 this.jdbcTemplate.update(insertSql,
                         new Object[]{
@@ -407,7 +411,7 @@ public class NotificationRepository {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
 
-            int notificationResponse = 0;
+            int notificationResponse;
             switch (notification.getType()) {
                 case "followed_by":
                     notificationResponse = updateNotificationUser((NotificationUser) notification.getFrom());
@@ -418,6 +422,8 @@ public class NotificationRepository {
                 case "reaction":
                     notificationResponse = updateNotificationReaction((NotificationReaction) notification.getFrom());
                     break;
+                default:
+                    throw new NotificationTypeNotFoundException(notification.getType());
             }
             this.jdbcTemplate.update(insertSql,
                     new Object[]{
