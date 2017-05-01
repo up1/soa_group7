@@ -53,6 +53,23 @@ public class UserRepository {
     }
 
     @Transactional(readOnly = true)
+    public UserDetails findByUsername1(String username) {
+        try {
+            return this.jdbcTemplate.queryForObject(
+                    "SELECT id, username, password, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
+                            "FROM users " +
+                            "WHERE username = ?",
+                    new Object[] {
+                            username
+                    },
+                    new UserDetailsRowMapper()
+            );
+        } catch (Exception exception) {
+            throw new UserNotFoundException(username);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public List<User> findByName(String name) {
         try {
             String sql = "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
