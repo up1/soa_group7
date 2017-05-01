@@ -51,7 +51,6 @@ public class CommentController extends TemplateRestController {
 
         ResponseEntity<CommentList> responseEntity = request(HttpMethod.GET, url, CommentList.class, postId);
 
-        // Embed user into comments
         userController.embeddedMultipleComment(responseEntity.getBody().getComments());
 
         return responseEntity;
@@ -64,7 +63,6 @@ public class CommentController extends TemplateRestController {
     ) {
         ResponseEntity<Comment> responseEntity = request(HttpMethod.GET, "/posts/{post_id}/comments/{comment_id}", Comment.class, postId, commentId);
 
-        // Embed user into comments
         userController.embeddedSingleComment(responseEntity.getBody());
 
         return responseEntity;
@@ -77,13 +75,10 @@ public class CommentController extends TemplateRestController {
     ) {
         ResponseEntity<Comment> responseEntity = request(HttpMethod.POST, "/posts/{post_id}/comments?userId=" + getAuthenticatedUser().getId(), commentCreate, Comment.class, postId);
 
-        // Embed user into comments
         userController.embeddedSingleComment(responseEntity.getBody());
 
-        // Increase post comment count
         postController.increaseComments(postId);
 
-        // Create comment notification
         notificationController.createCommentNotification(Math.toIntExact(getAuthenticatedUser().getId()), postId, responseEntity.getBody().getId());
 
         return responseEntity;
@@ -97,7 +92,6 @@ public class CommentController extends TemplateRestController {
     ) {
         ResponseEntity<Comment> responseEntity = request(HttpMethod.PUT, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), commentUpdate, Comment.class, postId, commentId);
 
-        // Embed user into comments
         userController.embeddedSingleComment(responseEntity.getBody());
 
         return responseEntity;
@@ -110,7 +104,6 @@ public class CommentController extends TemplateRestController {
     ) throws IOException {
         ResponseEntity<Comment> responseEntity = request(HttpMethod.DELETE, "/posts/{post_id}/comments/{comment_id}?userId=" + getAuthenticatedUser().getId(), Comment.class, postId, commentId);
 
-        // Decrease post comment count
         try {
             postController.decreaseComments(postId);
         } catch(Exception ignored) {
@@ -120,9 +113,6 @@ public class CommentController extends TemplateRestController {
         return new ResponseEntity<>(responseEntity.getStatusCode());
     }
 
-    /**
-     * Internal Only
-     */
     public void deleteCommentsOfPostId(
             int postId
     ) {
