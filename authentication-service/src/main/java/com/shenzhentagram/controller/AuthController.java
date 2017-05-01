@@ -23,9 +23,6 @@ public class AuthController {
     @Autowired
     UserService userService;
 
-    /**
-     * Get token's user details <b>(For test only)</b>
-     */
     @RequestMapping(method = RequestMethod.GET, path = "/auth", produces = { MediaType.APPLICATION_JSON_VALUE })
     public String getUsers() throws JsonProcessingException {
         // TODO For test only
@@ -40,11 +37,7 @@ public class AuthController {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(user);
     }
-
-    /**
-     * Authenticate user
-     * @see com.shenzhentagram.filter.JWTLoginFilter
-     */
+    
     @RequestMapping(method = RequestMethod.POST, path = "/auth", produces = { MediaType.APPLICATION_JSON_VALUE })
     public String authenticate(
             @RequestAttribute("access_token") String access_token,
