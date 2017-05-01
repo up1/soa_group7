@@ -24,9 +24,15 @@ public class FollowController {
 
     @GetMapping("/{id}/follows")
     public Follows getFollows(@PathVariable("id") String id) {
+        Follows follows = followsRepository.findById(id);
 
-        return followsRepository.findById(id);
+        if(follows == null) {
+            follows = new Follows();
+            follows.setFollower(new ArrayList<>());
+            follows.setFollowing(new ArrayList<>());
+        }
 
+        return follows;
     }
 
 
