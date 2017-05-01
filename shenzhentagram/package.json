@@ -15,6 +15,7 @@
   "dependencies": {
     "@websanova/vue-auth": "^2.8.2-beta",
     "bulma": "^0.4.0",
+    "emoji-mart-vue": "^0.5.0",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
     "vue": "^2.2.1",

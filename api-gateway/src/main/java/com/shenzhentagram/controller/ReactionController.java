@@ -24,6 +24,9 @@ public class ReactionController extends TemplateRestController {
     private NotificationController notificationController;
 
     @Autowired
+    private UserController userController;
+
+    @Autowired
     private PostController postController;
 
     /**
@@ -40,7 +43,12 @@ public class ReactionController extends TemplateRestController {
     public ResponseEntity<ReactionList> getReactions(
             @PathVariable("post_id") int postId
     ) {
-        return request(HttpMethod.GET, BASE_URL, ReactionList.class, postId);
+        ResponseEntity<ReactionList> responseEntity = request(HttpMethod.GET, BASE_URL, ReactionList.class, postId);
+
+        // Embedded user into reactions
+        userController.embeddedMultipleReaction(responseEntity.getBody());
+
+        return responseEntity;
     }
 
     @PostMapping("/{post_id}/reactions")
@@ -51,6 +59,9 @@ public class ReactionController extends TemplateRestController {
         reaction.setUserId(getAuthenticatedUser().getId());
 
         ResponseEntity<Reaction> responseEntity = request(HttpMethod.POST, BASE_URL, reaction, Reaction.class, postId);
+
+        // Embedded user into reactions
+        userController.embeddedSingleReaction(responseEntity.getBody());
 
         // Increase post comment count
         postController.increaseReactions(postId);

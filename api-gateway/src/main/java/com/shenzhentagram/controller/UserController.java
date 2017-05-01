@@ -249,4 +249,33 @@ public class UserController extends TemplateRestController {
         guardRequester(() -> comment.setUser(getUser(comment.getUserId()).getBody()));
     }
 
+    /**
+     * [Internal only] Embedded user into multiple reactions
+     * @param reactions
+     */
+    public void embeddedMultipleReaction(List<Reaction> reactions) {
+        guardRequester(() -> {
+            HashMap<Long, User> cachedUsers = new HashMap<>();
+            for(Reaction reaction : reactions) {
+                if(!cachedUsers.containsKey(reaction.getUserId())) {
+                    cachedUsers.put(reaction.getUserId(), getUser(reaction.getUserId()).getBody());
+                }
+
+                reaction.setUser(cachedUsers.get(reaction.getUserId()));
+            }
+        });
+    }
+
+    /**
+     * [Internal only] Embedded user into single reaction<br>
+     * <b>
+     *     Don't use this method if you want to embed multiple reaction<br>
+     *     See {@link UserController#embeddedMultipleReaction(List)} instead
+     * </b>
+     * @param reaction
+     */
+    public void embeddedSingleReaction(Reaction reaction) {
+        guardRequester(() -> reaction.setUser(getUser(reaction.getUserId()).getBody()));
+    }
+
 }
