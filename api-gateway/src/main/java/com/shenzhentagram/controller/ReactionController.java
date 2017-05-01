@@ -78,7 +78,11 @@ public class ReactionController extends TemplateRestController {
             @RequestBody ReactionBase reaction
     ) {
         reaction.setUserId(getAuthenticatedUser().getId());
-        return request(HttpMethod.PUT, BASE_URL, reaction, Reaction.class, postId);
+        ResponseEntity<Reaction> responseEntity = request(HttpMethod.PUT, BASE_URL, reaction, Reaction.class, postId);
+
+        // Embedded user into reactions
+        userController.embeddedSingleReaction(responseEntity.getBody());
+        return responseEntity;
     }
 
     @DeleteMapping("/{post_id}/reactions")

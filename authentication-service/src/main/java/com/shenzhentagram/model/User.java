@@ -1,5 +1,7 @@
 package com.shenzhentagram.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -16,6 +18,10 @@ public class User implements Serializable {
 
     @Column(nullable = false)
     private String username;
+
+    @JsonIgnore
+    @Column(nullable = false)
+    private String password;
 
     @Column(nullable = false)
     private String full_name;
@@ -43,8 +49,9 @@ public class User implements Serializable {
 
     public User() { }
 
-    public User(String username, String full_name, String bio, String profile_picture, String display_name, int follows, int followed_by, int post_count, String role) {
+    public User(String username, String password, String full_name, String bio, String profile_picture, String display_name, int follows, int followed_by, int post_count, String role) {
         this.username = username;
+        this.password = password;
         this.full_name = full_name;
         this.bio = bio;
         this.profile_picture = profile_picture;
@@ -133,5 +140,13 @@ public class User implements Serializable {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
