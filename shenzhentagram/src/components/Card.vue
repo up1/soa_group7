@@ -32,7 +32,7 @@
                    @blur="doneEdit">
           </p>
         </div>
-        <router-link :to="{name: 'post-single', params: {postId: this.post.id}}"><small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small></router-link>
+        <router-link :to="{name: 'post-single', params: {postId: this.post.id}}" class="is-primary"><small>{{this.post.created_at | moment("MMM D, YYYY, h:mm A")}}</small></router-link>
       </div>
 
       <div v-if="this.post.comment_count > 0" class="content">
