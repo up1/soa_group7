@@ -114,7 +114,6 @@ public abstract class TemplateRestController {
      */
     protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
         String targetPath = uriTemplateHandler.expand(uri, uriVariables).getPath();
-
         if(serviceConnectingTask.isServiceAlive(serviceName)) {
             HttpEntity<Object> entity = new HttpEntity<>(body, new HttpHeaders());
             try {
@@ -151,6 +150,24 @@ public abstract class TemplateRestController {
                 throw new RestTemplateException(e, targetPath, serviceName);
             }
         } else {
+            //count error 500
+            countRequestRequest(500);
+            if(uri.matches("/auth")){
+                countAuthenticationRequest(500);
+            }
+            else if(uri.matches("/posts.*./comments.*")){
+                countCommentRequest(500);
+            }
+            else if(uri.matches("/notifications.*")){
+                countNotificationRequest(500);
+            }
+            else if(uri.matches("/posts.*")){
+                countPostRequest(500);
+            }
+            else if(uri.matches("/users.*")){
+                countUserRequest(500);
+            }
+
             throw new RestTemplateException(new ResourceAccessException("Service is not connected"), targetPath, serviceName);
         }
     }

@@ -9,3 +9,9 @@
 .is-emoji {
   font-family: "EmojiOne Color";
 }
+.is-primary {
+  color: #4a4a4a;
+}
+.is-bold {
+  font-weight: bold;
+}
