@@ -1,6 +1,7 @@
 package com.shenzhentagram;
 
 import com.shenzhentagram.errors.NotificationNotFoundException;
+import com.shenzhentagram.errors.NotificationTypeNotFoundException;
 import com.shenzhentagram.mappers.NotificationPostRowMapper;
 import com.shenzhentagram.mappers.NotificationReactionRowMapper;
 import com.shenzhentagram.mappers.NotificationRowMapper;
@@ -58,7 +59,7 @@ public class NotificationRepository {
                         notification.setFrom(findNotificationReactionById(notification.getNotificationId()));
                         break;
                     default:
-                        break;
+                        throw new NotificationTypeNotFoundException(notification.getType());
                 }
             });
             return notifications;
@@ -90,6 +91,8 @@ public class NotificationRepository {
                 case "reaction":
                     notification.setFrom(findNotificationReactionById(notification.getNotificationId()));
                     break;
+                default:
+                    throw new NotificationTypeNotFoundException(notification.getType());
             }
             return notification;
         } catch (Exception exception) {
@@ -450,7 +453,7 @@ public class NotificationRepository {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
             for (Notification notification : notifications) {
-                long notificationId = 1;
+                long notificationId;
                 switch (type) {
                     case "followed_by":
                         notificationId = createNotificationUser((NotificationUser) notification.getFrom());
@@ -462,7 +465,7 @@ public class NotificationRepository {
                         notificationId = createNotificationReaction((NotificationReaction) notification.getFrom());
                         break;
                     default:
-                        break;
+                        throw new NotificationTypeNotFoundException(type);
                 }
                 notification.setNotificationId(notificationId);
                 this.jdbcTemplate.update(insertSql,
@@ -507,7 +510,7 @@ public class NotificationRepository {
                     notificationId = createNotificationReaction((NotificationReaction) notification.getFrom());
                     break;
                 default:
-                    throw new Exception();
+                    throw new NotificationTypeNotFoundException(notification.getType());
             }
             notification.setNotificationId(notificationId);
             this.jdbcTemplate.update(insertSql,
