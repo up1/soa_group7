@@ -2,7 +2,6 @@ package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.AuthenticateCredential;
 import com.shenzhentagram.model.AuthenticateDetail;
-import com.shenzhentagram.prometheus.RequestCounter;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;

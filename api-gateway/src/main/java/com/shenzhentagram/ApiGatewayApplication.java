@@ -49,7 +49,6 @@ public class ApiGatewayApplication {
 	}
 
 	private ApiInfo apiInfo() {
-		// TODO Add version by getting from pom.xml
 		return new ApiInfoBuilder()
 				.title("Shenzhentagram API GATEWAY")
 				.description("Shenzhentagram API GATEWAY, Spring boot REST-client service")

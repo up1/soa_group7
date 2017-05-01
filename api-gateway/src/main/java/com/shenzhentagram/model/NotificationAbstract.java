@@ -5,7 +5,7 @@ package com.shenzhentagram.model;
  */
 
 
-abstract public class NotificationAbstract {
+public abstract class NotificationAbstract {
     long id;
 
     public long getId() {

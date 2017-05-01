@@ -5,13 +5,6 @@ public class AuthenticateCredential {
     private String username;
     private String password;
 
-    public AuthenticateCredential() { }
-
-    public AuthenticateCredential(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
     public String getUsername() {
         return username;
     }

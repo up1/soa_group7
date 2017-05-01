@@ -1,27 +1,31 @@
 package com.shenzhentagram.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 public abstract class UserBase {
 
+    @JsonProperty("full_name")
     @ApiModelProperty(required = true, position = 4)
-    private String full_name;
+    private String fullName;
 
     @ApiModelProperty(position = 5)
     private String bio;
 
+    @JsonProperty("profile_picture")
     @ApiModelProperty(position = 6)
-    private String profile_picture;
+    private String profilePicture;
 
+    @JsonProperty("display_name")
     @ApiModelProperty(required = true, position = 3)
-    private String display_name;
+    private String displayName;
 
-    public String getFull_name() {
-        return full_name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getBio() {
@@ -32,20 +36,20 @@ public abstract class UserBase {
         this.bio = bio;
     }
 
-    public String getProfile_picture() {
-        return profile_picture;
+    public String getProfilePicture() {
+        return profilePicture;
     }
 
-    public void setProfile_picture(String profile_picture) {
-        this.profile_picture = profile_picture;
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
-    public String getDisplay_name() {
-        return display_name;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setDisplay_name(String display_name) {
-        this.display_name = display_name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
 }

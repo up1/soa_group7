@@ -8,7 +8,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,9 +21,6 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriTemplateHandler;
 import org.springframework.web.util.UriTemplateHandler;
-
-import java.util.Date;
-import java.util.regex.Matcher;
 
 import static com.shenzhentagram.prometheus.RequestCounter.*;
 
@@ -76,9 +76,10 @@ public abstract class TemplateRestController {
     public TemplateRestController(Environment environment, RestTemplateBuilder restTemplateBuilder, String serviceName) {
         this.serviceName = serviceName;
 
-        String protocol = environment.getProperty("service." + serviceName + ".protocol");
-        String ip = environment.getProperty("service." + serviceName + ".ip");
-        String port = environment.getProperty("service." + serviceName + ".port");
+        String service = "service.";
+        String protocol = environment.getProperty(service + serviceName + ".protocol");
+        String ip = environment.getProperty(service + serviceName + ".ip");
+        String port = environment.getProperty(service + serviceName + ".port");
 
         this.restTemplate = restTemplateBuilder.rootUri(protocol + "://" + ip + ":" + port).build();
 

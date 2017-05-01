@@ -48,7 +48,7 @@ public class PostController extends TemplateRestController {
         return responseEntity;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{post_id}")
     @ApiOperation(
             tags = "Post-API",
             value = "getPost",
@@ -59,9 +59,9 @@ public class PostController extends TemplateRestController {
             @ApiResponse(code = 404, message = "Post not found")
     })
     public ResponseEntity<Post> getPost(
-            @PathVariable("id") long id
+            @PathVariable("post_id") long postId
     ) {
-        ResponseEntity<Post> responseEntity = request(HttpMethod.GET, "/posts/{id}", Post.class, id);
+        ResponseEntity<Post> responseEntity = request(HttpMethod.GET, "/posts/{post_id}", Post.class, postId);
 
         // Embed user into post
         userController.embeddedSinglePost(responseEntity.getBody());
@@ -79,7 +79,7 @@ public class PostController extends TemplateRestController {
     public ResponseEntity<Post> createPost(
             @RequestBody PostCreate detail
     ) {
-        detail.setUser_id(getAuthenticatedUser().getId());
+        detail.setUserId(getAuthenticatedUser().getId());
 
         // Create post
         ResponseEntity<Post> responseEntity = request(HttpMethod.POST, "/posts", detail, Post.class);
@@ -93,7 +93,7 @@ public class PostController extends TemplateRestController {
         return responseEntity;
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{post_id}")
     @ApiOperation(
             tags = "Post-API",
             value = "updatePost",
@@ -104,14 +104,14 @@ public class PostController extends TemplateRestController {
             @ApiResponse(code = 404, message = "Post not found")
     })
     public ResponseEntity<Post> updatePost(
-            @PathVariable("id") long id,
+            @PathVariable("id") long postId,
             @RequestBody PostUpdate detail
     ) {
-        detail.setUser_id(getAuthenticatedUser().getId());
-        return request(HttpMethod.PATCH, "/posts/{id}", detail, Post.class, id);
+        detail.setUserId(getAuthenticatedUser().getId());
+        return request(HttpMethod.PATCH, "/posts/{id}", detail, Post.class, postId);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{post_id}")
     @ApiOperation(
             tags = "Post-API",
             value = "deletePost",
@@ -122,17 +122,17 @@ public class PostController extends TemplateRestController {
             @ApiResponse(code = 404, message = "Post not found")
     })
     public ResponseEntity<Void> deletePost(
-            @PathVariable("id") long id
+            @PathVariable("id") long postId
     ) {
         PostDelete detail = new PostDelete();
-        detail.setUser_id(getAuthenticatedUser().getId());
-        ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{id}", detail, Void.class, id);
+        detail.setUserId(getAuthenticatedUser().getId());
+        ResponseEntity<Void> response = request(HttpMethod.DELETE, "/posts/{post_id}", detail, Void.class, postId);
 
         // Decrease user post count
         userController.decreasePosts((int) getAuthenticatedUser().getId());
 
         // Remove all post's comments
-        commentController.deleteCommentsOfPostId(Math.toIntExact(id));
+        commentController.deleteCommentsOfPostId(Math.toIntExact(postId));
 
         return response;
     }
@@ -140,44 +140,36 @@ public class PostController extends TemplateRestController {
     /**
      * [Internal only] Increase post comment count by one
      */
-    public int increaseComments(long id) {
+    public int increaseComments(long postId) {
         AtomicInteger commentCount = new AtomicInteger(-1);
-        guardRequester(() -> {
-            commentCount.set(request(HttpMethod.POST, "/posts/{id}/comments/count", Post.class, id).getBody().getComment_count());
-        });
+        guardRequester(() -> commentCount.set(request(HttpMethod.POST, "/posts/{post_id}/comments/count", Post.class, postId).getBody().getCommentCount()));
         return commentCount.get();
     }
 
     /**
      * [Internal only] Increase post reaction count by one
      */
-    public int increaseReactions(long id) {
+    public int increaseReactions(long postId) {
         AtomicInteger reactionCount = new AtomicInteger(-1);
-        guardRequester(() -> {
-            reactionCount.set(request(HttpMethod.POST, "/posts/{id}/reactions/count", Post.class, id).getBody().getReactions());
-        });
+        guardRequester(() -> reactionCount.set(request(HttpMethod.POST, "/posts/{post_id}/reactions/count", Post.class, postId).getBody().getReactions()));
         return reactionCount.get();
     }
 
     /**
      * [Internal only] Decrease post comment count by one
      */
-    public int decreaseComments(long id) {
+    public int decreaseComments(long postId) {
         AtomicInteger commentCount = new AtomicInteger(-1);
-        guardRequester(() -> {
-            commentCount.set(request(HttpMethod.PUT, "/posts/{id}/comments/count", Post.class, id).getBody().getComment_count());
-        });
+        guardRequester(() -> commentCount.set(request(HttpMethod.PUT, "/posts/{post_id}/comments/count", Post.class, postId).getBody().getCommentCount()));
         return commentCount.get();
     }
 
     /**
      * [Internal only] Decrease post reaction count by one
      */
-    public int decreaseReactions(long id) {
+    public int decreaseReactions(long postId) {
         AtomicInteger reactionCount = new AtomicInteger(-1);
-        guardRequester(() -> {
-            reactionCount.set(request(HttpMethod.PUT, "/posts/{id}/reactions/count", Post.class, id).getBody().getReactions());
-        });
+        guardRequester(() -> reactionCount.set(request(HttpMethod.PUT, "/posts/{post_id}/reactions/count", Post.class, postId).getBody().getReactions()));
         return reactionCount.get();
     }
 
