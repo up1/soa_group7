@@ -1,8 +1,9 @@
 package com.shenzhentagram.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shenzhentagram.model.*;
+import com.shenzhentagram.model.Notification;
+import com.shenzhentagram.model.NotificationPost;
+import com.shenzhentagram.model.NotificationReaction;
+import com.shenzhentagram.model.NotificationUser;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -34,7 +35,7 @@ public class NotificationController extends TemplateRestController {
     public ResponseEntity<ArrayList> getSelfNotifications(
             @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page
-    ) throws Exception {
+    ) {
         String uri = String.format("/notifications?limit=%d&page=%d&userId=%d",
                 limit,
                 page,
@@ -112,8 +113,8 @@ public class NotificationController extends TemplateRestController {
 
             // Create empty sub-type notification
             NotificationPost subNotification = new NotificationPost();
-            subNotification.setPost_id(targetPostId);
-            subNotification.setComment_id(targetCommentId);
+            subNotification.setPostId(targetPostId);
+            subNotification.setCommentId(targetCommentId);
 
             // Set sub-type to base
             notification.setFrom(subNotification);
@@ -121,12 +122,6 @@ public class NotificationController extends TemplateRestController {
             // AND WHY THE FUCK I NEED TO SENT IT AS ARRAY JUST TO CREATE ONLY ONE NOTIFICATION -_-
             List<Notification> notifications = new ArrayList<>();
             notifications.add(notification);
-
-            try {
-                log.info(new ObjectMapper().writeValueAsString(notifications));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
 
             // Send to notification-service
             request(HttpMethod.POST, "/notifications/comment", notifications, Void.class);
@@ -153,8 +148,8 @@ public class NotificationController extends TemplateRestController {
 
             // Create empty sub-type notification
             NotificationReaction subNotification = new NotificationReaction();
-            subNotification.setPost_id(targetPostId);
-            subNotification.setReaction_id(targetReactionId);
+            subNotification.setPostId(targetPostId);
+            subNotification.setReactionId(targetReactionId);
 
             // Set sub-type to base
             notification.setFrom(subNotification);

@@ -1,5 +1,6 @@
 package com.shenzhentagram.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 public class User extends UserBase {
@@ -16,11 +17,13 @@ public class User extends UserBase {
     @ApiModelProperty(position = 8)
     private int follows;
 
+    @JsonProperty("followed_by")
     @ApiModelProperty(position = 9)
-    private int followed_by;
+    private int followedBy;
 
+    @JsonProperty("post_count")
     @ApiModelProperty(position = 10)
-    private int post_count;
+    private int postCount;
 
     public long getId() {
         return id;
@@ -54,20 +57,20 @@ public class User extends UserBase {
         this.follows = follows;
     }
 
-    public int getFollowed_by() {
-        return followed_by;
+    public int getFollowedBy() {
+        return followedBy;
     }
 
-    public void setFollowed_by(int followed_by) {
-        this.followed_by = followed_by;
+    public void setFollowedBy(int followedBy) {
+        this.followedBy = followedBy;
     }
 
-    public int getPost_count() {
-        return post_count;
+    public int getPostCount() {
+        return postCount;
     }
 
-    public void setPost_count(int post_count) {
-        this.post_count = post_count;
+    public void setPostCount(int postCount) {
+        this.postCount = postCount;
     }
 
 }

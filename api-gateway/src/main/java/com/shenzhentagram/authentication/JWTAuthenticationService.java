@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class JWTAuthenticationService {
 
-    public static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 10; // in milliseconds, 10 days
+    public static final long EXPIRATION_TIME = 1000L * 60L * 60L * 24L * 10L; // in milliseconds, 10 days
     public static final String SECRET = "bWVuaXRl"; // you know :3
     public static final String TOKEN_PREFIX = "Bearer";
     public static final String HEADER_STRING = "Authorization";

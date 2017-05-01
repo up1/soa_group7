@@ -23,7 +23,6 @@ public class JWTAuthenticateFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        // TODO check expired token (renew or reject)
         if(((HttpServletRequest) servletRequest).getHeader(JWTAuthenticationService.HEADER_STRING) != null) {
             Authentication authentication = new JWTAuthenticationService().parseToken((HttpServletRequest) servletRequest);
             SecurityContextHolder.getContext().setAuthentication(authentication);

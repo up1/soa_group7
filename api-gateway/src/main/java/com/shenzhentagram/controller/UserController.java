@@ -1,15 +1,15 @@
 package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.*;
-import com.shenzhentagram.scheduler.ServiceConnectingTask;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,12 +66,10 @@ public class UserController extends TemplateRestController {
     @ApiResponses({
             @ApiResponse(code = 201, message = "New user created")
     })
-    public ResponseEntity<Void> createUser(
+    public ResponseEntity<User> createUser(
             @ApiParam("Register detail") @RequestBody UserRegister detail
     ) {
-        // TODO return created user
-
-        return request(HttpMethod.POST, "/users", detail, Void.class);
+        return request(HttpMethod.POST, "/users", detail, User.class);
     }
 
     @GetMapping("/self")
@@ -136,9 +134,7 @@ public class UserController extends TemplateRestController {
      */
     public int increasePosts(long id) {
         AtomicInteger postCount = new AtomicInteger(-1);
-        guardRequester(() -> {
-            postCount.set((int) request(HttpMethod.POST, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count"));
-        });
+        guardRequester(() -> postCount.set((int) request(HttpMethod.POST, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count")));
         return postCount.get();
     }
 
@@ -147,9 +143,7 @@ public class UserController extends TemplateRestController {
      */
     public int decreasePosts(long id) {
         AtomicInteger postCount = new AtomicInteger(-1);
-        guardRequester(() -> {
-            postCount.set((int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count"));
-        });
+        guardRequester(() -> postCount.set((int) request(HttpMethod.PUT, "/users/{id}/posts/count", HashMap.class, id).getBody().get("post_count")));
         return postCount.get();
     }
 
@@ -179,9 +173,7 @@ public class UserController extends TemplateRestController {
      * @param post
      */
     public void embeddedSinglePost(Post post) {
-        guardRequester(() -> {
-            post.setUser(getUser(post.getUserId()).getBody());
-        });
+        guardRequester(() -> post.setUser(getUser(post.getUserId()).getBody()));
     }
 
     /**
@@ -210,9 +202,7 @@ public class UserController extends TemplateRestController {
      * @param comment
      */
     public void embeddedSingleComment(Comment comment) {
-        guardRequester(() -> {
-            comment.setUser(getUser(comment.getUserId()).getBody());
-        });
+        guardRequester(() -> comment.setUser(getUser(comment.getUserId()).getBody()));
     }
 
 }

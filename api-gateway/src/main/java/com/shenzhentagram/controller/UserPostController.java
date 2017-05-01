@@ -10,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @CrossOrigin
 @RestController
 @RequestMapping(path = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
