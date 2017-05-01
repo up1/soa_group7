@@ -150,6 +150,34 @@ public class UserController extends TemplateRestController {
     }
 
     /**
+     * [Internal only] Increase user following count by one
+     */
+    public void increaseFollowing(long id) {
+        guardRequester(() -> request(HttpMethod.POST, "/users/{id}/follows", Void.class, id));
+    }
+
+    /**
+     * [Internal only] Decrease user following count by one
+     */
+    public void decreaseFollowing(long id) {
+        guardRequester(() ->request(HttpMethod.PUT, "/users/{id}/follows", Void.class, id));
+    }
+
+    /**
+     * [Internal only] Increase user follower count by one
+     */
+    public void increaseFollower(long id) {
+        guardRequester(() -> request(HttpMethod.POST, "/users/{id}/followed_by", Void.class, id));
+    }
+
+    /**
+     * [Internal only] Decrease user follower count by one
+     */
+    public void decreaseFollower(long id) {
+        guardRequester(() ->request(HttpMethod.PUT, "/users/{id}/followed_by", Void.class, id));
+    }
+
+    /**
      * [Internal only] Convert follower user id lists to user detail lists
      * @param userIds
      * @return {@link Follower}
