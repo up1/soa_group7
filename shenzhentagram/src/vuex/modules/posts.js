@@ -90,6 +90,23 @@ const actions = {
         postId,
         commentId
       }))
+  },
+
+  fetchReaction ({commit}, postId) {
+    Vue.http.get('posts/' + postId + '/reactions')
+      .then((response) => commit(types.FETCH_REACTION, {
+        postId: postId,
+        reactions: response.body
+      }))
+  },
+  addReaction ({commit}, {postId, reaction}) {
+    console.log('action')
+    console.log(reaction)
+    return Vue.http.post('posts/' + postId + '/reactions', { reaction })
+      .then((response) => commit(types.ADD_REACTION, {
+        postId: postId,
+        reaction: response.body
+      }))
   }
 
 }
@@ -105,7 +122,10 @@ const mutations = {
   },
   [types.FETCH_POSTS] (state, posts) {
     posts = posts.reverse()
-    posts.map(p => { p.comments = [] })
+    posts.map(p => {
+      p.comments = []
+      p.reactions_data = []
+    })
     state.posts = posts
   },
   [types.CLEAR_SINGLE_POST] (state) {
@@ -166,6 +186,27 @@ const mutations = {
         state.posts[i].comments = state.posts[i].comments.filter((comment) => {
           return comment.id !== commentId
         })
+      }
+    })
+  },
+
+  [types.FETCH_REACTION] (state, {postId, reactions}) {
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        state.posts[i].reactions_data = reactions
+      }
+    })
+  },
+  [types.ADD_REACTION] (state, {postId, reaction}) {
+    console.log('mutation')
+    console.log(reaction)
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        if (state.posts[i].reactions_data == null) {
+          state.posts[i].reactions_data = []
+        }
+        state.posts[i].reactions_data.push(reaction)
+        state.posts[i].reactions++
       }
     })
   }
