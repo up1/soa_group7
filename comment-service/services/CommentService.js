@@ -41,7 +41,7 @@ class CommentRepository {
         }
 
         entity.userId = userId;
-        let comment = post.comments.create(entity);
+        const comment = post.comments.create(entity);
         post.comments.push(comment);
 
         post.comment_count++;
@@ -51,12 +51,12 @@ class CommentRepository {
     }
 
     *updateOne(postId, commentId, userId, entity) {
-        let post = yield Comment.findOne({ postId });
+        const post = yield Comment.findOne({ postId });
         if (!post) {
             throw new Exception("No comment in post", 404);
         }
 
-        let comment = post.comments.id(commentId);
+        const comment = post.comments.id(commentId);
         if(!comment) {
             throw new Exception("No comment found", 404);
         }
@@ -92,7 +92,7 @@ class CommentRepository {
     }
 
     *getOne(postId, commentId) {
-        let post = yield Comment.findOne({ postId });
+        const post = yield Comment.findOne({ postId });
         if (!post) {
             return null;
         }
@@ -101,7 +101,7 @@ class CommentRepository {
     }
 
     *deleteAllByPostId(postId) {
-        let post = yield Comment.findOne({ postId });
+        const post = yield Comment.findOne({ postId });
 
         if (post) {
             yield post.remove();
@@ -109,12 +109,12 @@ class CommentRepository {
     }
 
     *deleteOne(postId, commentId, userId) {
-        let post = yield Comment.findOne({ postId });
+        const post = yield Comment.findOne({ postId });
         if (!post) {
             throw new Exception("No comment found", 404);
         }
 
-        let comment = post.comments.id(commentId);
+        const comment = post.comments.id(commentId);
         if(!comment) {
             throw new Exception("No comment found", 404);
         }

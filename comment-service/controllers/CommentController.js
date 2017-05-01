@@ -18,13 +18,13 @@ module.exports = {
 };
 
 function* createSingle(req, res) {
-    let comment = yield CommentRepository.createOne(req.params.postId, req.query.userId, req.body);
+    const comment = yield CommentRepository.createOne(req.params.postId, req.query.userId, req.body);
     return res.status(201).json(comment);
 }
 
 function* updateSingle(req, res) {
     try {
-        let comment = yield CommentRepository.updateOne(req.params.postId, req.params.commentId, req.query.userId, req.body);
+        const comment = yield CommentRepository.updateOne(req.params.postId, req.params.commentId, req.query.userId, req.body);
         res.status(200).json(comment);
     } catch(e) {
         res.status(e.status).json(e);
@@ -33,7 +33,7 @@ function* updateSingle(req, res) {
 
 function* deleteSingle(req, res) {
     try {
-        let comment = yield CommentRepository.deleteOne(req.params.postId, req.params.commentId, req.query.userId);
+        const comment = yield CommentRepository.deleteOne(req.params.postId, req.params.commentId, req.query.userId);
         res.status(200).json(comment);
     } catch(e) {
         res.status(e.status).json(e);
@@ -41,7 +41,7 @@ function* deleteSingle(req, res) {
 }
 
 function* getSingle(req, res) {
-    let comment = yield CommentRepository.getOne(req.params.postId, req.params.commentId);
+    const comment = yield CommentRepository.getOne(req.params.postId, req.params.commentId);
     if (!comment) {
         res.status(404).json(new Exception("Comment not found", 404))
     } else {
