@@ -62,10 +62,10 @@ const actions = {
     Comment Actions
    */
 
-  fetchComment ({commit}, id) {
-    Vue.http.get('posts/' + id + '/comments')
+  fetchComment ({commit}, postId) {
+    Vue.http.get('posts/' + postId + '/comments')
       .then((response) => commit(types.FETCH_COMMENT, {
-        id: id,
+        postId: postId,
         comments: response.body.comments
       }))
   },
@@ -104,7 +104,9 @@ const mutations = {
     state.posts = []
   },
   [types.FETCH_POSTS] (state, posts) {
-    state.posts = posts.reverse()
+    posts = posts.reverse()
+    posts.map(p => { p.comments = [] })
+    state.posts = posts
   },
   [types.CLEAR_SINGLE_POST] (state) {
     state.singlePost = null
@@ -128,9 +130,9 @@ const mutations = {
     Comment Actions
    */
 
-  [types.FETCH_COMMENT] (state, {id, comments}) {
+  [types.FETCH_COMMENT] (state, {postId, comments}) {
     state.posts.map((p, i) => {
-      if (p.id === id) {
+      if (p.id === postId) {
         state.posts[i].comments = comments
       }
     })
