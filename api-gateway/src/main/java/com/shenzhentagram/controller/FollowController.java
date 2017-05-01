@@ -23,12 +23,6 @@ public class FollowController extends TemplateRestController {
     @Autowired
     private UserController userController;
 
-    /**
-     * Setup the template for REST request
-     *
-     * @param environment
-     * @param restTemplateBuilder
-     */
     public FollowController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "follow");
     }
@@ -39,7 +33,7 @@ public class FollowController extends TemplateRestController {
     ) {
         ResponseEntity<FollowIds> responseEntity = request(HttpMethod.GET, "/users/{id}/follows", FollowIds.class, userId);
 
-        // Convert ids to users
+
         Follower follower = userController.convertFollowerIds(responseEntity.getBody().getFollower());
 
         return new ResponseEntity<>(follower, responseEntity.getStatusCode());
@@ -51,7 +45,6 @@ public class FollowController extends TemplateRestController {
     ) {
         ResponseEntity<FollowIds> responseEntity = request(HttpMethod.GET, "/users/{id}/follows", FollowIds.class, userId);
 
-        // Convert ids to users
         Following following = userController.convertFollowingIds(responseEntity.getBody().getFollowing());
 
         return new ResponseEntity<>(following, responseEntity.getStatusCode());
@@ -65,10 +58,8 @@ public class FollowController extends TemplateRestController {
             put("userId", getAuthenticatedUser().getId());
         }};
 
-        // Increase follower to target {user_id}
         userController.increaseFollower(userId);
 
-        // Increase following to current authenticated user
         userController.increaseFollowing(getAuthenticatedUser().getId());
 
         return request(HttpMethod.POST, "/users/{id}/follows", sendPayload, Void.class, userId);
@@ -82,10 +73,8 @@ public class FollowController extends TemplateRestController {
             put("userId", getAuthenticatedUser().getId());
         }};
 
-        // Increase follower to target {user_id}
         userController.decreaseFollower(userId);
 
-        // Increase following to current authenticated user
         userController.decreaseFollowing(getAuthenticatedUser().getId());
 
         return request(HttpMethod.DELETE, "/users/{id}/follows", sendPayload, Void.class, userId);
