@@ -8,9 +8,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -42,6 +45,11 @@ public class UserController {
     private UserRepository userRepository;
 
     private MinioClient minio;
+
+
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostConstruct
     public void postConstruction() throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
@@ -109,7 +117,7 @@ public class UserController {
             }
 
             // Save user
-            this.userRepository.save(user, password);
+            this.userRepository.save(user, passwordEncoder.encode(password));
 
             // Return created user
             user = this.userRepository.findByUsername(user.getUsername());
