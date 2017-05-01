@@ -150,6 +150,34 @@ public class UserController extends TemplateRestController {
     }
 
     /**
+     * [Internal only] Increase user following count by one
+     */
+    public void increaseFollowing(long id) {
+        guardRequester(() -> request(HttpMethod.POST, "/users/{id}/follows", Void.class, id));
+    }
+
+    /**
+     * [Internal only] Decrease user following count by one
+     */
+    public void decreaseFollowing(long id) {
+        guardRequester(() ->request(HttpMethod.PUT, "/users/{id}/follows", Void.class, id));
+    }
+
+    /**
+     * [Internal only] Increase user follower count by one
+     */
+    public void increaseFollower(long id) {
+        guardRequester(() -> request(HttpMethod.POST, "/users/{id}/followed_by", Void.class, id));
+    }
+
+    /**
+     * [Internal only] Decrease user follower count by one
+     */
+    public void decreaseFollower(long id) {
+        guardRequester(() ->request(HttpMethod.PUT, "/users/{id}/followed_by", Void.class, id));
+    }
+
+    /**
      * [Internal only] Convert follower user id lists to user detail lists
      * @param userIds
      * @return {@link Follower}
@@ -247,6 +275,35 @@ public class UserController extends TemplateRestController {
      */
     public void embeddedSingleComment(Comment comment) {
         guardRequester(() -> comment.setUser(getUser(comment.getUserId()).getBody()));
+    }
+
+    /**
+     * [Internal only] Embedded user into multiple reactions
+     * @param reactions
+     */
+    public void embeddedMultipleReaction(List<Reaction> reactions) {
+        guardRequester(() -> {
+            HashMap<Long, User> cachedUsers = new HashMap<>();
+            for(Reaction reaction : reactions) {
+                if(!cachedUsers.containsKey(reaction.getUserId())) {
+                    cachedUsers.put(reaction.getUserId(), getUser(reaction.getUserId()).getBody());
+                }
+
+                reaction.setUser(cachedUsers.get(reaction.getUserId()));
+            }
+        });
+    }
+
+    /**
+     * [Internal only] Embedded user into single reaction<br>
+     * <b>
+     *     Don't use this method if you want to embed multiple reaction<br>
+     *     See {@link UserController#embeddedMultipleReaction(List)} instead
+     * </b>
+     * @param reaction
+     */
+    public void embeddedSingleReaction(Reaction reaction) {
+        guardRequester(() -> reaction.setUser(getUser(reaction.getUserId()).getBody()));
     }
 
 }

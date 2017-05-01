@@ -3,7 +3,7 @@
     <div class="arrow"></div>
     <div class="search-box">
       <div class="content">
-        <a v-for="user in this.users" :key="user.id" href="" class="list">
+        <router-link :to="{name: 'users', params: { userId: user.id }}" v-for="user in this.users" :key="user.id" v-on:click.native="clear" class="list">
           <div>
             <figure class="image is-32x32">
               <img class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
@@ -13,7 +13,7 @@
               <p class="name">{{user.display_name}}</p>
             </div>
           </div>
-        </a>
+        </router-link>
       </div>
     </div>
   </div>
@@ -24,22 +24,25 @@
     props: ['keyword'],
     data () {
       return {
-        users: [
-          {
-            id: 1,
-            username: 'test',
-            display_name: 'dis'
-          },
-          {
-            id: 2,
-            username: 'test1',
-            display_name: 'dis1'
-          }
-        ]
+        users: []
       }
     },
     watch: {
       keyword: function (v) {
+        if (v === '') {
+          this.users = []
+        } else {
+          this.search()
+        }
+      }
+    },
+    methods: {
+      clear () {
+        this.keyword = ''
+      },
+      search () {
+        this.$http.get('users/search?name=' + this.keyword)
+          .then((response) => (this.users = response.body))
       }
     }
   }
