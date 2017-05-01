@@ -37,21 +37,20 @@ public class FollowController {
     @PostMapping("/{id}/follows")
     public Follows createFollowing   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
         List<Integer> follower = new ArrayList<>();
-        ArrayList<Integer> following = new ArrayList<>();
+        List<Integer> following = new ArrayList<>();
 
         ArrayList<Integer> useradd = new ArrayList<>();
 
         Follows follows;
         follows = followsRepository.findById(Integer.toString((Integer)payload.get(USERID)));
         try {
-            follower = follows.getFollowing();
+            following = follows.getFollowing();
             Set<Integer> mySet = new HashSet<>(following);
             mySet.add(Integer.parseInt(id));
             useradd.addAll(mySet);
             follows.setFollowing(useradd);
             followsRepository.save(follows);
         }catch (Exception e){
-            Logger.getLogger(e.getMessage());
             following.add(Integer.parseInt(id));
             follows = new Follows(Integer.toString((Integer) payload.get(USERID)), follower ,following);
             followsRepository.save(follows);
@@ -71,7 +70,6 @@ public class FollowController {
             follows2.setFollower(useradd);
             followsRepository.save(follows2);
         }catch (Exception e){
-            LOGGER.info(e.getMessage());
             follower.add((int)payload.get(USERID));
             follows2 = new Follows(id, follower ,following);
             followsRepository.save(follows2);
