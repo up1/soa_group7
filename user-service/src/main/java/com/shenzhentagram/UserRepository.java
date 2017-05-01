@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Repository
@@ -89,7 +88,6 @@ public class UserRepository {
             throw new UserNotFoundException(name);
         }
     }
-
 
     @Transactional(readOnly = true)
     public List<User> findAll(int page, int itemPerPage) {
