@@ -23,17 +23,11 @@ public class AuthController {
     @Autowired
     UserService userService;
 
-    /**
-     * Get token's user details <b>(For test only)</b>
-     */
     @RequestMapping(method = RequestMethod.GET, path = "/auth", produces = { MediaType.APPLICATION_JSON_VALUE })
     public String getUsers() throws JsonProcessingException {
-        // TODO For test only
 
-        // Get authenticated user
         AuthenticatedUser auth = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
 
-        // Get user by username
         String username = auth.getName();
         User user = userService.getByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
@@ -41,10 +35,6 @@ public class AuthController {
         return mapper.writeValueAsString(user);
     }
 
-    /**
-     * Authenticate user
-     * @see com.shenzhentagram.filter.JWTLoginFilter
-     */
     @RequestMapping(method = RequestMethod.POST, path = "/auth", produces = { MediaType.APPLICATION_JSON_VALUE })
     public String authenticate(
             @RequestAttribute("access_token") String access_token,

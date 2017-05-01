@@ -19,11 +19,6 @@ public class JWTAuthenticationService {
     public static final String TOKEN_PREFIX = "Bearer";
     public static final String HEADER_STRING = "Authorization";
 
-    /**
-     * Parse token to authenticated user
-     * @param request
-     * @return
-     */
     public Authentication parseToken(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
 
