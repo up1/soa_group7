@@ -65,6 +65,12 @@ public class FollowController extends TemplateRestController {
             put("userId", getAuthenticatedUser().getId());
         }};
 
+        // Increase follower to target {user_id}
+        userController.increaseFollower(userId);
+
+        // Increase following to current authenticated user
+        userController.increaseFollowing(getAuthenticatedUser().getId());
+
         return request(HttpMethod.POST, "/users/{id}/follows", sendPayload, Void.class, userId);
     }
 
@@ -75,6 +81,12 @@ public class FollowController extends TemplateRestController {
         HashMap<String, Object> sendPayload = new HashMap<String, Object>() {{
             put("userId", getAuthenticatedUser().getId());
         }};
+
+        // Increase follower to target {user_id}
+        userController.decreaseFollower(userId);
+
+        // Increase following to current authenticated user
+        userController.decreaseFollowing(getAuthenticatedUser().getId());
 
         return request(HttpMethod.DELETE, "/users/{id}/follows", sendPayload, Void.class, userId);
     }
