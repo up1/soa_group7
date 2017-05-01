@@ -79,6 +79,9 @@ public abstract class TemplateRestController {
                 else if(uri.matches("/posts.*")){
                     countPostRequest(SC);
                 }
+                else if(uri.matches("/users.*./follow.*")){
+                    countFollowRequest(SC);
+                }
                 else if(uri.matches("/users.*")){
                     countUserRequest(SC);
                 }
@@ -107,9 +110,13 @@ public abstract class TemplateRestController {
             else if(uri.matches("/posts.*")){
                 countPostRequest(503);
             }
+            else if(uri.matches("/users.*./follow.*")){
+                countFollowRequest(503);
+            }
             else if(uri.matches("/users.*")){
                 countUserRequest(503);
             }
+
             throw new HttpServerErrorException(HttpStatus.SERVICE_UNAVAILABLE, "Response:"+targetPath+", Service "+serviceName+" Unavailable");
         }
     }
