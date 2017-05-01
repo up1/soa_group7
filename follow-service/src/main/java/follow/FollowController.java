@@ -37,14 +37,14 @@ public class FollowController {
     @PostMapping("/{id}/follows")
     public Follows createFollowing   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
         List<Integer> follower = new ArrayList<>();
-        ArrayList<Integer> following = new ArrayList<>();
+        List<Integer> following = new ArrayList<>();
 
         ArrayList<Integer> useradd = new ArrayList<>();
 
         Follows follows;
         follows = followsRepository.findById(Integer.toString((Integer)payload.get(USERID)));
         try {
-            follower = follows.getFollowing();
+            following = follows.getFollowing();
             Set<Integer> mySet = new HashSet<>(following);
             mySet.add(Integer.parseInt(id));
             useradd.addAll(mySet);
