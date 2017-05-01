@@ -1,6 +1,7 @@
 package com.shenzhentagram.prometheus;
 
 import io.prometheus.client.Counter;
+import io.prometheus.client.Gauge;
 import io.prometheus.client.Summary;
 
 /**
@@ -73,12 +74,15 @@ public class RequestCounter {
         switch (statusCode){
             case 200:
                 AuthenticationOKCounter.inc();
+                AuthenticationStatus.set(1);
                 break;
             case 201:
                 AuthenticationCreatedCounter.inc();
+                AuthenticationStatus.set(1);
                 break;
             case 204:
                 AuthenticationNoContentCounter.inc();
+                AuthenticationStatus.set(1);
                 break;
             case 400:
                 AuthenticationBasRequestCounter.inc();
@@ -97,9 +101,13 @@ public class RequestCounter {
                 break;
             case 503:
                 AuthenticationServiceUnavailableCounter.inc();
+                AuthenticationStatus.set(0);
                 break;
         }
     }
+    private static final Gauge AuthenticationStatus = Gauge.build()
+            .name("API_Gateway_Request_Authentication_Status")
+            .help("Request Authentication Status if 1 available if 0 unavailable").register();
     private static final Counter AuthenticationOKCounter = Counter.build()
             .name("API_Gateway_Request_Authentication_OK_200")
             .help("Request Authentication OK 200 Counter").register();
@@ -132,12 +140,15 @@ public class RequestCounter {
         switch (statusCode){
             case 200:
                 CommentOKCounter.inc();
+                CommentStatus.set(1);
                 break;
             case 201:
                 CommentCreatedCounter.inc();
+                CommentStatus.set(1);
                 break;
             case 204:
                 CommentNoContentCounter.inc();
+                CommentStatus.set(1);
                 break;
             case 400:
                 CommentBasRequestCounter.inc();
@@ -156,9 +167,13 @@ public class RequestCounter {
                 break;
             case 503:
                 CommentServiceUnavailableCounter.inc();
+                CommentStatus.set(0);
                 break;
         }
     }
+    private static final Gauge CommentStatus = Gauge.build()
+            .name("API_Gateway_Request_Comment_Status")
+            .help("Request Comment Status if 1 available if 0 unavailable").register();
     private static final Counter CommentOKCounter = Counter.build()
             .name("API_Gateway_Request_Comment_OK_200")
             .help("Request Comment OK 200 Counter").register();
@@ -191,12 +206,15 @@ public class RequestCounter {
         switch (statusCode){
             case 200:
                 FollowOKCounter.inc();
+                FollowStatus.set(1);
                 break;
             case 201:
                 FollowCreatedCounter.inc();
+                FollowStatus.set(1);
                 break;
             case 204:
                 FollowNoContentCounter.inc();
+                FollowStatus.set(1);
                 break;
             case 400:
                 FollowBasRequestCounter.inc();
@@ -215,9 +233,13 @@ public class RequestCounter {
                 break;
             case 503:
                 FollowServiceUnavailableCounter.inc();
+                FollowStatus.set(0);
                 break;
         }
     }
+    private static final Gauge FollowStatus = Gauge.build()
+            .name("API_Gateway_Request_Follow_Status")
+            .help("Request Follow Status if 1 available if 0 unavailable").register();
     private static final Counter FollowOKCounter = Counter.build()
             .name("API_Gateway_Request_Follow_OK_200")
             .help("Request Follow OK 200 Counter").register();
@@ -250,12 +272,15 @@ public class RequestCounter {
         switch (statusCode){
             case 200:
                 NotificationOKCounter.inc();
+                NotificationStatus.set(1);
                 break;
             case 201:
                 NotificationCreatedCounter.inc();
+                NotificationStatus.set(1);
                 break;
             case 204:
                 NotificationNoContentCounter.inc();
+                NotificationStatus.set(1);
                 break;
             case 400:
                 NotificationBasRequestCounter.inc();
@@ -274,9 +299,13 @@ public class RequestCounter {
                 break;
             case 503:
                 NotificationServiceUnavailableCounter.inc();
+                NotificationStatus.set(0);
                 break;
         }
     }
+    private static final Gauge NotificationStatus = Gauge.build()
+            .name("API_Gateway_Request_Notification_Status")
+            .help("Request Notification Status if 1 available if 0 unavailable").register();
     private static final Counter NotificationOKCounter = Counter.build()
             .name("API_Gateway_Request_Notification_OK_200")
             .help("Request Notification OK 200 Counter").register();
@@ -309,12 +338,15 @@ public class RequestCounter {
         switch (statusCode){
             case 200:
                 PostOKCounter.inc();
+                PostStatus.set(1);
                 break;
             case 201:
                 PostCreatedCounter.inc();
+                PostStatus.set(1);
                 break;
             case 204:
                 PostNoContentCounter.inc();
+                PostStatus.set(1);
                 break;
             case 400:
                 PostBasRequestCounter.inc();
@@ -333,9 +365,13 @@ public class RequestCounter {
                 break;
             case 503:
                 PostServiceUnavailableCounter.inc();
+                PostStatus.set(0);
                 break;
         }
     }
+    private static final Gauge PostStatus = Gauge.build()
+            .name("API_Gateway_Request_Post_Status")
+            .help("Request Post Status  if 1 available if 0 unavailable").register();
     private static final Counter PostOKCounter = Counter.build()
             .name("API_Gateway_Request_Post_OK_200")
             .help("Request Post OK 200 Counter").register();
@@ -368,12 +404,15 @@ public class RequestCounter {
         switch (statusCode){
             case 200:
                 UserOKCounter.inc();
+                UserStatus.set(1);
                 break;
             case 201:
                 UserCreatedCounter.inc();
+                UserStatus.set(1);
                 break;
             case 204:
                 UserNoContentCounter.inc();
+                UserStatus.set(1);
                 break;
             case 400:
                 UserBasRequestCounter.inc();
@@ -392,9 +431,13 @@ public class RequestCounter {
                 break;
             case 503:
                 UserServiceUnavailableCounter.inc();
+                UserStatus.set(0);
                 break;
         }
     }
+    private static final Gauge UserStatus = Gauge.build()
+            .name("API_Gateway_Request_User_Status")
+            .help("Request User Status  if 1 available if 0 unavailable").register();
     private static final Counter UserOKCounter = Counter.build()
             .name("API_Gateway_Request_User_OK_200")
             .help("Request User OK 200 Counter").register();
