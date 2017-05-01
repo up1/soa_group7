@@ -21,55 +21,21 @@ import org.springframework.web.util.UriTemplateHandler;
 
 import static com.shenzhentagram.prometheus.RequestCounter.*;
 
-/**
- * Template Rest Controller<br>
- * Use for creating a REST request controller to other service<br>
- * Setting for calling to the other services can be found in resources/application.properties<br><br>
- *
- * Example setting for each service in application.properties:<br>
- * service.[service-name].protocol = http || https<br>
- * service.[service-name].port = [current-service-port]<br>
- * service.[service-name].ip = [current-service-ip]
- *
- * @author Meranote
- * @version 3
- */
 public abstract class TemplateRestController {
 
     @Autowired
     private ServiceConnectingTask serviceConnectingTask;
 
-    /**
-     * Service Name
-     */
     private String serviceName;
 
-    /**
-     * Logging
-     */
     protected Log log = LogFactory.getLog(this.getClass());
 
-    /**
-     * URI Template Handler (For logging)
-     */
     private UriTemplateHandler uriTemplateHandler = new DefaultUriTemplateHandler();
 
-    /**
-     * Rest template for calling apis
-     */
     protected RestTemplate restTemplate;
 
-    /**
-     * Default timeout
-     */
     private static final int TIMEOUT = 20 * 1000; // in milliseconds, 20 seconds
 
-    /**
-     * Setup the template for REST request
-     * @param environment
-     * @param restTemplateBuilder
-     * @param serviceName
-     */
     public TemplateRestController(Environment environment, RestTemplateBuilder restTemplateBuilder, String serviceName) {
         this.serviceName = serviceName;
 
@@ -80,7 +46,6 @@ public abstract class TemplateRestController {
 
         this.restTemplate = restTemplateBuilder.rootUri(protocol + "://" + ip + ":" + port).build();
 
-        // Set components (request timeout)
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(TIMEOUT);
         requestFactory.setReadTimeout(TIMEOUT);
@@ -88,29 +53,10 @@ public abstract class TemplateRestController {
         this.restTemplate.setRequestFactory(requestFactory);
     }
 
-    /**
-     * Send a request (without Authorization)
-     * @param method {@link HttpMethod} to call service
-     * @param uri path to call service
-     * @param responseClass target class that will map the response body into
-     * @param uriVariables path variables
-     * @param <T> target class that will map the response body into
-     * @return {@link ResponseEntity} => mapped response object
-     */
     protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Class<T> responseClass, Object... uriVariables) {
         return request(method, uri, "", responseClass, uriVariables);
     }
 
-    /**
-     * Send a request (without Authorization)
-     * @param method {@link HttpMethod} to call service
-     * @param uri path to call service
-     * @param responseClass target class that will map the response body into
-     * @param body request body
-     * @param uriVariables path variables
-     * @param <T> target class that will map the response body into
-     * @return {@link ResponseEntity} => mapped response object
-     */
     protected <T> ResponseEntity<T> request(HttpMethod method, String uri, Object body, Class<T> responseClass, Object... uriVariables) {
         String targetPath = uriTemplateHandler.expand(uri, uriVariables).getPath();
         if(serviceConnectingTask.isServiceAlive(serviceName)) {
@@ -118,7 +64,6 @@ public abstract class TemplateRestController {
             try {
                 ResponseEntity<T> responseEntity = restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
 
-                //prometheus count
                 int SC = responseEntity.getStatusCodeValue();
                 countRequestRequest(SC);
 
@@ -149,7 +94,6 @@ public abstract class TemplateRestController {
                 throw new RestTemplateException(e, targetPath, serviceName);
             }
         } else {
-            //count error 500
             countRequestRequest(503);
             if(uri.matches("/auth")){
                 countAuthenticationRequest(503);
@@ -167,25 +111,13 @@ public abstract class TemplateRestController {
                 countUserRequest(503);
             }
             throw new HttpServerErrorException(HttpStatus.SERVICE_UNAVAILABLE, "Response:"+targetPath+", Service "+serviceName+" Unavailable");
-//            throw new RestTemplateException(new ResourceAccessException("Service is not connected"), targetPath, serviceName);
         }
     }
 
-    /**
-     * Run request without throwing any error (Request exception wrapper)
-     * @param runnable
-     * @return
-     */
     protected void guardRequester(Runnable runnable) {
         guardRequester(runnable, null);
     }
 
-    /**
-     * Run request without throwing any error (Request exception wrapper)
-     * @param runnable
-     * @param errorLogMessage
-     * @return
-     */
     protected void guardRequester(Runnable runnable, String errorLogMessage) {
         try {
             runnable.run();
@@ -196,17 +128,10 @@ public abstract class TemplateRestController {
         }
     }
 
-    /**
-     * Get the current authenticated user
-     * @return current {@link AuthenticatedUser}
-     */
     protected AuthenticatedUser getAuthenticatedUser() {
         return (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication();
     }
 
-    /**
-     * Exception message format
-     */
     public static class ExceptionMessage {
 
         private long timestamp;
@@ -283,11 +208,6 @@ public abstract class TemplateRestController {
         }
     }
 
-    /**
-     * {@link RestTemplateException} handler
-     * @param e Exception object throw by request()
-     * @return {@link ExceptionMessage}
-     */
     @ExceptionHandler(RestTemplateException.class)
     public ResponseEntity<ExceptionMessage> restRequestExceptionHandler(RestTemplateException e) {
         return new ResponseEntity<>(new ExceptionMessage(e), e.getHttpStatus());
