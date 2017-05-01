@@ -1,39 +1,29 @@
 package com.shenzhentagram.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Jiravat on 3/13/2017.
  */
 
 public class NotificationPost extends NotificationAbstract {
 
-    long id;
+    @JsonProperty("postId") long postId;
+    @JsonProperty("commentId") String commentId;
 
-    long post_id;
-
-    String comment_id;
-
-    public NotificationPost(long id, long post_id, String comment_id) {
-        this.id = id;
-        this.post_id = post_id;
-        this.comment_id = comment_id;
+    public long getPostId() {
+        return postId;
     }
 
-    public NotificationPost() {
+    public void setPostId(long postId) {
+        this.postId = postId;
     }
 
-    public long getPost_id() {
-        return post_id;
+    public String getCommentId() {
+        return commentId;
     }
 
-    public void setPost_id(long post_id) {
-        this.post_id = post_id;
-    }
-
-    public String getComment_id() {
-        return comment_id;
-    }
-
-    public void setComment_id(String comment_id) {
-        this.comment_id = comment_id;
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
     }
 }

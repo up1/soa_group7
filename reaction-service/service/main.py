@@ -8,12 +8,12 @@ app = Flask(__name__)
 mysql = MySQL()
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'mysql'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'shenzhentagram07user'
 app.config['MYSQL_DATABASE_DB'] = 'reactions'
-app.config['MYSQL_DATABASE_HOST'] = 'mariadb'
+app.config['MYSQL_DATABASE_HOST'] = '35.185.137.69'
 mysql.init_app(app)
 
-POST_SERVICE_URL = "http://104.154.167.139:9002/posts"
+POST_SERVICE_URL = "http://0.0.0.0:9002/posts"
 
 
 def increase_react(post_id):
@@ -48,9 +48,6 @@ def get_reacts(post_id):
 
 def create_react(post_id, user_id, reaction):
     try:
-        status_code = increase_react(post_id)
-        if status_code != 200:
-            return '', status_code
 
         cursor = mysql.get_db().cursor()
         sql = "INSERT INTO reactions(user_id, post_id, reaction) VALUES (%s, %s, %s)"
@@ -59,7 +56,6 @@ def create_react(post_id, user_id, reaction):
 
         return get_react(post_id, user_id)
     except Exception as e:
-        decrease_react(post_id)
         return json.dumps({'error': str(e)})
 
 
@@ -77,9 +73,6 @@ def update_react(post_id, user_id, reaction):
 
 def delete_react(post_id, user_id):
     try:
-        status_code = decrease_react(post_id)
-        if status_code != 200:
-            return '', status_code
 
         cursor = mysql.get_db().cursor()
         sql = "DELETE FROM reactions WHERE post_id = %s AND user_id = %s"
@@ -88,24 +81,26 @@ def delete_react(post_id, user_id):
 
         return '', 200
     except Exception as e:
-        increase_react(post_id)
         return json.dumps({'error': str(e)})
 
 
 @app.route('/posts/<int:post_id>/reactions', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def reacts(post_id):
+    body = request.get_json()
+    if body is None:
+        body = request.form
     if request.method == 'GET':
         return get_reacts(post_id)
     elif request.method == 'POST':
-        user_id = request.form['user_id']
-        reaction = request.form['reaction']
+        user_id = body['user_id']
+        reaction = body['reaction']
         return create_react(post_id, user_id, reaction)
     elif request.method == 'PUT':
-        user_id = request.form['user_id']
-        reaction = request.form['reaction']
+        user_id = body['user_id']
+        reaction = body['reaction']
         return update_react(post_id, user_id, reaction)
     elif request.method == 'DELETE':
-        user_id = request.form['user_id']
+        user_id = body['user_id']
         return delete_react(post_id, user_id)
 
 if __name__ == "__main__":

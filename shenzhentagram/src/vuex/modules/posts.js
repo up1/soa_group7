@@ -23,7 +23,7 @@ const actions = {
   // Mutliple post (Feed)
 
   fetchPosts ({commit}) {
-    Vue.http.get('posts')
+    return Vue.http.get('posts')
       .then((response) => commit(types.FETCH_POSTS, response.body.content))
   },
   editCaption ({commit}, {id, value}) {
@@ -46,15 +46,23 @@ const actions = {
       .then((response) => {
         let post = response.body
         let comments = []
+        let reactions = []
 
         // Fetch single post comments
         Vue.http.get('posts/' + postId + '/comments')
           .then((response) => {
             comments = response.body.comments
-            commit(types.FETCH_SINGLE_POST, {post, comments})
+            commit(types.FETCH_SINGLE_POST, {post, comments, reactions})
           })
 
-        commit(types.FETCH_SINGLE_POST, {post, comments})
+        // Fetch single post reactions
+        Vue.http.get('posts/' + postId + '/reactions')
+          .then((response) => {
+            reactions = response.body
+            commit(types.FETCH_SINGLE_POST, {post, comments, reactions})
+          })
+
+        commit(types.FETCH_SINGLE_POST, {post, comments, reactions})
       })
   },
 
@@ -62,10 +70,10 @@ const actions = {
     Comment Actions
    */
 
-  fetchComment ({commit}, id) {
-    Vue.http.get('posts/' + id + '/comments')
+  fetchComment ({commit}, postId) {
+    Vue.http.get('posts/' + postId + '/comments')
       .then((response) => commit(types.FETCH_COMMENT, {
-        id: id,
+        postId: postId,
         comments: response.body.comments
       }))
   },
@@ -90,6 +98,34 @@ const actions = {
         postId,
         commentId
       }))
+  },
+
+  fetchReaction ({commit}, postId) {
+    Vue.http.get('posts/' + postId + '/reactions')
+      .then((response) => commit(types.FETCH_REACTION, {
+        postId: postId,
+        reactions: response.body
+      }))
+  },
+  addReaction ({commit}, {postId, reaction}) {
+    console.log('action')
+    console.log(reaction)
+    return Vue.http.post('posts/' + postId + '/reactions', { reaction })
+      .then((response) => commit(types.ADD_REACTION, {
+        postId: postId,
+        reaction: response.body
+      }))
+  },
+  editReaction ({commit}, {postId, reaction}) {
+    return Vue.http.put('posts/' + postId + '/reactions', { reaction })
+      .then((response) => commit(types.EDIT_REACTION, {
+        postId: postId,
+        reaction: response.body
+      }))
+  },
+  deleteReaction ({commit}, {postId, userId}) {
+    return Vue.http.delete('posts/' + postId + '/reactions')
+      .then((response) => commit(types.DELETE_REACTION, {postId, userId}))
   }
 
 }
@@ -104,13 +140,19 @@ const mutations = {
     state.posts = []
   },
   [types.FETCH_POSTS] (state, posts) {
-    state.posts = posts.reverse()
+    posts = posts.reverse()
+    posts.map(p => {
+      p.comments = []
+      p.reactions_data = []
+    })
+    state.posts = posts
   },
   [types.CLEAR_SINGLE_POST] (state) {
     state.singlePost = null
   },
-  [types.FETCH_SINGLE_POST] (state, {post, comments}) {
+  [types.FETCH_SINGLE_POST] (state, {post, comments, reactions}) {
     post.comments = comments
+    post.reactions_data = reactions
     state.singlePost = post
   },
   [types.EDIT_CAPTION] (state, body) {
@@ -128,9 +170,9 @@ const mutations = {
     Comment Actions
    */
 
-  [types.FETCH_COMMENT] (state, {id, comments}) {
+  [types.FETCH_COMMENT] (state, {postId, comments}) {
     state.posts.map((p, i) => {
-      if (p.id === id) {
+      if (p.id === postId) {
         state.posts[i].comments = comments
       }
     })
@@ -163,6 +205,48 @@ const mutations = {
       if (p.id === postId) {
         state.posts[i].comments = state.posts[i].comments.filter((comment) => {
           return comment.id !== commentId
+        })
+      }
+    })
+  },
+
+  [types.FETCH_REACTION] (state, {postId, reactions}) {
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        state.posts[i].reactions_data = reactions
+      }
+    })
+  },
+  [types.ADD_REACTION] (state, {postId, reaction}) {
+    console.log('mutation')
+    console.log(reaction)
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        if (state.posts[i].reactions_data == null) {
+          state.posts[i].reactions_data = []
+        }
+        state.posts[i].reactions_data.push(reaction)
+        state.posts[i].reactions++
+      }
+    })
+  },
+  [types.EDIT_REACTION] (state, {postId, reaction}) {
+    state.posts.map((p, i) => {
+      if (p.id === postId) {
+        state.posts[i].reactions_data.map((c, j) => {
+          if (c.id === reaction.id) {
+            state.posts[i].reactions_data[j] = reaction
+          }
+        })
+      }
+    })
+  },
+  [types.DELETE_REACTION] (state, {postId, userId}) {
+    state.posts.map((p, i) => {
+      state.posts[i].reactions--
+      if (p.id === postId) {
+        state.posts[i].reactions_data = state.posts[i].reactions_data.filter((r) => {
+          return r.user_id !== userId
         })
       }
     })

@@ -1,18 +1,21 @@
 package follow;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.logging.Logger;
-
 
 import java.util.*;
-
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/users")
 public class FollowController {
+
+    /**
+     * Logging
+     */
+    protected Log logger = LogFactory.getLog(FollowController.class);
 
     @Autowired
     private FollowsRepository followsRepository;
@@ -21,30 +24,36 @@ public class FollowController {
 
     @GetMapping("/{id}/follows")
     public Follows getFollows(@PathVariable("id") String id) {
+        Follows follows = followsRepository.findById(id);
 
-        return followsRepository.findById(id);
+        if(follows == null) {
+            follows = new Follows();
+            follows.setFollower(new ArrayList<>());
+            follows.setFollowing(new ArrayList<>());
+        }
 
+        return follows;
     }
 
 
     @PostMapping("/{id}/follows")
     public Follows createFollowing   (@PathVariable("id") String id, @RequestBody Map<String, Object> payload) {
         List<Integer> follower = new ArrayList<>();
-        ArrayList<Integer> following = new ArrayList<>();
+        List<Integer> following = new ArrayList<>();
 
         ArrayList<Integer> useradd = new ArrayList<>();
 
         Follows follows;
         follows = followsRepository.findById(Integer.toString((Integer)payload.get(USERID)));
         try {
-            follower = follows.getFollowing();
+            following = follows.getFollowing();
             Set<Integer> mySet = new HashSet<>(following);
             mySet.add(Integer.parseInt(id));
             useradd.addAll(mySet);
             follows.setFollowing(useradd);
             followsRepository.save(follows);
         }catch (Exception e){
-            Logger.getLogger(e.getMessage());
+            logger.debug(e);
             following.add(Integer.parseInt(id));
             follows = new Follows(Integer.toString((Integer) payload.get(USERID)), follower ,following);
             followsRepository.save(follows);
@@ -64,7 +73,7 @@ public class FollowController {
             follows2.setFollower(useradd);
             followsRepository.save(follows2);
         }catch (Exception e){
-            LOGGER.info(e.getMessage());
+            logger.debug(e);
             follower.add((int)payload.get(USERID));
             follows2 = new Follows(id, follower ,following);
             followsRepository.save(follows2);
@@ -94,7 +103,7 @@ public class FollowController {
             follows.setFollowing(useradd);
             followsRepository.save(follows);
         }catch (Exception e){
-            LOGGER.info(e.getMessage());
+            logger.debug(e);
         }
 
         useradd = new ArrayList<>();
@@ -109,7 +118,7 @@ public class FollowController {
             followsRepository.save(follows2);
 
         }catch (Exception e){
-            LOGGER.info(e.getMessage());
+            logger.debug(e);
         }
 
         return follows;

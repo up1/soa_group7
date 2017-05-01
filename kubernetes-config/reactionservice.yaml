@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: reaction
+spec:
+  selector:
+    app: reaction
+    version: latest
+  ports:
+    - protocol: TCP
+      port: 9007
+      targetPort: 9007
+  type: ClusterIP

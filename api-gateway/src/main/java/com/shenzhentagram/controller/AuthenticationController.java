@@ -2,7 +2,6 @@ package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.AuthenticateCredential;
 import com.shenzhentagram.model.AuthenticateDetail;
-import com.shenzhentagram.prometheus.RequestCounter;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -30,9 +29,7 @@ public class AuthenticationController extends TemplateRestController {
     public ResponseEntity<AuthenticateDetail> auth(
             @RequestBody AuthenticateCredential credential
     ) {
-        ResponseEntity<AuthenticateDetail> auth = request(HttpMethod.POST, "/auth", credential, AuthenticateDetail.class);
-        RequestCounter.countAuthenRequest(auth.getStatusCodeValue());
-        return auth;
+        return request(HttpMethod.POST, "/auth", credential, AuthenticateDetail.class);
     }
 
 }

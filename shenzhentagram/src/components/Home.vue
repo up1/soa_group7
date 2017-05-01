@@ -10,7 +10,16 @@
 
 <script type="text/babel">
   import Card from './Card'
+  import store from '../vuex/store'
   import { mapGetters } from 'vuex'
+
+  function preFetchRoute (dispatcher, to, from, next) {
+    dispatcher('fetchPosts', to.params.postId)
+    .then((response) => {
+      next()
+    })
+  }
+
   export default {
     name: 'home',
     components: {
@@ -21,12 +30,11 @@
         posts: 'getPosts'
       })
     },
-    created () {
-      this.$store.dispatch('fetchPosts')
+    beforeRouteEnter (to, from, next) {
+      preFetchRoute(store.dispatch, to, from, next)
     },
-    data () {
-      return {
-      }
+    beforeRouteUpdate (to, from, next) {
+      preFetchRoute(this.$store.dispatch, to, from, next)
     }
   }
 </script>
