@@ -29,12 +29,6 @@ public class ReactionController extends TemplateRestController {
     @Autowired
     private PostController postController;
 
-    /**
-     * Setup the template for REST request
-     *
-     * @param environment
-     * @param restTemplateBuilder
-     */
     public ReactionController(Environment environment, RestTemplateBuilder restTemplateBuilder) {
         super(environment, restTemplateBuilder, "reaction");
     }
@@ -45,7 +39,6 @@ public class ReactionController extends TemplateRestController {
     ) {
         ResponseEntity<ReactionList> responseEntity = request(HttpMethod.GET, BASE_URL, ReactionList.class, postId);
 
-        // Embedded user into reactions
         userController.embeddedMultipleReaction(responseEntity.getBody());
 
         return responseEntity;
@@ -60,13 +53,10 @@ public class ReactionController extends TemplateRestController {
 
         ResponseEntity<Reaction> responseEntity = request(HttpMethod.POST, BASE_URL, reaction, Reaction.class, postId);
 
-        // Embedded user into reactions
         userController.embeddedSingleReaction(responseEntity.getBody());
 
-        // Increase post comment count
         postController.increaseReactions(postId);
 
-        // Create comment notification
         notificationController.createReactionNotification(Math.toIntExact(getAuthenticatedUser().getId()), postId, responseEntity.getBody().getId());
 
         return responseEntity;
@@ -80,7 +70,6 @@ public class ReactionController extends TemplateRestController {
         reaction.setUserId(getAuthenticatedUser().getId());
         ResponseEntity<Reaction> responseEntity = request(HttpMethod.PUT, BASE_URL, reaction, Reaction.class, postId);
 
-        // Embedded user into reactions
         userController.embeddedSingleReaction(responseEntity.getBody());
         return responseEntity;
     }
