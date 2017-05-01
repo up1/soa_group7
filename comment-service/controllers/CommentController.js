@@ -50,9 +50,9 @@ function* getSingle(req, res) {
 }
 
 function* getCommentsByPostId(req, res) {
-    let limit = req.query.limit ? parseInt(req.query.limit) : null;
-    let offset = req.query.offset ? parseInt(req.query.offset) : null;
-    let comment = yield CommentRepository.getAllByPostId(req.params.postId, limit, offset);
+    const limit = req.query.limit ? parseInt(req.query.limit) : null;
+    const offset = req.query.offset ? parseInt(req.query.offset) : null;
+    const comment = yield CommentRepository.getAllByPostId(req.params.postId, limit, offset);
     res.status(200).json(comment);
 }
 

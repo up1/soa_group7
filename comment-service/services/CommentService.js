@@ -81,12 +81,12 @@ class CommentRepository {
                 offset = 0;
             }
 
-            let startOffset = limit * offset;
-            let post = yield Comment.findOne({ postId }, {comments : {$slice : [startOffset, limit]}});
+            const startOffset = limit * offset;
+            const post = yield Comment.findOne({ postId }, {comments : {$slice : [startOffset, limit]}});
 
             return constructPostPanigation(postId, post, limit, offset);
         } else {
-            let post = yield Comment.findOne({ postId });
+            const post = yield Comment.findOne({ postId });
             return constructPostPanigation(postId, post, 0, 0);
         }
     }
