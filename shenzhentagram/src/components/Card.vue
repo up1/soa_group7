@@ -9,7 +9,8 @@
       <div class="media">
         <div class="media-left">
           <figure class="image is-48x48">
-            <img class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+            <img v-if="this.post.user.profile_picture != null" class="profile-img" :src="'https://storage.googleapis.com/shenzhentagram-avatar/' + this.post.user.profile_picture" alt="Image">
+            <img v-else class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
           </figure>
         </div>
         <div class="media-content">

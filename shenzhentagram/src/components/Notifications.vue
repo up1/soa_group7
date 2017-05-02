@@ -1,20 +1,16 @@
 <template>
-  <div class="search" v-if="this.users.length > 0">
+  <div class="search" v-if="active">
     <div class="arrow"></div>
     <div class="search-box">
       <div class="content">
-        <router-link :to="{name: 'users', params: { userId: user.id }}" v-for="user in this.users" :key="user.id" v-on:click.native="clear" class="list">
+        <div class="list" v-for="noti in this.notis" :key="noti.id">
           <div>
-            <figure class="image is-32x32">
-              <img v-if="user.profile_picture != null" class="profile-img" :src="'https://storage.googleapis.com/shenzhentagram-avatar/' + user.profile_picture">
-              <img v-else class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
-            </figure>
             <div class="name">
-              <p class="name is-bold">{{user.username}}</p>
-              <p class="name">{{user.display_name}}</p>
+              <p class="name is-bold">{{noti.text}}</p>
+              <p class="name">{{noti.time | moment("MMM D, YYY, h:mm A")}}</p>
             </div>
           </div>
-        </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -22,29 +18,15 @@
 
 <script type="text/babel">
   export default {
-    props: ['keyword'],
+    props: ['active'],
     data () {
       return {
-        users: []
+        notis: []
       }
     },
-    watch: {
-      keyword: function (v) {
-        if (v === '') {
-          this.users = []
-        } else {
-          this.search()
-        }
-      }
-    },
-    methods: {
-      clear () {
-        this.$parent.keyword = ''
-      },
-      search () {
-        this.$http.get('users/search?name=' + this.keyword)
-          .then((response) => (this.users = response.body))
-      }
+    created () {
+      this.$http.get('notifications')
+        .then((response) => (this.notis = response.body))
     }
   }
 </script>
@@ -52,13 +34,14 @@
 <style scoped>
   .search {
     position: absolute;
-    margin-top:30px;
+    margin-top:50px;
   }
   .arrow {
     border: solid 1px #e6e6e6;
     box-shadow: 0 0 5px 1px rgba(0,0,0,.0975);
     background-color: #fff;
     height: 14px;
+    right: 90px;
     margin: auto;
     position: relative;
     -webkit-transform: rotate(45deg);
@@ -73,7 +56,7 @@
     box-shadow: 0 0 5px rgba(0,0,0,.0975);
     display: block;
     position: absolute;
-    right: -122px;
+    right: 0;
     top: 18px;
     width: 245px;
     z-index: 9;

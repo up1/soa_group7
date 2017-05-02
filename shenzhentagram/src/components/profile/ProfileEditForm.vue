@@ -3,7 +3,8 @@
     <div class="columns">
       <div class="column profile is-one-quarter is-paddingless">
         <figure class="image profile-figure is-48x48 is-pulled-right">
-          <img class="profile-img" src="http://bulma.io/images/placeholders/64x64.png">
+          <img v-if="user.profile_picture != null" class="profile-img" :src="'https://storage.googleapis.com/shenzhentagram-avatar/' + user.profile_picture">
+          <img v-else class="profile-img" src="http://bulma.io/images/placeholders/64x64.png">
         </figure>
       </div>
       <div class="column is-paddingless display_name">

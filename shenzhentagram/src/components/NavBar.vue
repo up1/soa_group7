@@ -28,6 +28,12 @@
             <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
           </span>
         </router-link>
+        <a class="nav-item" @click="showNoti = !showNoti">
+          <span class="icon is-medium">
+            <i class="fa fa-heart-o fa-2x" aria-hidden="true"></i>
+          </span>
+        </a>
+        <notifications v-bind:active="showNoti"></notifications>
         <router-link :to="{name: 'users', params: {userId: this.$auth.user().id}}"  class="nav-item">
           <span class="icon is-medium">
             <i class="fa fa-user-o fa-2x" aria-hidden="true"></i>
@@ -40,14 +46,16 @@
 
 <script type="text/babel">
   import SearchModal from './SearchModal'
+  import Notifications from './Notifications'
   export default {
     data () {
       return {
-        keyword: ''
+        keyword: '',
+        showNoti: false
       }
     },
     components: {
-      SearchModal
+      SearchModal, Notifications
     },
     methods: {
       logout () {

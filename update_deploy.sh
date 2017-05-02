@@ -9,4 +9,4 @@ docker push meranote/post-service
 
 gcloud container clusters get-credentials shenzhentagram-group-asia --zone asia-east1-b --project shenzhentagram
 
-kubectl delete pods --all
+kubectl delete pods -l app=service

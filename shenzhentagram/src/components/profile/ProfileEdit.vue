@@ -4,13 +4,15 @@
       <div class="column is-one-quarter menu">
         <div class="tabs">
           <ul>
-            <li class="is-active"><a>Edit Profile</a></li>
+            <li v-bind:class="{ 'is-active': profileEditActive }"><a v-on:click="editProfile">Edit Profile</a></li>
+            <li v-bind:class="{ 'is-active': pictureFormActive }"><a v-on:click="editPicture">Change Profile Picture</a></li>
             <li class="is-unselectable"><a>Change Password</a></li>
           </ul>
         </div>
       </div>
       <div class="column form">
-        <profile-edit-form></profile-edit-form>
+        <profile-edit-form v-if="profileEditActive"></profile-edit-form>
+        <profile-picture-form v-if="pictureFormActive"></profile-picture-form>
       </div>
     </div>
   </div>
@@ -18,12 +20,27 @@
 
 <script type="text/babel">
   import ProfileEditForm from './ProfileEditForm'
+  import ProfilePictureForm from './ProfilePictureForm'
+
   export default {
     data () {
-      return {}
+      return {
+        profileEditActive: true,
+        pictureFormActive: false
+      }
     },
     components: {
-      ProfileEditForm
+      ProfileEditForm, ProfilePictureForm
+    },
+    methods: {
+      editProfile () {
+        this.profileEditActive = true
+        this.pictureFormActive = false
+      },
+      editPicture () {
+        this.profileEditActive = false
+        this.pictureFormActive = true
+      }
     }
   }
 </script>

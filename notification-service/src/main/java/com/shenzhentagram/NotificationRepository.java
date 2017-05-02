@@ -1,6 +1,8 @@
 package com.shenzhentagram;
 
 import com.shenzhentagram.errors.NotificationNotFoundException;
+import com.shenzhentagram.errors.NotificationNotModifiedException;
+import com.shenzhentagram.errors.NotificationTypeNotFoundException;
 import com.shenzhentagram.mappers.NotificationPostRowMapper;
 import com.shenzhentagram.mappers.NotificationReactionRowMapper;
 import com.shenzhentagram.mappers.NotificationRowMapper;
@@ -21,11 +23,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 @Repository
 public class NotificationRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    protected Log log = LogFactory.getLog(this.getClass());
 
     @Transactional(readOnly = true)
     public List<Notification> findByUserId(Long id, int limit, int page) {
@@ -52,10 +59,13 @@ public class NotificationRepository {
                     case "reaction":
                         notification.setFrom(findNotificationReactionById(notification.getNotificationId()));
                         break;
+                    default:
+                        throw new NotificationTypeNotFoundException(notification.getType());
                 }
             });
             return notifications;
         } catch (Exception exception) {
+            log.error(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -82,10 +92,12 @@ public class NotificationRepository {
                 case "reaction":
                     notification.setFrom(findNotificationReactionById(notification.getNotificationId()));
                     break;
+                default:
+                    throw new NotificationTypeNotFoundException(notification.getType());
             }
-            ;
             return notification;
         } catch (Exception exception) {
+            log.error(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -110,6 +122,7 @@ public class NotificationRepository {
             );
             return notification;
         } catch (Exception exception) {
+            log.error(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -128,6 +141,7 @@ public class NotificationRepository {
             );
             return notification;
         } catch (Exception exception) {
+            log.error(exception);
             throw new NotificationNotFoundException(id);
         }
     }
@@ -146,17 +160,17 @@ public class NotificationRepository {
             );
             return notification;
         } catch (Exception exception) {
+            log.error(exception);
             throw new NotificationNotFoundException(id);
         }
     }
 
-    @Transactional()
-    int createNotifications(List<Notification> notifications) {
+    public int createNotifications(List<Notification> notifications) {
         try {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
             for (Notification notification : notifications) {
-                long notificationId = 1;
+                long notificationId;
                 switch (notification.getType()) {
                     case "followed_by":
                         notificationId = createNotificationUser((NotificationUser) notification.getFrom());
@@ -167,6 +181,8 @@ public class NotificationRepository {
                     case "reaction":
                         notificationId = createNotificationReaction((NotificationReaction) notification.getFrom());
                         break;
+                    default:
+                        throw new NotificationTypeNotFoundException(notification.getType());
                 }
                 notification.setNotificationId(notificationId);
                 this.jdbcTemplate.update(insertSql,
@@ -189,6 +205,7 @@ public class NotificationRepository {
             }
             return HttpServletResponse.SC_CREATED;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -277,6 +294,7 @@ public class NotificationRepository {
 
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -288,7 +306,7 @@ public class NotificationRepository {
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
 
             for (Notification notification : notifications) {
-                int notificationResponse = 0;
+                int notificationResponse;
                 switch (notification.getType()) {
                     case "followed_by":
                         notificationResponse = updateNotificationUser((NotificationUser) notification.getFrom());
@@ -299,6 +317,8 @@ public class NotificationRepository {
                     case "reaction":
                         notificationResponse = updateNotificationReaction((NotificationReaction) notification.getFrom());
                         break;
+                    default:
+                        throw new NotificationTypeNotFoundException(notification.getType());
                 }
                 this.jdbcTemplate.update(insertSql,
                         new Object[]{
@@ -318,13 +338,14 @@ public class NotificationRepository {
                         }
                 );
                 if (notificationResponse == HttpServletResponse.SC_NOT_MODIFIED) {
-                    throw new Exception();
+                    throw new NotificationNotModifiedException();
                 }
             }
 
 
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -342,6 +363,7 @@ public class NotificationRepository {
             );
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -361,6 +383,7 @@ public class NotificationRepository {
             );
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -378,6 +401,7 @@ public class NotificationRepository {
             );
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -388,7 +412,7 @@ public class NotificationRepository {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
 
-            int notificationResponse = 0;
+            int notificationResponse;
             switch (notification.getType()) {
                 case "followed_by":
                     notificationResponse = updateNotificationUser((NotificationUser) notification.getFrom());
@@ -399,6 +423,8 @@ public class NotificationRepository {
                 case "reaction":
                     notificationResponse = updateNotificationReaction((NotificationReaction) notification.getFrom());
                     break;
+                default:
+                    throw new NotificationTypeNotFoundException(notification.getType());
             }
             this.jdbcTemplate.update(insertSql,
                     new Object[]{
@@ -418,22 +444,23 @@ public class NotificationRepository {
                     }
             );
             if (notificationResponse == HttpServletResponse.SC_NOT_MODIFIED) {
-                throw new Exception();
+                throw new NotificationNotModifiedException();
             }
 
             return HttpServletResponse.SC_OK;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
 
-    @Transactional()
-    int createNotifications(List<Notification> notifications, String type) {
+    @Transactional
+    public int createNotifications(List<Notification> notifications, String type) {
         try {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
             for (Notification notification : notifications) {
-                long notificationId = 1;
+                long notificationId;
                 switch (type) {
                     case "followed_by":
                         notificationId = createNotificationUser((NotificationUser) notification.getFrom());
@@ -445,7 +472,7 @@ public class NotificationRepository {
                         notificationId = createNotificationReaction((NotificationReaction) notification.getFrom());
                         break;
                     default:
-                        break;
+                        throw new NotificationTypeNotFoundException(type);
                 }
                 notification.setNotificationId(notificationId);
                 this.jdbcTemplate.update(insertSql,
@@ -469,6 +496,7 @@ public class NotificationRepository {
 
             return HttpServletResponse.SC_CREATED;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }
@@ -477,7 +505,7 @@ public class NotificationRepository {
         try {
             String insertSql = "insert into notifications(id,userId ,type_,text,thumbnail,notificationId ,checkStatus) values(?,? ,?,?,?,? ,?) " +
                     "ON DUPLICATE KEY UPDATE userId=? ,type_=?,text=?,thumbnail=?,notificationId=?,checkStatus=?";
-            long notificationId = 1;
+            long notificationId;
             switch (notification.getType()){
                 case "followed_by":
                     notificationId = createNotificationUser((NotificationUser) notification.getFrom());
@@ -489,7 +517,7 @@ public class NotificationRepository {
                     notificationId = createNotificationReaction((NotificationReaction) notification.getFrom());
                     break;
                 default:
-                    throw new Exception();
+                    throw new NotificationTypeNotFoundException(notification.getType());
             }
             notification.setNotificationId(notificationId);
             this.jdbcTemplate.update(insertSql,
@@ -511,6 +539,7 @@ public class NotificationRepository {
 
             return HttpServletResponse.SC_CREATED;
         } catch (Exception exception) {
+            log.error(exception);
             return HttpServletResponse.SC_NOT_MODIFIED;
         }
     }

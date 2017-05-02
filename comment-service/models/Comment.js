@@ -27,9 +27,8 @@ const CommentSchema = new mongoose.Schema({
 });
 CommentSchema.plugin(timestamps);
 
-function sanitizeComment(doc, ret) {
-    const sanitized = _.omit(ret, '__v', '_id');
-    return sanitized;
+function sanitizeComment(ret) {
+    return _.omit(ret, '__v', '_id');
 }
 
 const PostCommentsSchema = new mongoose.Schema({
