@@ -235,7 +235,9 @@ const mutations = {
       if (p.id === postId) {
         state.posts[i].reactions_data.map((c, j) => {
           if (c.id === reaction.id) {
-            state.posts[i].reactions_data[j] = reaction
+            let eReaction = state.posts[i].reactions_data.splice(j, 1)[0]
+            eReaction = reaction
+            state.posts[i].reactions_data.push(eReaction)
           }
         })
       }
