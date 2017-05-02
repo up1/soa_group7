@@ -2,7 +2,8 @@
   <div class="columns">
     <div class="column is-narrow profile">
       <figure class="image profile-figure is-1by1">
-        <img class="profile-img" src="http://bulma.io/images/placeholders/256x256.png">
+        <img v-if="this.user.profile_picture != null" class="profile-img" :src="'https://storage.googleapis.com/shenzhentagram-avatar/' + this.user.profile_picture">
+        <img v-else class="profile-img" src="http://bulma.io/images/placeholders/256x256.png">
       </figure>
     </div>
     <profile-details></profile-details>
@@ -11,10 +12,14 @@
 
 <script type="text/babel">
   import ProfileDetails from './ProfileDetails'
+  import { mapGetters } from 'vuex'
   export default {
     components: {
       ProfileDetails
     },
+    computed: mapGetters({
+      user: 'getUser'
+    }),
     data () {
       return {}
     }

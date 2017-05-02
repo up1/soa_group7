@@ -13,7 +13,8 @@
             <div class="reaction list" v-for="reaction in reactions_data">
               <div>
                 <figure class="image is-32x32">
-                  <img class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+                  <img v-if="reaction.user.profile_picture != null" class="profile-img" :src="'https://storage.googleapis.com/shenzhentagram-avatar/' + reaction.user.profile_picture">
+                  <img v-else class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
                 </figure>
                 <div class="name">
                   <p class="name is-bold">{{reaction.user.username}}</p>

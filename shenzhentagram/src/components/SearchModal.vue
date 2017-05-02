@@ -6,7 +6,8 @@
         <router-link :to="{name: 'users', params: { userId: user.id }}" v-for="user in this.users" :key="user.id" v-on:click.native="clear" class="list">
           <div>
             <figure class="image is-32x32">
-              <img class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+              <img v-if="user.profile_picture != null" class="profile-img" :src="'https://storage.googleapis.com/shenzhentagram-avatar/' + user.profile_picture">
+              <img v-else class="profile-img" src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
             </figure>
             <div class="name">
               <p class="name is-bold">{{user.username}}</p>
