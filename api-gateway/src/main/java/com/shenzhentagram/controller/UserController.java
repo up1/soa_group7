@@ -2,7 +2,6 @@ package com.shenzhentagram.controller;
 
 import com.shenzhentagram.model.*;
 import io.swagger.annotations.*;
-import io.swagger.models.auth.In;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -160,9 +159,9 @@ public class UserController extends TemplateRestController {
     }
 
     public Follower convertFollowerIds(List<Integer> userIds) {
-        return new Follower() {{
-            setFollower(convertFollowsIds(userIds));
-        }};
+        Follower follower = new Follower();
+        follower.setFollower(convertFollowsIds(userIds));
+        return follower;
     }
 
     public Following convertFollowingIds(List<Integer> userIds) {
