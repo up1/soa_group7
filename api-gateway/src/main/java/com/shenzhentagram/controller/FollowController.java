@@ -68,7 +68,7 @@ public class FollowController extends TemplateRestController {
     public ResponseEntity<Void> unfollowTo(
             @PathVariable("id") int userId
     ) {
-        HashMap<String, Object> sendPayload = new HashMap<String, Object>();
+        HashMap<String, Object> sendPayload = new HashMap<>();
         sendPayload.put("userId", getAuthenticatedUser().getId());
 
         userController.decreaseFollower(userId);
