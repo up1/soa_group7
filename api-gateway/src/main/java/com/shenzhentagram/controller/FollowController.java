@@ -54,9 +54,8 @@ public class FollowController extends TemplateRestController {
     public ResponseEntity<Void> followTo(
             @PathVariable("id") int userId
     ) {
-        HashMap<String, Object> sendPayload = new HashMap<String, Object>() {{
-            put("userId", getAuthenticatedUser().getId());
-        }};
+        HashMap<String, Object> sendPayload = new HashMap<>();
+        sendPayload.put("userId", getAuthenticatedUser().getId());
 
         userController.increaseFollower(userId);
 
