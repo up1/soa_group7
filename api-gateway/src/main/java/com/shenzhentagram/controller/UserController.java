@@ -165,9 +165,9 @@ public class UserController extends TemplateRestController {
     }
 
     public Following convertFollowingIds(List<Integer> userIds) {
-        return new Following() {{
-            setFollowing(convertFollowsIds(userIds));
-        }};
+        Following following = new Following();
+        following.setFollowing(convertFollowsIds(userIds));
+        return following;
     }
 
     private List<User> convertFollowsIds(List<Integer> userIds) {
