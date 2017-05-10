@@ -14,59 +14,59 @@ public class RequestCounter {
     public static void countRequestRequest(int statusCode){
         switch (statusCode){
             case 200:
-                RequestOKCounter.inc();
+                requestOKCounter.inc();
                 break;
             case 201:
-                RequestCreatedCounter.inc();
+                requestCreatedCounter.inc();
                 break;
             case 204:
-                RequestNoContentCounter.inc();
+                requestNoContentCounter.inc();
                 break;
             case 400:
-                RequestBasRequestCounter.inc();
+                requestBasRequestCounter.inc();
                 break;
             case 401:
-                RequestUnauthorizedCounter.inc();
+                requestUnauthorizedCounter.inc();
                 break;
             case 403:
-                RequestForbiddenCounter.inc();
+                requestForbiddenCounter.inc();
                 break;
             case 404:
-                RequestNotFoundCounter.inc();
+                requestNotFoundCounter.inc();
                 break;
             case 500:
-                RequestInternalServerErrorCounter.inc();
+                requestInternalServerErrorCounter.inc();
                 break;
             case 503:
-                RequestServiceUnavailableCounter.inc();
+                requestServiceUnavailableCounter.inc();
                 break;
         }
     }
-    private static final Counter RequestOKCounter = Counter.build()
+    private static final Counter requestOKCounter = Counter.build()
             .name("API_Gateway_Request_Request_OK_200")
             .help("Request Request OK 200 Counter").register();
-    private static final Counter RequestCreatedCounter = Counter.build()
+    private static final Counter requestCreatedCounter = Counter.build()
             .name("API_Gateway_Request_Request_Created_201")
             .help("Request Request Created 201 Counter").register();
-    private static final Counter RequestNoContentCounter = Counter.build()
+    private static final Counter requestNoContentCounter = Counter.build()
             .name("API_Gateway_Request_Request_NoContent_204")
             .help("Request Request NoContent 204 Counter").register();
-    private static final Counter RequestBasRequestCounter = Counter.build()
+    private static final Counter requestBasRequestCounter = Counter.build()
             .name("API_Gateway_Request_Request_BasRequest_400")
             .help("Request Request BasRequest 400 Counter").register();
-    private static final Counter RequestUnauthorizedCounter = Counter.build()
+    private static final Counter requestUnauthorizedCounter = Counter.build()
             .name("API_Gateway_Request_Request_Unauthorized_401")
             .help("Request Request Unauthorized 401 Counter").register();
-    private static final Counter RequestForbiddenCounter = Counter.build()
+    private static final Counter requestForbiddenCounter = Counter.build()
             .name("API_Gateway_Request_Request_Forbidden_403")
             .help("Request Request Forbidden 403 Counter").register();
-    private static final Counter RequestNotFoundCounter = Counter.build()
+    private static final Counter requestNotFoundCounter = Counter.build()
             .name("API_Gateway_Request_Request_NotFound_404")
             .help("Request Request NotFound 404 Counter").register();
-    private static final Counter RequestInternalServerErrorCounter = Counter.build()
+    private static final Counter requestInternalServerErrorCounter = Counter.build()
             .name("API_Gateway_Request_Request_InternalServerError_500")
             .help("Request Request InternalServerError 500 Counter").register();
-    private static final Counter RequestServiceUnavailableCounter = Counter.build()
+    private static final Counter requestServiceUnavailableCounter = Counter.build()
             .name("API_Gateway_Request_Request_ServiceUnavailable_503")
             .help("Request Request ServiceUnavailable 503 Counter").register();
 
