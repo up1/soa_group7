@@ -28,6 +28,7 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final String PROFILE_PICTURE = "profile_picture";
     private static Log log = LogFactory.getLog(UserController.class);
 
     @Value("${minio.url}")
@@ -86,9 +87,9 @@ public class UserController {
 
         // If have image, extract
         FileUtility.FileDetail fileDetail = null;
-        if(payload.containsKey("profile_picture") && payload.get("profile_picture") != null) {
+        if(payload.containsKey(PROFILE_PICTURE) && payload.get(PROFILE_PICTURE) != null) {
             // Extract image (base64)
-            String imageBase64 = (String) payload.remove("profile_picture");
+            String imageBase64 = (String) payload.remove(PROFILE_PICTURE);
             fileDetail = FileUtility.extractFileFromBase64(imageBase64);
         }
 
@@ -158,12 +159,12 @@ public class UserController {
     ) throws Exception {
         User user = this.userRepository.findById(id);
 
-        if(!payload.containsKey("profile_picture")) {
+        if(!payload.containsKey(PROFILE_PICTURE)) {
             throw new Exception("no profile_picture field");
         }
 
         // Extract image (base64)
-        String imageBase64 = (String) payload.remove("profile_picture");
+        String imageBase64 = (String) payload.remove(PROFILE_PICTURE);
         FileUtility.FileDetail fileDetail = FileUtility.extractFileFromBase64(imageBase64);
 
         try {
