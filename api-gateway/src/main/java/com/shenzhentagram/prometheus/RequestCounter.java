@@ -255,6 +255,8 @@ public class RequestCounter {
             case 503:
                 RequestServiceUnavailableCounter.inc();
                 break;
+            default:
+                break;
         }
     }
 
@@ -290,6 +292,8 @@ public class RequestCounter {
             case 503:
                 AuthenticationServiceUnavailableCounter.inc();
                 AuthenticationStatus.set(0);
+                break;
+            default:
                 break;
         }
     }
@@ -327,6 +331,8 @@ public class RequestCounter {
                 CommentServiceUnavailableCounter.inc();
                 CommentStatus.set(0);
                 break;
+            default:
+                break;
         }
     }
 
@@ -362,6 +368,8 @@ public class RequestCounter {
             case 503:
                 FollowServiceUnavailableCounter.inc();
                 FollowStatus.set(0);
+                break;
+            default:
                 break;
         }
     }
@@ -399,6 +407,8 @@ public class RequestCounter {
                 NotificationServiceUnavailableCounter.inc();
                 NotificationStatus.set(0);
                 break;
+            default:
+                break;
         }
     }
 
@@ -434,6 +444,8 @@ public class RequestCounter {
             case 503:
                 PostServiceUnavailableCounter.inc();
                 PostStatus.set(0);
+                break;
+            default:
                 break;
         }
     }
@@ -471,6 +483,8 @@ public class RequestCounter {
             case 503:
                 UserServiceUnavailableCounter.inc();
                 UserStatus.set(0);
+                break;
+            default:
                 break;
         }
     }
