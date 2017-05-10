@@ -40,3 +40,16 @@ Reaction Post
     Click Link    dom=document.getElementsByClassName("button is-large is-borderless is-marginless")[1]
     
     
+    
+Comment
+    Wait Until Page Contains    Admin   timeout=${FIVESECOND}
+    Input Text  dom=document.getElementsByClassName("input is-medium is-borderless")[0]    Somkiat
+    Click Link    dom=document.getElementsByClassName("footer-item icon is-medium right")[0]
+    Page Should Contain     Somkiat
+    
+    
+    Wait Until Page Contains    Admin   timeout=${FIVESECOND}
+    Input Text  dom=document.getElementsByClassName("input is-medium is-borderless")[1]    Pichai
+    Click Link    dom=document.getElementsByClassName("footer-item icon is-medium right")[1]
+    Page Should Contain     Pichai
+
