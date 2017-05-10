@@ -226,6 +226,9 @@ public class RequestCounter {
             .name("API_Gateway_Request_User_ServiceUnavailable_503")
             .help("Request User ServiceUnavailable 503 Counter").register();
 
+    private RequestCounter() {
+    }
+
     public static void countRequestRequest(int statusCode){
         switch (statusCode){
             case 200:
