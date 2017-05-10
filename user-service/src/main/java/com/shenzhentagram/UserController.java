@@ -229,7 +229,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/followed_by")
-    public void increaseFollowed_by(
+    public void increaseFollowedBy(
             @PathVariable("id") long id
     ) {
         User user = this.userRepository.findById(id);
@@ -238,7 +238,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/followed_by")
-    public void decreaseFollowed_by(
+    public void decreaseFollowedBy(
             @PathVariable("id") long id
     ) {
         User user = this.userRepository.findById(id);
