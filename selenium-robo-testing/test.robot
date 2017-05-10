@@ -68,6 +68,6 @@ Logout
     Click Link  dom=document.getElementsByClassName("logout-modal icon")
     Click Link  dom=document.getElementsByClassName("button is-fullwidth is-medium")[0]
     Wait Until Page Contains    Shenzhentagram  timeout=${FIVESECOND}
-    
+    Close Browser   
 
     
