@@ -23,3 +23,12 @@ Go to index
     Create WebDriver    Chrome    chrome_options=${chrome_options}
     Go to    ${HOMEPAGE}
     Set Selenium Speed  0.7
+
+*** Test Case ***
+
+Login
+    Go to index
+    Input Text  dom=document.getElementsByTagName("input")[1]   ${USERNAME}
+    Input Password  dom=document.getElementsByTagName("input")[2]   ${PASSWORD}
+    Click Button    dom=document.getElementsByClassName("button is-primary is-medium")
+    Page Should Contain     Admin
