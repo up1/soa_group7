@@ -53,3 +53,12 @@ Comment
     Click Link    dom=document.getElementsByClassName("footer-item icon is-medium right")[1]
     Page Should Contain     Pichai
 
+
+
+Search
+    Wait Until Page Contains    Admin   timeout=${FIVESECOND}
+    Input Text  dom=document.getElementsByTagName("input")[0]   meranote
+    Wait Until Element Is Visible   dom=document.getElementsByClassName("search")  timeout=${FIVESECOND}
+    Click Link    dom=document.links[1]
+    Page Should Contain     meranote
+    
