@@ -40,10 +40,9 @@ public class AuthController {
             @RequestAttribute("access_token") String access_token,
             @RequestAttribute("authenticated_user") User user
     ) throws JsonProcessingException {
-        HashMap<String, Object> mappingResponse = new HashMap<String, Object>() {{
-            put("access_token", access_token);
-            put("user", user);
-        }};
+        HashMap<String, Object> mappingResponse = new HashMap<>();
+        mappingResponse.put("access_token", access_token);
+        mappingResponse.put("user", user);
         ObjectMapper mapper = new ObjectMapper();
 
         return mapper.writeValueAsString(mappingResponse);
