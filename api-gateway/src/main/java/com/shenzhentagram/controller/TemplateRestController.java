@@ -64,26 +64,26 @@ public abstract class TemplateRestController {
             try {
                 ResponseEntity<T> responseEntity = restTemplate.exchange(uri, method, entity, responseClass, uriVariables);
 
-                int SC = responseEntity.getStatusCodeValue();
-                countRequestRequest(SC);
+                int sc = responseEntity.getStatusCodeValue();
+                countRequestRequest(sc);
 
                 if(uri.matches("/auth")){
-                    countAuthenticationRequest(SC);
+                    countAuthenticationRequest(sc);
                 }
                 else if(uri.matches("/posts.*./comments.*")){
-                    countCommentRequest(SC);
+                    countCommentRequest(sc);
                 }
                 else if(uri.matches("/notifications.*")){
-                    countNotificationRequest(SC);
+                    countNotificationRequest(sc);
                 }
                 else if(uri.matches("/posts.*")){
-                    countPostRequest(SC);
+                    countPostRequest(sc);
                 }
                 else if(uri.matches("/users.*./follow.*")){
-                    countFollowRequest(SC);
+                    countFollowRequest(sc);
                 }
                 else if(uri.matches("/users.*")){
-                    countUserRequest(SC);
+                    countUserRequest(sc);
                 }
 
 

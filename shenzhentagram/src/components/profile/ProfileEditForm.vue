@@ -91,6 +91,7 @@
       ]),
       editProfile () {
         this.$store.dispatch('editProfile', this.user)
+        this.$router.push({name: 'users', params: {userId: this.$auth.user().id}})
       }
     }
   }

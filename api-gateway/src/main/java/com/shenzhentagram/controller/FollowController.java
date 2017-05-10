@@ -20,6 +20,8 @@ import java.util.HashMap;
 @RequestMapping("/users")
 public class FollowController extends TemplateRestController {
 
+    public static final String USER_FOLLOW = "/users/{id}/follows";
+
     @Autowired
     private UserController userController;
 
@@ -31,7 +33,7 @@ public class FollowController extends TemplateRestController {
     public ResponseEntity<Follower> getFollower(
             @PathVariable("id") int userId
     ) {
-        ResponseEntity<FollowIds> responseEntity = request(HttpMethod.GET, "/users/{id}/follows", FollowIds.class, userId);
+        ResponseEntity<FollowIds> responseEntity = request(HttpMethod.GET, USER_FOLLOW, FollowIds.class, userId);
 
 
         Follower follower = userController.convertFollowerIds(responseEntity.getBody().getFollower());
@@ -43,7 +45,7 @@ public class FollowController extends TemplateRestController {
     public ResponseEntity<Following> getFollowing(
             @PathVariable("id") int userId
     ) {
-        ResponseEntity<FollowIds> responseEntity = request(HttpMethod.GET, "/users/{id}/follows", FollowIds.class, userId);
+        ResponseEntity<FollowIds> responseEntity = request(HttpMethod.GET, USER_FOLLOW, FollowIds.class, userId);
 
         Following following = userController.convertFollowingIds(responseEntity.getBody().getFollowing());
 
@@ -54,30 +56,28 @@ public class FollowController extends TemplateRestController {
     public ResponseEntity<Void> followTo(
             @PathVariable("id") int userId
     ) {
-        HashMap<String, Object> sendPayload = new HashMap<String, Object>() {{
-            put("userId", getAuthenticatedUser().getId());
-        }};
+        HashMap<String, Object> sendPayload = new HashMap<>();
+        sendPayload.put("userId", getAuthenticatedUser().getId());
 
         userController.increaseFollower(userId);
 
         userController.increaseFollowing(getAuthenticatedUser().getId());
 
-        return request(HttpMethod.POST, "/users/{id}/follows", sendPayload, Void.class, userId);
+        return request(HttpMethod.POST, USER_FOLLOW, sendPayload, Void.class, userId);
     }
 
     @DeleteMapping("/{id}/follows")
     public ResponseEntity<Void> unfollowTo(
             @PathVariable("id") int userId
     ) {
-        HashMap<String, Object> sendPayload = new HashMap<String, Object>() {{
-            put("userId", getAuthenticatedUser().getId());
-        }};
+        HashMap<String, Object> sendPayload = new HashMap<>();
+        sendPayload.put("userId", getAuthenticatedUser().getId());
 
         userController.decreaseFollower(userId);
 
         userController.decreaseFollowing(getAuthenticatedUser().getId());
 
-        return request(HttpMethod.DELETE, "/users/{id}/follows", sendPayload, Void.class, userId);
+        return request(HttpMethod.DELETE, USER_FOLLOW, sendPayload, Void.class, userId);
     }
 
 }

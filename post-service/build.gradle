@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('se.transmode.gradle:gradle-docker:1.2')
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.4"
     }
 }
 
@@ -18,6 +19,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'docker'
+apply plugin: 'org.sonarqube'
 
 jar {
     baseName = 'post-service'
