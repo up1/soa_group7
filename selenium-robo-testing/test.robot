@@ -39,21 +39,16 @@ Reaction Post
     Wait Until Element Is Visible   dom=document.getElementsByClassName("button is-large is-borderless is-marginless")  timeout=${FIVESECOND}
     Click Link    dom=document.getElementsByClassName("button is-large is-borderless is-marginless")[1]
     
-    
-    
-Comment
+Post Comment
     Wait Until Page Contains    Admin   timeout=${FIVESECOND}
     Input Text  dom=document.getElementsByClassName("input is-medium is-borderless")[0]    Somkiat
     Click Link    dom=document.getElementsByClassName("footer-item icon is-medium right")[0]
     Page Should Contain     Somkiat
     
-    
     Wait Until Page Contains    Admin   timeout=${FIVESECOND}
     Input Text  dom=document.getElementsByClassName("input is-medium is-borderless")[1]    Pichai
     Click Link    dom=document.getElementsByClassName("footer-item icon is-medium right")[1]
     Page Should Contain     Pichai
-
-
 
 Search
     Wait Until Page Contains    Admin   timeout=${FIVESECOND}
@@ -66,6 +61,13 @@ View Post
     Wait Until Page Contains    Test update   timeout=${FIVESECOND}
     Click Link    dom=document.getElementsByTagName("a")[document.getElementsByTagName("a").length-1]
     Page Should Contain     ;w;
+    
+Logout
+    Click Link  dom=document.getElementsByClassName("nav-item")[document.getElementsByClassName("nav-item").length-1]
+    Wait Until Element Is Visible   dom=document.getElementsByClassName("logout-modal icon")    timeout=${FIVESECOND}
+    Click Link  dom=document.getElementsByClassName("logout-modal icon")
+    Click Link  dom=document.getElementsByClassName("button is-fullwidth is-medium")[0]
+    Wait Until Page Contains    Shenzhentagram  timeout=${FIVESECOND}
     
 
     
