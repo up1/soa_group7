@@ -1,11 +1,13 @@
 package com.shenzhentagram;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Repository
@@ -29,8 +31,8 @@ public class UserRepository {
                     },
                     new UserRowMapper()
             );
-        } catch (Exception exception) {
-            throw new UserNotFoundException(id);
+        } catch (DataAccessException exception) {
+            throw new UserNotFoundException(id + "|" + exception);
         }
     }
 
@@ -46,8 +48,8 @@ public class UserRepository {
                     },
                     new UserRowMapper()
             );
-        } catch (Exception exception) {
-            throw new UserNotFoundException(username);
+        } catch (DataAccessException exception) {
+            throw new UserNotFoundException(username + "|" + exception);
         }
     }
 
@@ -63,8 +65,8 @@ public class UserRepository {
                     },
                     new UserDetailsRowMapper()
             );
-        } catch (Exception exception) {
-            throw new UserNotFoundException(username);
+        } catch (DataAccessException exception) {
+            throw new UserNotFoundException(username + "|" + exception);
         }
     }
 
@@ -84,8 +86,8 @@ public class UserRepository {
                     params,
                     new UserRowMapper()
             );
-        } catch (Exception exception) {
-            throw new UserNotFoundException(name);
+        } catch (DataAccessException exception) {
+            throw new UserNotFoundException(name + "|" + exception);
         }
     }
 
