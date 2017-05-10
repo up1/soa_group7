@@ -3,7 +3,10 @@ package com.shenzhentagram;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shenzhentagram.utility.FileUtility;
 import io.minio.MinioClient;
-import io.minio.errors.MinioException;
+import io.minio.errors.*;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +84,7 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<User> createUser(
             @RequestBody Map<String, Object> payload
-    ) throws Exception {
+    ) {
         // Extract the password
         String password = bCryptPasswordEncoder.encode((String) payload.remove("password"));
 
@@ -90,7 +93,11 @@ public class UserController {
         if(payload.containsKey(PROFILE_PICTURE) && payload.get(PROFILE_PICTURE) != null) {
             // Extract image (base64)
             String imageBase64 = (String) payload.remove(PROFILE_PICTURE);
-            fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+            try {
+                fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+            } catch (IOException|MagicParseException|MagicException|MagicMatchNotFoundException e) {
+                log.error(e);
+            }
         }
 
         // Extract user
@@ -121,10 +128,17 @@ public class UserController {
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (DataAccessException e) {
             if (fileDetail != null) {
-                minio.removeObject(bucket, user.getProfile_picture());
+                try {
+                    minio.removeObject(bucket, user.getProfile_picture());
+                } catch (InvalidKeyException|NoSuchAlgorithmException|NoResponseException|XmlPullParserException|InvalidBucketNameException|InsufficientDataException|ErrorResponseException|InternalException|IOException ex) {
+                    log.error(ex);
+                }
             }
 
             throw e;
+        } catch (InvalidKeyException|NoSuchAlgorithmException|NoResponseException|XmlPullParserException|InvalidBucketNameException|InvalidArgumentException|InsufficientDataException|ErrorResponseException|InternalException|IOException e) {
+            log.error(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
