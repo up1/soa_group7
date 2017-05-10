@@ -62,3 +62,10 @@ Search
     Click Link    dom=document.links[1]
     Page Should Contain     meranote
     
+View Post
+    Wait Until Page Contains    Test update   timeout=${FIVESECOND}
+    Click Link    dom=document.getElementsByTagName("a")[document.getElementsByTagName("a").length-1]
+    Page Should Contain     ;w;
+    
+
+    
