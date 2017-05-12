@@ -1,9 +1,14 @@
 package com.shenzhentagram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shenzhentagram.exception.NoProfilePictureException;
+import com.shenzhentagram.exception.WTFException;
 import com.shenzhentagram.utility.FileUtility;
 import io.minio.MinioClient;
-import io.minio.errors.MinioException;
+import io.minio.errors.*;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,7 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final String PROFILE_PICTURE = "profile_picture";
     private static Log log = LogFactory.getLog(UserController.class);
 
     @Value("${minio.url}")
@@ -48,7 +54,7 @@ public class UserController {
     private MinioClient minio;
 
     @PostConstruct
-    public void postConstruction() throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    public void postConstruction() {
         try {
             minio = new MinioClient(url, accessKey, secretKey);
 
@@ -60,6 +66,9 @@ public class UserController {
             }
         } catch (MinioException e) {
             log.error("postConstruction() : minio client error => " + e);
+        } catch (NoSuchAlgorithmException|XmlPullParserException|InvalidKeyException|IOException e) {
+            log.error(e);
+            throw new WTFException(e.getMessage());
         }
     }
 
@@ -80,16 +89,20 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<User> createUser(
             @RequestBody Map<String, Object> payload
-    ) throws Exception {
+    ) {
         // Extract the password
         String password = bCryptPasswordEncoder.encode((String) payload.remove("password"));
 
         // If have image, extract
         FileUtility.FileDetail fileDetail = null;
-        if(payload.containsKey("profile_picture") && payload.get("profile_picture") != null) {
+        if(payload.containsKey(PROFILE_PICTURE) && payload.get(PROFILE_PICTURE) != null) {
             // Extract image (base64)
-            String imageBase64 = (String) payload.remove("profile_picture");
-            fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+            String imageBase64 = (String) payload.remove(PROFILE_PICTURE);
+            try {
+                fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+            } catch (IOException|MagicParseException|MagicException|MagicMatchNotFoundException e) {
+                log.error(e);
+            }
         }
 
         // Extract user
@@ -120,10 +133,17 @@ public class UserController {
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (DataAccessException e) {
             if (fileDetail != null) {
-                minio.removeObject(bucket, user.getProfile_picture());
+                try {
+                    minio.removeObject(bucket, user.getProfile_picture());
+                } catch (InvalidKeyException|NoSuchAlgorithmException|NoResponseException|XmlPullParserException|InvalidBucketNameException|InsufficientDataException|ErrorResponseException|InternalException|IOException ex) {
+                    log.error(ex);
+                }
             }
 
             throw e;
+        } catch (InvalidKeyException|NoSuchAlgorithmException|NoResponseException|XmlPullParserException|InvalidBucketNameException|InvalidArgumentException|InsufficientDataException|ErrorResponseException|InternalException|IOException e) {
+            log.error(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -155,38 +175,50 @@ public class UserController {
     public User updateSelfProfilePicture(
             @PathVariable("id") long id,
             @RequestBody Map<String, Object> payload
-    ) throws Exception {
+    ) {
         User user = this.userRepository.findById(id);
 
-        if(!payload.containsKey("profile_picture")) {
-            throw new Exception("no profile_picture field");
+        if(!payload.containsKey(PROFILE_PICTURE)) {
+            throw new NoProfilePictureException("no profile_picture field");
         }
 
         // Extract image (base64)
-        String imageBase64 = (String) payload.remove("profile_picture");
-        FileUtility.FileDetail fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+        String imageBase64 = (String) payload.remove(PROFILE_PICTURE);
+        FileUtility.FileDetail fileDetail = null;
+        try {
+            fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+        } catch (IOException|MagicParseException|MagicException|MagicMatchNotFoundException e) {
+            log.error(e);
+        }
 
         try {
             // upload image
-            // Set picture & upload to storage
-            user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
+            if (fileDetail != null) {
+                // Set picture & upload to storage
+                user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
 
-            // Upload file
-            minio.putObject(
-                    bucket,
-                    user.getProfile_picture(),
-                    fileDetail.inputStream,
-                    fileDetail.size,
-                    fileDetail.type
-            );
+                // Upload file
+                minio.putObject(
+                        bucket,
+                        user.getProfile_picture(),
+                        fileDetail.inputStream,
+                        fileDetail.size,
+                        fileDetail.type
+                );
+            }
 
             // Save user
             this.userRepository.update(user);
             return user;
-        } catch (MinioException e) {
-            throw e;
+        } catch (MinioException|NoSuchAlgorithmException|XmlPullParserException|InvalidKeyException|IOException e) {
+            log.error(e);
+            return null;
         } catch (DataAccessException e) {
-            minio.removeObject(bucket, user.getProfile_picture());
+            try {
+                minio.removeObject(bucket, user.getProfile_picture());
+            } catch (InvalidKeyException|NoSuchAlgorithmException|NoResponseException|XmlPullParserException|InvalidBucketNameException|InsufficientDataException|ErrorResponseException|InternalException|IOException ex) {
+                log.error(ex);
+            }
             throw e;
         }
     }
@@ -228,7 +260,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/followed_by")
-    public void increaseFollowed_by(
+    public void increaseFollowedBy(
             @PathVariable("id") long id
     ) {
         User user = this.userRepository.findById(id);
@@ -237,7 +269,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/followed_by")
-    public void decreaseFollowed_by(
+    public void decreaseFollowedBy(
             @PathVariable("id") long id
     ) {
         User user = this.userRepository.findById(id);

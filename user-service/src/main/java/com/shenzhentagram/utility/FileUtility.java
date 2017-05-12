@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -32,20 +31,25 @@ public class FileUtility {
 
     private FileUtility() {}
 
-    public static FileDetail extractFileFromBase64(String base64file) throws IOException, MagicParseException, MagicException, MagicMatchNotFoundException {
+    public static FileDetail extractFileFromBase64(String base64file) {
         String[] split = base64file.split(";");
         String base64String = split[1].replace("base64,", "");
 
         byte[] decodedBytes = Base64.decodeBase64(base64String);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(decodedBytes);
-        MagicMatch type = Magic.getMagicMatch(decodedBytes);
+        MagicMatch type = null;
+        try {
+            type = Magic.getMagicMatch(decodedBytes);
+            log.info("extractFileFromBase64() : mime type = " + type.getMimeType());
+            log.info("extractFileFromBase64() : extension = " + type.getExtension());
+            log.info("extractFileFromBase64() : size = " + (inputStream.available() / 1024.0f / 1024.0f) + "MB");
 
-        log.info("extractFileFromBase64() : mime type = " + type.getMimeType());
-        log.info("extractFileFromBase64() : extension = " + type.getExtension());
-        log.info("extractFileFromBase64() : size = " + (inputStream.available() / 1024.0f / 1024.0f) + "MB");
-
-        return new FileDetail(inputStream, type.getExtension(), type.getMimeType(), inputStream.available());
+            return new FileDetail(inputStream, type.getExtension(), type.getMimeType(), inputStream.available());
+        } catch (MagicParseException|MagicMatchNotFoundException|MagicException e) {
+            log.error(e);
+            return null;
+        }
     }
 
 }

@@ -1,11 +1,13 @@
 package com.shenzhentagram;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Repository
@@ -21,16 +23,15 @@ public class UserRepository {
     public User findById(Long id) {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
-                        "FROM users " +
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count FROM users " +
                         "WHERE id = ?",
                     new Object[] {
                             id
                     },
                     new UserRowMapper()
             );
-        } catch (Exception exception) {
-            throw new UserNotFoundException(id);
+        } catch (DataAccessException exception) {
+            throw new UserNotFoundException(id + "|" + exception);
         }
     }
 
@@ -38,16 +39,15 @@ public class UserRepository {
     public User findByUsername(String username) {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
-                            "FROM users " +
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count FROM users " +
                             "WHERE username = ?",
                     new Object[] {
                             username
                     },
                     new UserRowMapper()
             );
-        } catch (Exception exception) {
-            throw new UserNotFoundException(username);
+        } catch (DataAccessException exception) {
+            throw new UserNotFoundException(username + "|" + exception);
         }
     }
 
@@ -55,16 +55,15 @@ public class UserRepository {
     public UserDetails findByUsername1(String username) {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "SELECT id, username, password, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
-                            "FROM users " +
+                    "SELECT id, username, password, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count FROM users " +
                             "WHERE username = ?",
                     new Object[] {
                             username
                     },
                     new UserDetailsRowMapper()
             );
-        } catch (Exception exception) {
-            throw new UserNotFoundException(username);
+        } catch (DataAccessException exception) {
+            throw new UserNotFoundException(username + "|" + exception);
         }
     }
 
@@ -84,8 +83,8 @@ public class UserRepository {
                     params,
                     new UserRowMapper()
             );
-        } catch (Exception exception) {
-            throw new UserNotFoundException(name);
+        } catch (DataAccessException exception) {
+            throw new UserNotFoundException(name + "|" + exception);
         }
     }
 
