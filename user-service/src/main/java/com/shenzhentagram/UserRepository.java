@@ -23,8 +23,7 @@ public class UserRepository {
     public User findById(Long id) {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
-                        "FROM users " +
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count FROM users " +
                         "WHERE id = ?",
                     new Object[] {
                             id
@@ -40,8 +39,7 @@ public class UserRepository {
     public User findByUsername(String username) {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
-                            "FROM users " +
+                    "SELECT id, username, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count FROM users " +
                             "WHERE username = ?",
                     new Object[] {
                             username
@@ -57,8 +55,7 @@ public class UserRepository {
     public UserDetails findByUsername1(String username) {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "SELECT id, username, password, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count " +
-                            "FROM users " +
+                    "SELECT id, username, password, full_name, bio, profile_picture, display_name, role, follows, followed_by, post_count FROM users " +
                             "WHERE username = ?",
                     new Object[] {
                             username

@@ -7,6 +7,7 @@ public class UserDetails extends User {
     private String password;
 
     public UserDetails() {
+        //asdasdasd
     }
 
     public UserDetails(long id, String username, String full_name, String bio, String profile_name, String display_name, int follows, int followed_by, int post_count, String password) {
