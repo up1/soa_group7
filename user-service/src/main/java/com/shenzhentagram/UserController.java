@@ -1,6 +1,8 @@
 package com.shenzhentagram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shenzhentagram.exception.NoProfilePictureException;
+import com.shenzhentagram.exception.WTFException;
 import com.shenzhentagram.utility.FileUtility;
 import io.minio.MinioClient;
 import io.minio.errors.*;
@@ -52,7 +54,7 @@ public class UserController {
     private MinioClient minio;
 
     @PostConstruct
-    public void postConstruction() throws XmlPullParserException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    public void postConstruction() {
         try {
             minio = new MinioClient(url, accessKey, secretKey);
 
@@ -64,6 +66,9 @@ public class UserController {
             }
         } catch (MinioException e) {
             log.error("postConstruction() : minio client error => " + e);
+        } catch (NoSuchAlgorithmException|XmlPullParserException|InvalidKeyException|IOException e) {
+            log.error(e);
+            throw new WTFException(e.getMessage());
         }
     }
 
@@ -170,38 +175,50 @@ public class UserController {
     public User updateSelfProfilePicture(
             @PathVariable("id") long id,
             @RequestBody Map<String, Object> payload
-    ) throws Exception {
+    ) {
         User user = this.userRepository.findById(id);
 
         if(!payload.containsKey(PROFILE_PICTURE)) {
-            throw new Exception("no profile_picture field");
+            throw new NoProfilePictureException("no profile_picture field");
         }
 
         // Extract image (base64)
         String imageBase64 = (String) payload.remove(PROFILE_PICTURE);
-        FileUtility.FileDetail fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+        FileUtility.FileDetail fileDetail = null;
+        try {
+            fileDetail = FileUtility.extractFileFromBase64(imageBase64);
+        } catch (IOException|MagicParseException|MagicException|MagicMatchNotFoundException e) {
+            log.error(e);
+        }
 
         try {
             // upload image
-            // Set picture & upload to storage
-            user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
+            if (fileDetail != null) {
+                // Set picture & upload to storage
+                user.setProfile_picture(UUID.randomUUID().toString() + "." + fileDetail.extension);
 
-            // Upload file
-            minio.putObject(
-                    bucket,
-                    user.getProfile_picture(),
-                    fileDetail.inputStream,
-                    fileDetail.size,
-                    fileDetail.type
-            );
+                // Upload file
+                minio.putObject(
+                        bucket,
+                        user.getProfile_picture(),
+                        fileDetail.inputStream,
+                        fileDetail.size,
+                        fileDetail.type
+                );
+            }
 
             // Save user
             this.userRepository.update(user);
             return user;
-        } catch (MinioException e) {
-            throw e;
+        } catch (MinioException|NoSuchAlgorithmException|XmlPullParserException|InvalidKeyException|IOException e) {
+            log.error(e);
+            return null;
         } catch (DataAccessException e) {
-            minio.removeObject(bucket, user.getProfile_picture());
+            try {
+                minio.removeObject(bucket, user.getProfile_picture());
+            } catch (InvalidKeyException|NoSuchAlgorithmException|NoResponseException|XmlPullParserException|InvalidBucketNameException|InsufficientDataException|ErrorResponseException|InternalException|IOException ex) {
+                log.error(ex);
+            }
             throw e;
         }
     }
